@@ -1,0 +1,4 @@
+{
+  "port": 5000,
+  "jwtSecret": "Fg6J7z93jG51a12s"
+}
