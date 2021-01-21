@@ -76,7 +76,7 @@ router.post('/registerMentor',
                 validationErrors: validationErrors.array(),
                 message: 'Некорректные данные при регистрации'
             })
-        };
+        }
 
         const {name, email, direction, experience, city, sex, password} = req.body;
 
@@ -102,8 +102,48 @@ router.post('/registerMentor',
 
 
 // /api/auth/loginStudent
-router.post('/loginStudent',async (req, res) => {
+router.post('/loginStudent',
+    [
+        check('email', 'Некорректный email').isEmail(),
+        check('password', 'Некорректный пароль').exists()
+    ],
+    async (req, res) => {
     try {
+
+        const validationErrors = validationResult(req);
+
+        if (!validationErrors.isEmpty()) {
+            return res.status(400).json({
+                validationErrors: validationErrors.array(),
+                message: 'Некорректные данные при авторизации',
+            });
+        }
+
+        const {email, password} = req.body;
+
+        const condidate = await pool.query('SELECT * FROM student WHERE "emailStudent" = $1;', [email]);
+
+        if (!condidate.rows[0]){
+            return res.status(400).json({messege: 'Такого студента не существует, проверьте email'});
+        }
+
+        const passwordsMatch = await bcryptn.compare(password, condidate.rows[0].passwordStudent);
+
+        if (!passwordsMatch) {
+            return res.status(400).json({message: 'Неверный пароль'});
+        }
+
+        const token = jsonwebtoken.sign(
+            {
+                userId: condidate.rows[0].id_student,
+                role: 'student',
+            },
+            config.get('jwtSecret'),
+            {expiresIn: '1h'}
+        );
+
+        res.json({ token: token, userId: condidate.rows[0].id_student });
+
 
     }catch (e) {
         res.status(500).json({message: 'Что-то пошло не так в блоке авторизациии студента'})
@@ -115,8 +155,48 @@ router.post('/loginStudent',async (req, res) => {
 
 
 // /api/auth/loginMentor
-router.post('/loginMentor',async (req, res) => {
+router.post('/loginMentor',
+    [
+        check('email', 'Некорректный email').isEmail(),
+        check('password', 'Некорректный пароль').exists(),
+    ],
+    async (req, res) => {
     try {
+
+        const validationErrors = validationResult(req);
+
+        if (!validationErrors.isEmpty()) {
+            return res.status(400).json({
+                validationErrors: validationErrors.array(),
+                message: 'Некорректные данные при авторизации',
+            });
+        }
+
+        const {email, password} = req.body;
+
+        const condidate = await pool.query('SELECT * FROM mentor WHERE "emailMentor" = $1;', [email]);
+
+        if (!condidate.rows[0]) {
+            return res.status(400).json({messege: 'Такого ментора не существует, проверьте email'});
+        }
+
+        const passwordsMatch = await bcryptn.compare(password, condidate.rows[0].passwordMentor);
+
+        if (!passwordsMatch) {
+            return res.status(400).json({message: 'Неверный пароль'});
+        }
+
+        const token = jsonwebtoken.sign(
+            {
+                userId: condidate.rows[0].id_mentor,
+                role: 'mentor',
+            },
+            config.get('jwtSecret'),
+            {expiresIn: '1h'}
+        );
+
+        res.json({ token, userId: condidate.rows[0].id_mentor });
+
 
     }catch (e) {
         res.status(500).json({message: 'Что-то пошло не так в блоке авторизация ментора'})
