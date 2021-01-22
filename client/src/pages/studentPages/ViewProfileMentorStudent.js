@@ -1,12 +1,12 @@
 import React from 'react';
 
 
-export const ViewProfileStudentMentor = () => {
+export const ViewProfileMentorStudent = () => {
 
 
     return(
         <div>
-            <h1>ViewProfileStudentMentor</h1>
+            <h1>ViewProfileMentorStudent</h1>
         </div>
     );
 };
