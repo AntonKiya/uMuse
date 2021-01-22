@@ -134,7 +134,7 @@ router.post('/loginStudent',
         }
 
         const token = jsonwebtoken.sign(
-            {
+            { 
                 userId: condidate.rows[0].id_student,
                 role: 'student',
             },
