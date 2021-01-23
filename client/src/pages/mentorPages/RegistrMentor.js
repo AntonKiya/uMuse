@@ -131,7 +131,7 @@ export const RegistrMentor = () => {
                                     <select
                                         style={{fontSize: "16px", background: "transparent", border: "none", color: "white"}}  className='browser-default'
                                         onChange={changeInputHandler}
-                                        name="sex1"
+                                        name="sex"
                                         required
                                     >
                                         <option value="1" >Мужской</option>
@@ -166,7 +166,7 @@ export const RegistrMentor = () => {
                             </div>
                         </div>
                         <div className="card-actions center">
-                            <button onClick={() => console.log(form)} type="button" className="waves-effect light-blue waves-light btn ">Войти</button>
+                            <button onClick={() => console.log(form)} type="button" className="waves-effect light-blue waves-light btn ">Зарегистрироваться</button>
                             <h6 className="">Назад к <Link to='authmen'>Авторизации</Link></h6>
                             <h6 className="">Я <Link to='/'>студент</Link></h6>
                         </div>

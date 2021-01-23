@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 
-
 export const AuthStudent = () => {
+
 
     const [form, setForm] = useState({
         email: '',
@@ -48,7 +48,7 @@ export const AuthStudent = () => {
                             </div>
                         </div>
                         <div className="card-actions center">
-                            <button onClick={() => console.log(form)} type="button" className="waves-effect light-blue waves-light btn ">Войти</button>
+                            <button type="button" className="waves-effect light-blue waves-light btn ">Войти</button>
                             <h6 className="">Зарегистрироваться в uMuse <Link to='registerst'>Здесь</Link></h6>
                             <h6 className="">Я <Link to='authmen'>наставник</Link></h6>
                         </div>

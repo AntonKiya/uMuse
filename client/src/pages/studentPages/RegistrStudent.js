@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 
 export const RegistrStudent = () => {
 
+
     const [form, setForm] = useState({
         name:'',
         email: '',
@@ -62,7 +63,7 @@ export const RegistrStudent = () => {
                             </div>
                         </div>
                         <div className="card-actions center">
-                            <button onClick={() => console.log(form)} type="button" className="waves-effect light-blue waves-light btn ">Зарегистрироваться</button>
+                            <button type="button" className="waves-effect light-blue waves-light btn ">Зарегистрироваться</button>
                             <h6 className="">Назад к <Link to='/'>Авторизации</Link></h6>
                             <h6 className="">Я <Link to='authmen'>наставник</Link></h6>
                         </div>
