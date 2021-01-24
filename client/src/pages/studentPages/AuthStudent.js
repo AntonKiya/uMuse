@@ -7,14 +7,6 @@ export const AuthStudent = () => {
 
     const {request, loading, error, clearError} = useHttp();
 
-    useEffect(() => {
-
-        if (error){
-            alert(error)
-        }
-        clearError();
-
-    },[error]);
 
     const loginHandler = async () => {
         try {
@@ -28,6 +20,15 @@ export const AuthStudent = () => {
         email: '',
         password: '',
     });
+
+    useEffect(() => {
+
+        if (error){
+            alert(error)
+        }
+        clearError();
+
+    },[error, clearError]);
 
 
     const changeInputHandler = (event) => {

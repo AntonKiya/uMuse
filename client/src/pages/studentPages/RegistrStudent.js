@@ -7,6 +7,16 @@ export const RegistrStudent = () => {
 
     const {request, loading, error, clearError} = useHttp();
 
+
+    const registrHandler = async () => {
+        try {
+
+            const data = await request('/api/auth/registerStudent', 'POST', {...form})
+            alert(data.message);
+
+        }catch (e){}
+    };
+
     useEffect(() => {
 
         if (error){
@@ -14,15 +24,7 @@ export const RegistrStudent = () => {
         }
         clearError();
 
-    },[error]);
-
-    const registrHandler = async () => {
-        try {
-
-            const data = await request('/api/auth/registerStudent', 'POST', {...form})
-
-        }catch (e){}
-    };
+    },[error, clearError]);
 
     const [form, setForm] = useState({
         name:'',
