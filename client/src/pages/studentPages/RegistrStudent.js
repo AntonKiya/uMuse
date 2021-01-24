@@ -1,8 +1,30 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
+import {useHttp} from "../../hooks/http.hook";
 
 
 export const RegistrStudent = () => {
+
+    const {request, loading, error, clearError} = useHttp();
+
+
+    const registrHandler = async () => {
+        try {
+
+            const data = await request('/api/auth/registerStudent', 'POST', {...form})
+
+        }catch (e){}
+    };
+
+    useEffect(() => {
+
+        if (error){
+            alert(error)
+        }
+        clearError();
+
+    },[error, clearError]);
+
 
     const [form, setForm] = useState({
         name:'',
@@ -62,7 +84,14 @@ export const RegistrStudent = () => {
                             </div>
                         </div>
                         <div className="card-actions center">
-                            <button onClick={() => console.log(form)} type="button" className="waves-effect light-blue waves-light btn ">Зарегистрироваться</button>
+                            <button
+                                    onClick={registrHandler}
+                                    disabled={loading}
+                                    type="button"
+                                    className="waves-effect light-blue waves-light btn"
+                            >
+                                Зарегистрироваться
+                            </button>
                             <h6 className="">Назад к <Link to='/'>Авторизации</Link></h6>
                             <h6 className="">Я <Link to='authmen'>наставник</Link></h6>
                         </div>

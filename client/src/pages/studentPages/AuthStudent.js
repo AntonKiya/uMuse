@@ -1,8 +1,29 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link} from "react-router-dom";
-
+import {useHttp} from "../../hooks/http.hook";
 
 export const AuthStudent = () => {
+
+
+    const {request, loading, error, clearError} = useHttp();
+
+
+    const loginHandler = async () => {
+        try {
+
+            const data = await request('/api/auth/loginStudent','POST',{...form});
+
+        }catch (e){}
+    };
+
+    useEffect(() => {
+
+        if (error){
+            alert(error)
+        }
+        clearError();
+
+    },[error, clearError]);
 
     const [form, setForm] = useState({
         email: '',
@@ -48,7 +69,14 @@ export const AuthStudent = () => {
                             </div>
                         </div>
                         <div className="card-actions center">
-                            <button onClick={() => console.log(form)} type="button" className="waves-effect light-blue waves-light btn ">Войти</button>
+                            <button
+                                onClick={loginHandler}
+                                type="button"
+                                className="waves-effect light-blue waves-light btn"
+                                disabled={loading}
+                            >
+                                Войти
+                            </button>
                             <h6 className="">Зарегистрироваться в uMuse <Link to='registerst'>Здесь</Link></h6>
                             <h6 className="">Я <Link to='authmen'>наставник</Link></h6>
                         </div>
