@@ -1,4 +1,5 @@
 import {useState, useCallback} from 'react';
+import {validationResult} from "express-validator";
 
 
 export const useHttp = () => {
@@ -8,6 +9,14 @@ export const useHttp = () => {
 
     const request = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
         try{
+
+            // 16 если вообще передаем body, то приводим его к строке
+            // 17 и явно указываем в headers что по сети передаем json
+            if (body) {
+                body = JSON.stringify(body);
+                headers['Content-Type'] = 'application/json';
+            }
+
             setLoading(true);
 
             const response = await fetch(url, {method, body, headers});
