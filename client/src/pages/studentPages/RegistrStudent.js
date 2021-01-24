@@ -7,14 +7,6 @@ export const RegistrStudent = () => {
 
     const {request, loading, error, clearError} = useHttp();
 
-    useEffect(() => {
-
-        if (error){
-            alert(error)
-        }
-        clearError();
-
-    },[error]);
 
     const registrHandler = async () => {
         try {
@@ -23,6 +15,16 @@ export const RegistrStudent = () => {
 
         }catch (e){}
     };
+
+    useEffect(() => {
+
+        if (error){
+            alert(error)
+        }
+        clearError();
+
+    },[error, clearError]);
+
 
     const [form, setForm] = useState({
         name:'',
