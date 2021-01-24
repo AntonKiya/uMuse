@@ -10,7 +10,6 @@ export const RegistrMentor = () => {
     const registrHandler = async () => {
         try {
             const data = await request('/api/auth/registerMentor', 'POST', {...form});
-            alert(data.message);
 
         }catch (e){}
     };

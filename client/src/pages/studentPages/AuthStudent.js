@@ -16,10 +16,6 @@ export const AuthStudent = () => {
         }catch (e){}
     };
 
-    const [form, setForm] = useState({
-        email: '',
-        password: '',
-    });
 
     useEffect(() => {
 
@@ -29,6 +25,12 @@ export const AuthStudent = () => {
         clearError();
 
     },[error, clearError]);
+
+
+    const [form, setForm] = useState({
+        email: '',
+        password: '',
+    });
 
 
     const changeInputHandler = (event) => {
