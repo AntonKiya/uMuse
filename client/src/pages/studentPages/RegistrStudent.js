@@ -7,11 +7,11 @@ export const RegistrStudent = () => {
 
     const {request, loading, error, clearError} = useHttp();
 
-
     const registrHandler = async () => {
         try {
 
             const data = await request('/api/auth/registerStudent', 'POST', {...form})
+            alert(data.message);
 
         }catch (e){}
     };
@@ -25,18 +25,15 @@ export const RegistrStudent = () => {
 
     },[error, clearError]);
 
-
     const [form, setForm] = useState({
         name:'',
         email: '',
         password: '',
     });
 
-
     const changeInputHandler = (event) => {
         setForm({...form, [event.target.name]: event.target.value})
     };
-
 
     return(
         <div className={'row'}>

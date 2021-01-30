@@ -1,17 +1,21 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Link} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
+import {AuthContext} from "../../context/auth.context";
 
 
 export const AuthMentor = () => {
 
-    const {request, loading, error, clearError} = useHttp();
+    const authContext = useContext(AuthContext);
 
+    const {request, loading, error, clearError} = useHttp();
 
     const loginHandler = async () => {
         try {
 
             const data = await request('/api/auth/loginMentor','POST',{...form});
+            // alert(JSON.stringify(data));
+            authContext.login(data.token, data.userId, data.userRole);
 
         }catch (e){}
     };
@@ -29,7 +33,6 @@ export const AuthMentor = () => {
         email: '',
         password: '',
     });
-
 
     const changeInputHandler = (event) => {
         setForm({...form, [event.target.name]: event.target.value})

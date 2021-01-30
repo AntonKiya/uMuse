@@ -16,9 +16,9 @@ import {MyResponsesMentor} from "./pages/mentorPages/MyResponsesMentor";
 import {ViewProfileApplicationMentor} from "./pages/mentorPages/ViewProfileApplicationMentor";
 import {ViewProfileStudentMentor} from "./pages/mentorPages/ViewProfileStudentMentor";
 
-export const useRoutes = (role) => {
+export const useRoutes = (isAuthenticated, role) => {
 
-    if (role === 'student') {
+    if (isAuthenticated && role === 'student') {
         return(
           <Switch>
               <Route path={'/profilest'}>
@@ -43,7 +43,7 @@ export const useRoutes = (role) => {
           </Switch>
         );
     }
-    else if (role === 'mentor') {
+    else if (isAuthenticated && role === 'mentor') {
         return(
             <Switch>
                 <Route path={'/profilemen'} exact>
