@@ -142,7 +142,7 @@ router.post('/loginStudent',
             {expiresIn: '1h'}
         );
 
-        res.json({ token: token, userId: condidate.rows[0].id_student });
+        res.json({ token: token, userId: condidate.rows[0].id_student, userRole: 'student' });
 
 
     }catch (e) {
@@ -195,7 +195,7 @@ router.post('/loginMentor',
             {expiresIn: '1h'}
         );
 
-        res.json({ token, userId: condidate.rows[0].id_mentor });
+        res.json({ token, userId: condidate.rows[0].id_mentor, userRole: 'mentor' });
 
 
     }catch (e) {
