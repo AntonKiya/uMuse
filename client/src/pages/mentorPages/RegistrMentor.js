@@ -11,6 +11,7 @@ export const RegistrMentor = () => {
         try {
 
             const data = await request('/api/auth/registerMentor', 'POST', {...form})
+            alert(data.message);
 
         }catch (e){}
     };
@@ -34,7 +35,6 @@ export const RegistrMentor = () => {
         age: '',
         password: '',
     });
-
 
     const changeInputHandler = (event) => {
         setForm({...form, [event.target.name]: event.target.value})

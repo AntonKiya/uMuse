@@ -1,5 +1,4 @@
 import {useState, useCallback} from 'react';
-import {validationResult} from "express-validator";
 
 
 export const useHttp = () => {

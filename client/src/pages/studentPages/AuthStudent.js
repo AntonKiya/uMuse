@@ -1,17 +1,22 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {Link} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
+import {AuthContext} from "../../context/auth.context";
 
 export const AuthStudent = () => {
 
+    // теперь в authContext есть все те данные и методы которые мы передаем в
+    // AuthContext.Provider из хука auth.hook.js
+    const authContext = useContext(AuthContext);
 
     const {request, loading, error, clearError} = useHttp();
-
 
     const loginHandler = async () => {
         try {
 
             const data = await request('/api/auth/loginStudent','POST',{...form});
+            // alert(JSON.stringify(data));
+            authContext.login(data.token, data.userId, data.userRole);
 
         }catch (e){}
     };
@@ -29,7 +34,6 @@ export const AuthStudent = () => {
         email: '',
         password: '',
     });
-
 
     const changeInputHandler = (event) => {
         setForm({...form, [event.target.name]: event.target.value})
