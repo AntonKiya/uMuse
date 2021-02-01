@@ -1,0 +1,22 @@
+.navbar {
+    background-color: #ee721e;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.logo {
+    background-color: pink;
+    color: white;
+    padding: 30px;
+}
+.navlinks {
+    display: flex;
+}
+.navitem *{
+    font-size: 18px;
+    color: white;
+    padding: 8px;
+}
+.navitem:last-child {
+    background-color: pink;
+}
