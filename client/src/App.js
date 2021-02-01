@@ -4,6 +4,9 @@ import {useRoutes} from "./routes";
 import 'materialize-css';
 import {useAuth} from "./hooks/auth.hook";
 import {AuthContext} from "./context/auth.context";
+import {NavBarStudent} from "./components/studentComponents/NavBarStudent";
+import {NavBarMentor} from "./components/mentorComponents/NavBarMentor";
+
 
 
 function App() {
@@ -16,11 +19,13 @@ function App() {
 
   return (
       <AuthContext.Provider value={ {login, logout, token, userId, isAuthenticated, userRole} }>
-          <div className={"container"}>
               <BrowserRouter>
-                  {routes}
+                  {isAuthenticated && userRole === 'student' && <NavBarStudent/>}
+                  {isAuthenticated && userRole === 'mentor' && <NavBarMentor/>}
+                  <div className={"container"}>
+                      {routes}
+                  </div>
               </BrowserRouter>
-          </div>
       </AuthContext.Provider>
   );
 }
