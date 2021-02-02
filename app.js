@@ -8,7 +8,8 @@ const PORT = config.get('port') || 5000;
 
 app.use(express.json());
 
-app.use('/api/auth', require('./routes/auth.routs'));
+app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/user', require('./routes/user.routes'));
 
 async function start() {
     try{
