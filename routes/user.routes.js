@@ -1,29 +1,22 @@
 const {Router} = require('express');
 const {check, validationResult} = require('express-validator')
 const pool = require('../pool');
+const authMiddleware = require('../middleware/auth.middleware')
 
 const router = Router();
 
 
 //  /api/user/profileStudent
-router.post('/profileStudent',
-    [
-        check('userId', 'некорректный id студента').isNumeric()
-    ],
+router.get('/profileStudent',
+    authMiddleware,
     async (req, res) => {
     try{
 
-        const validationErrors = validationResult(req);
-
-        if (!validationErrors.isEmpty()) {
-            console.log(validationErrors);
-            return res.status(400).json({
-                validationErrors: validationErrors.array(),
-                message: 'некорректный id пользователя'
-            });
+        if (req.user.role !== 'student') {
+            return res.status(403).json('У вас нет прав доступа')
         }
 
-        const {userId} = req.body;
+        const userId = req.user.userId;
 
         const user = await pool.query('SELECT "id_student", "emailStudent", "nameStudent", "ageStudent", "aboutStudent" FROM student WHERE "id_student" = $1', [userId]);
 
@@ -44,24 +37,16 @@ router.post('/profileStudent',
 
 
 //  /api/user/profileMentor
-router.post('/profileMentor',
-    [
-        check('userId', 'некорректный id ментора').isNumeric()
-    ],
+router.get('/profileMentor',
+    authMiddleware,
     async (req, res) => {
         try{
 
-            const validationErrors = validationResult(req);
-
-            if (!validationErrors.isEmpty()) {
-                console.log(validationErrors);
-                return res.status(400).json({
-                    validationErrors: validationErrors.array(),
-                    message: 'некорректный id пользователя'
-                });
+            if (req.user.role !== 'mentor') {
+                return res.status(403).json('У вас нет прав доступа')
             }
 
-            const {userId} = req.body;
+            const userId = req.user.userId;
 
             const user = await pool.query('SELECT "id_mentor", "emailMentor", "nameMentor", "directionMentor_id", "experienceMentor_id", "cityMentor_id", "sexMentor_id", "ageMentor", "educationMentor", "aboutMentor" FROM mentor WHERE "id_mentor" = $1', [userId]);
 
