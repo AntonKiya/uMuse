@@ -1,11 +1,11 @@
 .navbar {
-    background-color: #ee721e;
+    background-color: #ffae00;
     display: flex;
     justify-content: space-around;
     align-items: center;
 }
 .logo {
-    background-color: pink;
+    background-color: #03a9f4;
     color: white;
     padding: 30px;
 }
@@ -18,5 +18,5 @@
     padding: 8px;
 }
 .navitem:last-child {
-    background-color: pink;
+    background-color: #03a9f4;
 }
