@@ -48,7 +48,13 @@ router.get('/profileMentor',
 
             const userId = req.user.userId;
 
-            const user = await pool.query('SELECT "id_mentor", "emailMentor", "nameMentor", "directionMentor_id", "experienceMentor_id", "cityMentor_id", "sexMentor_id", "ageMentor", "educationMentor", "aboutMentor" FROM mentor WHERE "id_mentor" = $1', [userId]);
+            const user = await pool.query('SELECT "id_mentor", "emailMentor","nameMentor" ,"ageMentor","educationMentor" ,"direction", "experience", "city", "sex","aboutMentor"\n' +
+                'FROM mentor, direction, experience, city, sex\n' +
+                'WHERE mentor.id_mentor = $1' +
+                'AND city."id_city" = mentor."cityMentor_id"\n' +
+                'AND direction."id_direction" = mentor."directionMentor_id"\n' +
+                'AND experience."id_experience" = mentor."experienceMentor_id"\n' +
+                'AND sex."id_sex" = mentor."sexMentor_id";', [userId]);
 
             if (!user.rows[0]) {
                 return res.status(404).json({message: 'Пользователь не найден!'})

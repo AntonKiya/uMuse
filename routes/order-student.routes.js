@@ -42,7 +42,14 @@ router.get('/allOrdersS', authMiddleware, async (req, res) => {
 
         const userId = req.user.userId;
 
-        const orders = await pool.query("SELECT * FROM \"order\" WHERE student_id = $1",[userId]);
+        const orders = await pool.query("SELECT \"id_order\", \"direction\", \"experience\", \"city\", \"sex\",\"type\" ,\"priceFrom\", \"priceTo\", \"ageFrom\", \"ageTo\", \"suggestions\"" +
+            "FROM \"order\", \"direction\", \"experience\", \"city\", \"sex\", \"type\"" +
+            "WHERE \"order\".student_id = $1" +
+            "AND direction.id_direction = \"order\".direction_id" +
+            "AND experience.id_experience = \"order\".experience_id" +
+            "AND city.id_city = \"order\".city_id" +
+            "AND sex.id_sex = \"order\".sex_id" +
+            "AND type.id_type = \"order\".type_id;",[userId]);
 
         res.json(orders.rows);
 
@@ -64,7 +71,14 @@ router.get('/oneOrderS/:idApp', authMiddleware, async (req, res) => {
         const userId = req.user.userId;
         const orderId = req.params.idApp;
 
-        const order = await pool.query('SELECT * FROM "order" WHERE student_id = $1 AND id_order = $2 ;',[userId, orderId]);
+        const order = await pool.query('SELECT "id_order", "direction", "experience", "city", "sex","type" ,"priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions"' +
+            'FROM "order", "direction", "experience", "city", "sex", "type"' +
+            'WHERE "order".student_id = $1 AND "order".id_order = $2' +
+            'AND direction.id_direction = "order".direction_id' +
+            'AND experience.id_experience = "order".experience_id' +
+            'AND city.id_city = "order".city_id' +
+            'AND sex.id_sex = "order".sex_id' +
+            'AND type.id_type = "order".type_id;',[userId, orderId]);
 
         if (!order.rows[0]) {
             res.json({message: 'Заявка не найдена'});
