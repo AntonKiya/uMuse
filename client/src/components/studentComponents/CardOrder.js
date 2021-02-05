@@ -14,7 +14,7 @@ export const CardOrder = ({orders}) => {
                         return (
                             <div className="col s12 m7" key={item.id_order}>
                                 <Link to={`/viewProfappS/${item.id_order}`}>
-                                    <h2 className="header">{item.direction_id}</h2>
+                                    <h2 className="header">{item.direction}</h2>
                                 </Link>
                                 <div className="card horizontal">
                                     <div className="card-stacked">
