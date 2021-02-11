@@ -3,7 +3,7 @@ import {useParams} from 'react-router-dom';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Loader} from "../../components/generalComponents/Loader";
-import {ProfileOrder} from "../../components/studentComponents/ProfileOrder";
+import {ProfileOrderS} from "../../components/studentComponents/ProfileOrderS";
 
 
 export const ViewProfileApplicationStudent = () => {
@@ -38,7 +38,7 @@ export const ViewProfileApplicationStudent = () => {
 
     return(
         <div>
-            <ProfileOrder order={order}/>
+            <ProfileOrderS order={order}/>
         </div>
     );
 };

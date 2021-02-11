@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useContext, useEffect} from 'react';
-import {CardOrder} from "../../components/studentComponents/CardOrder";
+import {CardOrderS} from "../../components/studentComponents/CardOrderS";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Loader} from "../../components/generalComponents/Loader";
@@ -35,7 +35,7 @@ export const MyApplicationStudents = () => {
 
     return(
         <div>
-            <CardOrder orders={orders}/>
+            <CardOrderS orders={orders}/>
         </div>
     );
 };

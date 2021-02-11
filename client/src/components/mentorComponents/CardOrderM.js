@@ -2,12 +2,12 @@ import React from 'react';
 import {Link} from "react-router-dom";
 
 
-export const CardOrder = ({orders}) => {
 
+export const CardOrderM = ({orders}) => {
 
     return(
         <div className={'center'}>
-            <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Все заявки которые вы создали😊🍑</h3>
+            <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Подходящие вас заявки😋🤝</h3>
             <div>
                 {
                     orders.map((item)=> {
@@ -24,8 +24,7 @@ export const CardOrder = ({orders}) => {
                                             </div>
                                         </Link>
                                         <div className="card-action">
-                                            <button className={'btn orange'}>Отклики</button>
-                                            <button className={'btn red'}>Удалить</button>
+                                            <button className={'btn orange'}>Откликнуться</button>
                                         </div>
                                     </div>
                                 </div>
