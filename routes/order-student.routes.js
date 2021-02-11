@@ -11,7 +11,7 @@ router.post('/create', authMiddleware, async (req, res) => {
     try{
 
         if (req.user.role !== 'student') {
-            return res.status(403).json('У вас нет прав доступа')
+            return res.status(403).json({message:'У вас нет прав доступа'});
         }
 
         const userId = req.user.userId;
@@ -37,19 +37,20 @@ router.get('/allOrdersS', authMiddleware, async (req, res) => {
     try{
 
         if (req.user.role !== 'student') {
-            return res.status(403).json('У вас нет прав доступа')
+            return res.status(403).json({message:'У вас нет прав доступа'})
         }
 
         const userId = req.user.userId;
 
-        const orders = await pool.query("SELECT \"id_order\", \"direction\", \"experience\", \"city\", \"sex\",\"type\" ,\"priceFrom\", \"priceTo\", \"ageFrom\", \"ageTo\", \"suggestions\"" +
-            "FROM \"order\", \"direction\", \"experience\", \"city\", \"sex\", \"type\"" +
-            "WHERE \"order\".student_id = $1" +
-            "AND direction.id_direction = \"order\".direction_id" +
-            "AND experience.id_experience = \"order\".experience_id" +
-            "AND city.id_city = \"order\".city_id" +
-            "AND sex.id_sex = \"order\".sex_id" +
-            "AND type.id_type = \"order\".type_id;",[userId]);
+        const orders = await pool.query(
+            'SELECT "id_order", "direction", "experience", "city", "sex","type" ,"priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions" ' +
+            'FROM "order", "direction", "experience", "city", "sex", "type" ' +
+            'WHERE "order".student_id = $1 ' +
+            'AND direction.id_direction = "order".direction_id ' +
+            'AND experience.id_experience = "order".experience_id ' +
+            'AND city.id_city = "order".city_id ' +
+            'AND sex.id_sex = "order".sex_id ' +
+            'AND type.id_type = "order".type_id;',[userId]);
 
         res.json(orders.rows);
 
@@ -65,19 +66,19 @@ router.get('/oneOrderS/:idApp', authMiddleware, async (req, res) => {
     try{
 
         if (req.user.role !== 'student') {
-            return res.status(403).json('У вас нет прав доступа')
+            return res.status(403).json({message:'У вас нет прав доступа'});
         }
 
         const userId = req.user.userId;
         const orderId = req.params.idApp;
 
-        const order = await pool.query('SELECT "id_order", "direction", "experience", "city", "sex","type" ,"priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions"' +
-            'FROM "order", "direction", "experience", "city", "sex", "type"' +
-            'WHERE "order".student_id = $1 AND "order".id_order = $2' +
-            'AND direction.id_direction = "order".direction_id' +
-            'AND experience.id_experience = "order".experience_id' +
-            'AND city.id_city = "order".city_id' +
-            'AND sex.id_sex = "order".sex_id' +
+        const order = await pool.query('SELECT "id_order", "direction", "experience", "city", "sex","type" ,"priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions" ' +
+            'FROM "order", "direction", "experience", "city", "sex", "type" WHERE "order".student_id = $1 ' +
+            'AND "order".id_order = $2 ' +
+            'AND direction.id_direction = "order".direction_id ' +
+            'AND experience.id_experience = "order".experience_id ' +
+            'AND city.id_city = "order".city_id ' +
+            'AND sex.id_sex = "order".sex_id ' +
             'AND type.id_type = "order".type_id;',[userId, orderId]);
 
         if (!order.rows[0]) {
@@ -87,7 +88,7 @@ router.get('/oneOrderS/:idApp', authMiddleware, async (req, res) => {
         res.json(order.rows[0]);
 
     }catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке получения заявки студента'});
+        res.status(500).json({message: 'Что-то пошло не так в блоке получения заявки студента ' + e});
     }
 });
 
