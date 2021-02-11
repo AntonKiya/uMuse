@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-export const ProfileOrder = ({order}) => {
+export const ProfileOrderS = ({order}) => {
 
 
     return(
