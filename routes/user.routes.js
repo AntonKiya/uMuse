@@ -49,11 +49,11 @@ router.get('/profileMentor',
             const userId = req.user.userId;
 
             const user = await pool.query('SELECT "id_mentor", "emailMentor","nameMentor" ,"ageMentor","educationMentor" ,"direction", "experience", "city", "sex","aboutMentor"\n' +
-                'FROM mentor, direction, experience, city, sex\n' +
+                'FROM mentor, direction, experience, city, sex ' +
                 'WHERE mentor.id_mentor = $1' +
-                'AND city."id_city" = mentor."cityMentor_id"\n' +
-                'AND direction."id_direction" = mentor."directionMentor_id"\n' +
-                'AND experience."id_experience" = mentor."experienceMentor_id"\n' +
+                'AND city."id_city" = mentor."cityMentor_id" ' +
+                'AND direction."id_direction" = mentor."directionMentor_id" ' +
+                'AND experience."id_experience" = mentor."experienceMentor_id" ' +
                 'AND sex."id_sex" = mentor."sexMentor_id";', [userId]);
 
             if (!user.rows[0]) {
