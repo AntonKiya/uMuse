@@ -78,7 +78,7 @@ router.post('/registerMentor',
             })
         }
 
-        const {name, email, direction, experience, city, sex, password} = req.body;
+        const {name, email, direction, experience, city, sex, age, password} = req.body;
 
         const condidate = await pool.query('SELECT * FROM mentor WHERE "emailMentor" = $1;', [email]);
 
@@ -88,7 +88,7 @@ router.post('/registerMentor',
 
         const hashedPassword = await bcryptn.hash(password,12);
 
-        await pool.query('INSERT INTO mentor ("emailMentor", "nameMentor", "directionMentor_id","experienceMentor_id", "cityMentor_id", "sexMentor_id", "passwordMentor")values ($1, $2, $3, $4, $5, $6, $7);', [email,name,direction,experience,city, sex,hashedPassword]);
+        await pool.query('INSERT INTO mentor ("emailMentor", "nameMentor", "directionMentor_id","experienceMentor_id", "cityMentor_id", "sexMentor_id", "ageMentor", "passwordMentor")values ($1, $2, $3, $4, $5, $6, $7, $8);', [email,name,direction,experience,city, sex,age,hashedPassword]);
 
         res.status(201).json({message: 'Ментор создан'});
 
