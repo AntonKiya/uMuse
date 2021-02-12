@@ -16,9 +16,9 @@ export const CreateApplication = () => {
     const createOrder = async () => {
         try {
 
-            const status = await request('/api/order-student/create', 'POST', {...form}, {Authorization: `Bearer ${authContext.token}`});
-            alert(status.message);
-            history.push(`/viewProfappS/${status.message}`);
+            const order = await request('/api/order-student/create', 'POST', {...form}, {Authorization: `Bearer ${authContext.token}`});
+
+            history.push(`/viewProfappS/${order}`);
 
         }catch (e){}
     };

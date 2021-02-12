@@ -13,12 +13,12 @@ export const CardOrderM = ({orders}) => {
                     orders.map((item)=> {
                         return (
                             <div className="col s12 m7" key={item.id_order}>
-                                <Link to={`/viewProfappS/${item.id_order}`}>
+                                <Link to={`/viewProfappM/${item.id_order || item.order_id}`}>
                                     <h2 className="header">{item.direction}</h2>
                                 </Link>
                                 <div className="card horizontal">
                                     <div className="card-stacked">
-                                        <Link to={`/viewProfappS/${item.id_order}`}>
+                                        <Link to={`/viewProfappM/${item.id_order || item.order_id}`}>
                                             <div className="card-content">
                                                 <p>{item.suggestions}</p>
                                             </div>

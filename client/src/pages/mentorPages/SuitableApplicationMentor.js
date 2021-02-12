@@ -18,7 +18,7 @@ export const SuitableApplicationMentor = () => {
 
             const data = await request('/api/order-mentor/suitable0rders', 'GET', null, {'Authorization':`Bearer ${authContext.token}`})
 
-            setOrder(JSON.stringify(data));
+            setOrder(data);
 
         }catch (e){}
     }, [request, authContext]);
