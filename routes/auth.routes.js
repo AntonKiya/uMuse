@@ -83,7 +83,7 @@ router.post('/registerMentor',
         const condidate = await pool.query('SELECT * FROM mentor WHERE "emailMentor" = $1;', [email]);
 
         if (condidate.rows[0]){
-            return res.status(400).json({messege: 'Ментор с таким email уже существует'});
+            return res.status(400).json({message: 'Ментор с таким email уже существует'});
         }
 
         const hashedPassword = await bcryptn.hash(password,12);
@@ -124,7 +124,7 @@ router.post('/loginStudent',
         const condidate = await pool.query('SELECT * FROM student WHERE "emailStudent" = $1;', [email]);
 
         if (!condidate.rows[0]){
-            return res.status(400).json({messege: 'Такого студента не существует, проверьте email'});
+            return res.status(400).json({message: 'Такого студента не существует, проверьте email'});
         }
 
         const passwordsMatch = await bcryptn.compare(password, condidate.rows[0].passwordStudent);
@@ -177,7 +177,7 @@ router.post('/loginMentor',
         const condidate = await pool.query('SELECT * FROM mentor WHERE "emailMentor" = $1;', [email]);
 
         if (!condidate.rows[0]) {
-            return res.status(400).json({messege: 'Такого ментора не существует, проверьте email'});
+            return res.status(400).json({message: 'Такого ментора не существует, проверьте email'});
         }
 
         const passwordsMatch = await bcryptn.compare(password, condidate.rows[0].passwordMentor);

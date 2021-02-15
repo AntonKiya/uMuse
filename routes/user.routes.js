@@ -33,9 +33,6 @@ router.get('/profileStudent',
 
 
 
-
-
-
 //  /api/user/profileMentor
 router.get('/profileMentor',
     authMiddleware,
