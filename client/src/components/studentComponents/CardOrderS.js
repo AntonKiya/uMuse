@@ -4,7 +4,6 @@ import {Link} from "react-router-dom";
 
 export const CardOrderS = ({orders}) => {
 
-
     return(
         <div className={'center'}>
             <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Все заявки которые вы создали😊🍑</h3>
@@ -24,7 +23,7 @@ export const CardOrderS = ({orders}) => {
                                             </div>
                                         </Link>
                                         <div className="card-action">
-                                            <button className={'btn orange'}>Отклики</button>
+                                            <Link to={`/allResp/${item.id_order}`} className={'btn orange'}>Отклики</Link>
                                             <button className={'btn red'}>Удалить</button>
                                         </div>
                                     </div>

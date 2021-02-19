@@ -1,9 +1,22 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {useHttp} from "../../hooks/http.hook";
+import {AuthContext} from "../../context/auth.context";
 
 
 
 export const ProfileOrderM = ({order}) => {
 
+    const {request, loadind} = useHttp();
+
+    const authContext = useContext(AuthContext);
+
+    const respond = async (orderId) => {
+
+        const status = await request('/api/order-mentor/respond', 'POST', {orderId: orderId}, {Authorization: `Bearer ${authContext.token}`})
+
+        alert(JSON.stringify(status.message));
+
+    };
 
     return(
             <div className={'center'}>
@@ -20,8 +33,15 @@ export const ProfileOrderM = ({order}) => {
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст от: <span style={{'color':'#03a9f4'}}>{order.ageFrom}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст до: <span style={{'color':'#03a9f4'}}>{order.ageTo}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пожелания к заявке: <span style={{'color':'#03a9f4'}}>{order.suggestions}</span></h5>
+                    <h5 style={{'color':'#a62bdb', 'fontWeight': 'bold'}}>Контакты для связи: <span style={{'color':'#f4033b'}}>{order.email || 'Контактов пока нет🤕'}</span></h5>
                 </div>
-                <button className="waves-effect waves-light btn blue">Откликнуться</button>
+                <button
+                    onClick={() => respond(order.id_order)}
+                    disabled={loadind}
+                    className="waves-effect waves-light btn blue"
+                >
+                    Откликнуться
+                </button>
             </div>
     );
 };

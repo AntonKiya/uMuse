@@ -1,8 +1,8 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 
 export const ProfileOrderS = ({order}) => {
-
 
     return(
         <div className={'center'}>
@@ -20,7 +20,7 @@ export const ProfileOrderS = ({order}) => {
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст до: <span style={{'color':'#03a9f4'}}>{order.ageTo}</span></h5>
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пожелания к заявке: <span style={{'color':'#03a9f4'}}>{order.suggestions}</span></h5>
             </div>
-            <button className="waves-effect waves-light btn blue">Окликнувшиеся</button>
+            <Link to={`/allResp/${order.id_order}`} className={'btn orange'}>Отклики</Link>
             <button className="waves-effect waves-light btn red">Удалить</button>
         </div>
     );

@@ -16,16 +16,21 @@ export const MyResponsesMentor = () => {
     const getOrders = useCallback( async () => {
         try {
 
-            const data = await request('/api/order-mentor/responses', 'GET', null, {'Authorization':`Bearer ${authContext.token}`});
-            console.log(1)
+            const data = await request(
+                '/api/order-mentor/responses',
+                'GET', null,
+                {'Authorization':`Bearer ${authContext.token}`}
+            );
+
             setOrders(data);
 
         }catch (e){}
     },[request, authContext]);
 
     useEffect(() => {
+
         getOrders();
-        console.log(2)
+
     }, [getOrders]);
 
     if (loading || !orders) {
