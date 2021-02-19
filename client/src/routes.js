@@ -33,7 +33,7 @@ export const useRoutes = (isAuthenticated, role) => {
               <Route path={'/viewProfappS/:idApp'}>
                   <ViewProfileApplicationStudent/>
               </Route>
-              <Route path={'/allResp'} exact>
+              <Route path={'/allResp/:idResponses'}>
                   <AllResponsesStudent/>
               </Route>
               <Route path={'/viewProfmentor/:idMentor'}>
