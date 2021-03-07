@@ -181,7 +181,7 @@ router.post('/respond', authMiddleware, async (req, res) => {
         const result = await pool.query('SELECT * FROM "responses" WHERE "order_id" = $1 AND "mentor_id" = $2;', [orderId, mentorId]);
 
         if (result.rows[0]) {
-            return res.status(409).json({message: 'Вы уже откликнулись на данную заявку'});
+            return res.status(200).json({message: 'Вы уже откликнулись на данную заявку'});
         }
 
         await pool.query('INSERT INTO "responses" ("order_id", "mentor_id") VALUES ($1, $2);', [orderId, mentorId]);
