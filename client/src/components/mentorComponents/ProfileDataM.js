@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 
 
 export const ProfileDataM = ({dataProfile}) => {
@@ -17,6 +18,7 @@ export const ProfileDataM = ({dataProfile}) => {
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Образование: <span style={{'color':'#03a9f4'}}>{dataProfile.educationMentor}</span></h5>
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Муз направление: <span style={{'color':'#03a9f4'}}>{dataProfile.direction}</span></h5>
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пол: <span style={{'color':'#03a9f4'}}>{dataProfile.sex}</span></h5>
+                <Link to={'/editM'}><button className="btn blue" >Редактировать</button></Link>
             </div>
         </div>
     );
