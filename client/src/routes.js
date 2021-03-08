@@ -15,6 +15,8 @@ import {ViewProfileMentorStudent} from "./pages/studentPages/ViewProfileMentorSt
 import {MyResponsesMentor} from "./pages/mentorPages/MyResponsesMentor";
 import {ViewProfileApplicationMentor} from "./pages/mentorPages/ViewProfileApplicationMentor";
 import {ViewProfileStudentMentor} from "./pages/mentorPages/ViewProfileStudentMentor";
+import {EditStudent} from "./pages/studentPages/EditStudent";
+import {EditMentor} from "./pages/mentorPages/EditMentor";
 
 export const useRoutes = (isAuthenticated, role) => {
 
@@ -23,6 +25,9 @@ export const useRoutes = (isAuthenticated, role) => {
           <Switch>
               <Route path={'/profilest'}>
                   <ProfileStudent/>
+              </Route>
+              <Route path={'/editS'}>
+                  <EditStudent/>
               </Route>
               <Route path={'/createapp'} exact>
                   <CreateApplication/>
@@ -36,7 +41,7 @@ export const useRoutes = (isAuthenticated, role) => {
               <Route path={'/allResp/:idResponses'}>
                   <AllResponsesStudent/>
               </Route>
-              <Route path={'/viewProfmentor/:idMentor'}>
+              <Route path={'/viewProfmentor/:idResponses/:idMentor'}>
                   <ViewProfileMentorStudent/>
               </Route>
               <Redirect to={'/profilest'} />
@@ -48,6 +53,9 @@ export const useRoutes = (isAuthenticated, role) => {
             <Switch>
                 <Route path={'/profilemen'} exact>
                     <ProfileMentor/>
+                </Route>
+                <Route path={'/editM'}>
+                    <EditMentor/>
                 </Route>
                 <Route path={'/myresp'} exact>
                     <MyResponsesMentor/>

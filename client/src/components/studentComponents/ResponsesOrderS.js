@@ -8,17 +8,17 @@ export const ResponsesOrderS = ({responses}) => {
 
     const {request, loading} = useHttp();
 
-    const authContext = useContext(AuthContext)
+    const authContext = useContext(AuthContext);
 
-    const {idResponses} = useParams()
+    const {idResponses} = useParams();
 
-    const invite = async () => {
+    const invite = async (idMentor) => {
         try {
 
             const status = await request(
                 '/api/order-student/invite',
                 'PATCH',
-                {orderId: idResponses, mentorId: authContext.userId},
+                {orderId: idResponses, mentorId: idMentor},
                 {'Authorization': `Bearer ${authContext.token}`}
             );
 
@@ -35,7 +35,7 @@ export const ResponsesOrderS = ({responses}) => {
                         <div key={item.id_order}>
                             <div className="card horizontal">
                                 <div className="card-stacked">
-                                    <Link to={`/viewProfmentor/${item.id_mentor}`}>
+                                    <Link to={`/viewProfmentor/${idResponses}/${item.id_mentor}`}>
                                         <div className="card-content">
                                             <h4 className="header">{item.direction}</h4>
                                             <h5>{item.nameMentor}</h5>
@@ -44,7 +44,7 @@ export const ResponsesOrderS = ({responses}) => {
                                         </div>
                                     </Link>
                                     <div className="card-action">
-                                        <button onClick={invite} disabled={loading} className={'btn orange'}>Пригласить</button>
+                                        <button onClick={() => invite(item.id_mentor)} disabled={loading} className={'btn orange'}>Пригласить</button>
                                         <button className={'btn red'}>Отказать</button>
                                     </div>
                                 </div>
