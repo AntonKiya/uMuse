@@ -15,9 +15,9 @@ router.patch('/editStudent', authMiddleware, async (req, res) => {
 
         const userId = req.user.userId;
 
-        const {nameStudent, ageStudent, aboutStudent} = req.body;
+        const {name, age, about} = req.body;
 
-        const update = await pool.query('UPDATE "student" SET "nameStudent" = $1, "ageStudent" = $2, "aboutStudent" = $3 WHERE "id_student" = $4;', [nameStudent, ageStudent, aboutStudent, userId]);
+        const update = await pool.query('UPDATE "student" SET "nameStudent" = $1, "ageStudent" = $2, "aboutStudent" = $3 WHERE "id_student" = $4;', [name, age, about, userId]);
 
         if (update.rowCount > 0) {
             res.json({message: 'Данные обновлены.'});
@@ -44,9 +44,9 @@ router.patch('/editMentor', authMiddleware, async (req, res) => {
 
         const userId = req.user.userId;
 
-        const {nameMentor, direction, experience, city, sex, ageMentor, educationMentor, aboutMentor} = req.body;
+        const {name, direction, experience, city, sex, age, education, about} = req.body;
 
-        const update = await pool.query('UPDATE "mentor" SET "nameMentor" = $1, "directionMentor_id" = $2, "experienceMentor_id" = $3, "cityMentor_id" = $4, "sexMentor_id" = $5, "ageMentor" = $6, "educationMentor" = $7, "aboutMentor" = $8 WHERE id_mentor = $9 ;', [nameMentor, direction, experience, city, sex, ageMentor, educationMentor, aboutMentor, userId]);
+        const update = await pool.query('UPDATE "mentor" SET "nameMentor" = $1, "directionMentor_id" = $2, "experienceMentor_id" = $3, "cityMentor_id" = $4, "sexMentor_id" = $5, "ageMentor" = $6, "educationMentor" = $7, "aboutMentor" = $8 WHERE id_mentor = $9 ;', [name, direction, experience, city, sex, age, education, about, userId]);
 
         if (update.rowCount > 0) {
             res.json({message: 'Данные обновлены.'});
