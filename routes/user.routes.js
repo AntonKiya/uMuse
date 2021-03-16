@@ -75,7 +75,7 @@ router.get('/getPhoto', authMiddleware, (req, res) => {
         // Здесь должна быть проверка пренадлежит ли запрашиваемое
         // фото этому пользователю
 
-        const {photo} = req.body;
+        const photo = req.params.photo;
 
         res.sendFile(`/Users/macbookpro/programming/Web/uMuse/uploads/${photo}`);
 
