@@ -67,7 +67,7 @@ router.get('/profileMentor',
 
 
 //  /api/user/getPhoto
-router.get('/getPhoto', authMiddleware, (req, res) => {
+router.get('/getPhoto/:photo', authMiddleware, (req, res) => {
     try {
 
         const userId = req.user.userId;
