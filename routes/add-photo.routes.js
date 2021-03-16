@@ -13,15 +13,27 @@ router.post('/photo', authMiddleware, uploader.single('image'), async (req, res)
 
         const userId = req.user.userId;
 
+        const userRole = req.user.role;
+
         if (!req.file){
             return res.status(400).json({message: 'Неккоректное фото'});
         }
 
         const filename = req.file.filename;
 
-        await pool.query("UPDATE student SET photo = $1 WHERE id_student = $2;", [filename, userId]);
+        if (userRole === 'student') {
+
+            await pool.query("UPDATE student SET photo = $1 WHERE id_student = $2;", [filename, userId]);
+
+        }
+        else if (userRole === 'mentor') {
+
+            await pool.query("UPDATE mentor SET photo = $1 WHERE id_mentor = $2;", [filename, userId]);
+
+        }
 
         res.status(201).json('photo added');
+
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке добавления фото ' + e.message})
