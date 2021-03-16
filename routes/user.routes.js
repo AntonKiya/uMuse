@@ -65,4 +65,24 @@ router.get('/profileMentor',
     });
 
 
+
+//  /api/user/getPhoto
+router.get('/getPhoto', authMiddleware, (req, res) => {
+    try {
+
+        const userId = req.user.userId;
+
+        // Здесь должна быть проверка пренадлежит ли запрашиваемое
+        // фото этому пользователю
+
+        const {photo} = req.body;
+
+        res.sendFile(`/Users/macbookpro/programming/Web/uMuse/uploads/${photo}`);
+
+    }catch (e){
+        res.status(500).json({message: 'Что-то пошло не так в блоке получения фото ' + e.message});
+    }
+});
+
+
 module.exports = router;
