@@ -38,7 +38,7 @@ export const ProfileMentor = () => {
     
     return(
         <div>
-                <ProfileDataM dataProfile={dataProfile}/>
+                <ProfileDataM getProfileData={getProfileData} dataProfile={dataProfile}/>
         </div>
     );
 };

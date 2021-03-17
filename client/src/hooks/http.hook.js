@@ -11,7 +11,7 @@ export const useHttp = () => {
 
             // 16 если вообще передаем body, то приводим его к строке
             // 17 и явно указываем в headers что по сети передаем json
-            if (body) {
+            if (body && headers.type !== 'formData') {
                 body = JSON.stringify(body);
                 headers['Content-Type'] = 'application/json';
             }
