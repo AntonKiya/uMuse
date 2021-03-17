@@ -33,7 +33,7 @@ export const ProfileStudent = () => {
 
     return(
         <div>
-            <ProfileDataS dataProfile={dataProfile}/>
+            <ProfileDataS getProfileData={getProfileData} dataProfile={dataProfile}/>
         </div>
     );
 };
