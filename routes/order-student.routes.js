@@ -110,7 +110,7 @@ router.post('/allResponses', authMiddleware, async (req, res) => {
         const orderId = req.body.orderId;
 
         const respondMentors = await pool.query(
-            'SELECT "id_mentor", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
+            'SELECT "id_mentor", "id_response", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
             'FROM "mentor", "responses", "order", "direction", "experience", "city", "sex" ' +
             'WHERE "responses"."order_id" = $1' +
             'AND "mentor"."id_mentor" = "responses"."mentor_id" ' +
@@ -143,7 +143,7 @@ router.post('/oneResponse', authMiddleware, async (req, res) => {
         const {mentorId, orderId} = req.body;
 
         const respondMentor = await pool.query(
-            'SELECT "id_mentor", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
+            'SELECT "id_mentor", "id_response", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
             'FROM "mentor", "responses", "direction", "experience", "city", "sex" ' +
             'WHERE "mentor".id_mentor = $1 ' +
             'AND "responses".mentor_id = $1 ' +
