@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
+import {Link} from "react-router-dom";
 
 
 
@@ -35,13 +36,19 @@ export const ProfileOrderM = ({order}) => {
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пожелания к заявке: <span style={{'color':'#03a9f4'}}>{order.suggestions}</span></h5>
                     <h5 style={{'color':'#a62bdb', 'fontWeight': 'bold'}}>Контакты для связи: <span style={{'color':'#f4033b'}}>{order.email || 'Контактов пока нет🤕'}</span></h5>
                 </div>
-                <button
-                    onClick={() => respond(order.id_order)}
-                    disabled={loadind}
-                    className="waves-effect waves-light btn blue"
-                >
-                    Откликнуться
-                </button>
+                {
+                    order.email
+                    &&
+                    <Link to={`/chat/${order.id_response}`}><button className={'btn green'}>Чат</button></Link>
+                    ||
+                    <button
+                        onClick={() => respond(order.id_order)}
+                        disabled={loadind}
+                        className="waves-effect waves-light btn blue"
+                    >
+                        Откликнуться
+                    </button>
+                }
             </div>
     );
 };

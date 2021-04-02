@@ -38,14 +38,20 @@ export const CardOrderM = ({orders}) => {
                                             </div>
                                         </Link>
                                         <div className="card-action">
-                                            <button
-                                                onClick={ () => respond(item.order_id || item.id_order) }
-                                                disabled={loadind}
-                                                type="button"
-                                                className={'btn orange'}
-                                            >
-                                                Откликнуться
-                                            </button>
+                                            {
+                                                item.email
+                                                &&
+                                                <Link to={`/chat/${item.id_response}`}><button className={'btn green'}>Чат</button></Link>
+                                                ||
+                                                <button
+                                                    onClick={ () => respond(item.order_id || item.id_order) }
+                                                    disabled={loadind}
+                                                    type="button"
+                                                    className={'btn orange'}
+                                                >
+                                                    Откликнуться
+                                                </button>
+                                            }
                                         </div>
                                         <h5 style={{'color':'#a62bdb', 'fontWeight': 'bold'}}>Контакты для связи: <span style={{'color':'#f4033b'}}>{item.email || 'Контактов пока нет🤕'}</span></h5>
                                     </div>

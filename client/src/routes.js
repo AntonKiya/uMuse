@@ -17,6 +17,7 @@ import {ViewProfileApplicationMentor} from "./pages/mentorPages/ViewProfileAppli
 import {ViewProfileStudentMentor} from "./pages/mentorPages/ViewProfileStudentMentor";
 import {EditStudent} from "./pages/studentPages/EditStudent";
 import {EditMentor} from "./pages/mentorPages/EditMentor";
+import {RoomChat} from "./pages/RoomChat";
 
 export const useRoutes = (isAuthenticated, role) => {
 
@@ -38,11 +39,14 @@ export const useRoutes = (isAuthenticated, role) => {
               <Route path={'/viewProfappS/:idApp'}>
                   <ViewProfileApplicationStudent/>
               </Route>
-              <Route path={'/allResp/:idResponses'}>
+              <Route path={'/allResp/:idOrder'}>
                   <AllResponsesStudent/>
               </Route>
-              <Route path={'/viewProfmentor/:idResponses/:idMentor'}>
+              <Route path={'/viewProfmentor/:idOrder/:idMentor'}>
                   <ViewProfileMentorStudent/>
+              </Route>
+              <Route path={'/chat/:roomId'}>
+                  <RoomChat />
               </Route>
               <Redirect to={'/profilest'} />
           </Switch>
@@ -68,6 +72,9 @@ export const useRoutes = (isAuthenticated, role) => {
                 </Route>
                 <Route path={'/viewProfstudent/:idStudent'}>
                     <ViewProfileStudentMentor/>
+                </Route>
+                <Route path={'/chat/:roomId'}>
+                    <RoomChat />
                 </Route>
                 <Redirect to={'/profilemen'} />
             </Switch>
