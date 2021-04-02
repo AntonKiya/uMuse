@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {useParams} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 
@@ -41,10 +41,22 @@ export const ProfileMentorS = ({mentor}) => {
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст: <span style={{'color':'#03a9f4'}}>{mentor.ageMentor} лет</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Образование: <span style={{'color':'#03a9f4'}}>{mentor.educationMentor}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>О менторе: <span style={{'color':'#03a9f4'}}>{mentor.aboutMentor}</span></h5>
+                    {/*<div className="card-action">*/}
+                    {/*    <button onClick={() => invite(mentor.id_mentor)} disabled={loading} className={'btn orange'}>Пригласить</button>*/}
+                    {/*    <button className={'btn red'}>Отказать</button>*/}
+                    {/*</div>*/}
+                    {mentor.invited !== 'true'
+                    &&
                     <div className="card-action">
                         <button onClick={() => invite(mentor.id_mentor)} disabled={loading} className={'btn orange'}>Пригласить</button>
                         <button className={'btn red'}>Отказать</button>
                     </div>
+                    ||
+                    <div>
+                        <p>Ментор приглашен</p>
+                        <Link to={`/chat/${mentor.id_response}`}><button className={'btn green'}>Чат</button></Link>
+                    </div>
+                    }
                 </div>
 
             }

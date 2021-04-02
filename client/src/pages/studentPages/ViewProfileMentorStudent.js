@@ -14,14 +14,14 @@ export const ViewProfileMentorStudent = () => {
 
     const authContext = useContext(AuthContext)
 
-    const {idMentor} = useParams();
+    const {idOrder, idMentor} = useParams();
 
     const getMentor = useCallback(async () => {
         try{
 
             const mentor = await request(
                 '/api/order-student/oneResponse',
-                'POST', {mentorId: idMentor},
+                'POST', {mentorId: idMentor, orderId: idOrder},
                 {'Authorization': `Bearer ${authContext.token}`}
 
             );

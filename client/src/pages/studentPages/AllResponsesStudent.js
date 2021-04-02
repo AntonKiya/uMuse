@@ -14,14 +14,14 @@ export const AllResponsesStudent = () => {
 
     const authContext = useContext(AuthContext)
 
-    const {idResponses} = useParams();
+    const {idOrder} = useParams();
 
     const getResponses = useCallback(async () => {
         try{
 
             const responses = await request(
                 '/api/order-student/allResponses',
-                'POST', {orderId: idResponses},
+                'POST', {orderId: idOrder},
                 {'Authorization': `Bearer ${authContext.token}`}
 
             );
@@ -29,7 +29,7 @@ export const AllResponsesStudent = () => {
             setResponses(responses);
 
         }catch (e){}
-    },[request, authContext, idResponses]);
+    },[request, authContext, idOrder]);
 
     useEffect(() => {
 
