@@ -76,13 +76,15 @@ router.get('/oneOrderM/:idOrder', authMiddleware, async (req, res) => {
         const idOrder = req.params.idOrder
 
         const order = await pool.query(
-            'SELECT "id_order", "direction", "experience", "city", "sex","type" ,"priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions" FROM "order", "direction", "experience", "city", "sex", "type"' +
+            'SELECT "id_order", "id_response","direction", "experience", "city", "sex","type" ,"priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions" FROM "order","responses" ,"direction", "experience", "city", "sex", "type"' +
             'WHERE id_order = $1 ' +
             'AND "order".direction_id = "direction".id_direction ' +
+            'AND "responses"."order_id" = $1 ' +
+            'AND "responses"."mentor_id" = $2 ' +
             'AND "order".experience_id = "experience".id_experience ' +
             'AND "order".city_id = "city".id_city ' +
             'AND "order".sex_id = "sex".id_sex ' +
-            'AND "order".type_id = "type".id_type;',[idOrder]);
+            'AND "order".type_id = "type".id_type;',[idOrder, userId]);
 
         console.log();
 
