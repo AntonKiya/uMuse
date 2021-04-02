@@ -1,6 +1,7 @@
 const pool = require("../pool");
 const {Router} = require('express');
 const authMiddleware = require('../middleware/auth.middleware');
+const RoomChat = require('../models/RoomChat.model.js');
 
 
 const router = Router();
@@ -109,7 +110,7 @@ router.post('/allResponses', authMiddleware, async (req, res) => {
         const orderId = req.body.orderId;
 
         const respondMentors = await pool.query(
-            'SELECT "id_mentor", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor" ' +
+            'SELECT "id_mentor", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
             'FROM "mentor", "responses", "order", "direction", "experience", "city", "sex" ' +
             'WHERE "responses"."order_id" = $1' +
             'AND "mentor"."id_mentor" = "responses"."mentor_id" ' +
@@ -139,16 +140,18 @@ router.post('/oneResponse', authMiddleware, async (req, res) => {
             return res.status(403).json({message: 'У вас нет прав доступа'});
         }
 
-        const mentorId = req.body.mentorId;
+        const {mentorId, orderId} = req.body;
 
         const respondMentor = await pool.query(
-            'SELECT "id_mentor", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor" ' +
-            'FROM "mentor", "direction", "experience", "city", "sex" ' +
+            'SELECT "id_mentor", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
+            'FROM "mentor", "responses", "direction", "experience", "city", "sex" ' +
             'WHERE "mentor".id_mentor = $1 ' +
+            'AND "responses".mentor_id = $1 ' +
+            'AND "responses".order_id = $2 ' +
             'AND "mentor"."directionMentor_id" = "direction".id_direction ' +
             'AND "mentor"."experienceMentor_id" = "experience".id_experience ' +
             'AND "mentor"."cityMentor_id" = "city".id_city ' +
-            'AND "mentor"."sexMentor_id" = "sex".id_sex;', [mentorId]);
+            'AND "mentor"."sexMentor_id" = "sex".id_sex;', [mentorId, orderId]);
 
         res.json(respondMentor.rows[0]);
 
@@ -166,14 +169,21 @@ router.patch('/invite', authMiddleware, async (req, res) => {
        if (req.user.role !== 'student') {
            return res.status(403).json({message: 'У вас нет прав достпа'});
        }
+       const userId = req.user.userId;
 
        const orderId = req.body.orderId;
+
+       const idResponse = req.body.idResponse;
 
        const mentorId = req.body.mentorId;
 
        const result = await pool.query('UPDATE "responses" SET "invited" = true  WHERE "responses"."order_id" = $1 AND "responses"."mentor_id" = $2 RETURNING "invited";', [orderId, mentorId]);
 
-       console.log(result.rows[0].invited)
+       await pool.query('INSERT INTO roomchat ("response_id", "student_id", "mentor_id") VALUES ($1, $2, $3);', [idResponse, userId, mentorId]);
+
+       const roomchatM = new RoomChat({idResponse: idResponse});
+
+       await roomchatM.save();
 
        if(result.rows[0].invited) {
 

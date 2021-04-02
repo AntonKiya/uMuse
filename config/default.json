@@ -1,4 +1,5 @@
 {
   "port": 5000,
-  "jwtSecret": "Fg6J7z93jG51a12s"
+  "jwtSecret": "Fg6J7z93jG51a12s",
+  "mongoURI": "mongodb+srv://anton:Vs594S11!@cluster0.ipjof.mongodb.net/uMuse-Chat?retryWrites=true&w=majority"
 }
