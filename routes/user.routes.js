@@ -18,7 +18,7 @@ router.get('/profileStudent',
 
         const userId = req.user.userId;
 
-        const user = await pool.query('SELECT "id_student", "emailStudent", "nameStudent", "ageStudent", "aboutStudent" FROM student WHERE "id_student" = $1', [userId]);
+        const user = await pool.query('SELECT "id_student", "emailStudent", "nameStudent", "ageStudent", "aboutStudent", "photo" FROM student WHERE "id_student" = $1', [userId]);
 
         if (!user.rows[0]) {
             return res.status(404).json({message: 'Пользователь не найден!'})
@@ -45,7 +45,7 @@ router.get('/profileMentor',
 
             const userId = req.user.userId;
 
-            const user = await pool.query('SELECT "id_mentor", "emailMentor","nameMentor" ,"ageMentor","educationMentor" ,"direction", "experience", "city", "sex","aboutMentor"\n' +
+            const user = await pool.query('SELECT "id_mentor", "emailMentor","nameMentor" ,"ageMentor","educationMentor" ,"direction", "experience", "city", "sex","aboutMentor", "photo"\n' +
                 'FROM mentor, direction, experience, city, sex ' +
                 'WHERE mentor.id_mentor = $1' +
                 'AND city."id_city" = mentor."cityMentor_id" ' +
@@ -67,10 +67,8 @@ router.get('/profileMentor',
 
 
 //  /api/user/getPhoto
-router.get('/getPhoto/:photo', authMiddleware, (req, res) => {
+router.get('/getPhoto/:photo', (req, res) => {
     try {
-
-        const userId = req.user.userId;
 
         // Здесь должна быть проверка пренадлежит ли запрашиваемое
         // фото этому пользователю
