@@ -1,0 +1,15 @@
+@import "~materialize-css/dist/css/materialize.min.css";
+.interestsItem {
+    border-radius: 8px;
+    margin: 5px;
+    background-color: #cfcfcf;
+    display: inline-block;
+    padding: 4px 7px;
+}
+.interestsItemSelected {
+    border-radius: 8px;
+    background-color: #ff4d4d;
+    display: inline-block;
+    padding: 4px 7px;
+    margin: 5px;
+}

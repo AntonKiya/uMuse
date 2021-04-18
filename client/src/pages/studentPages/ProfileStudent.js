@@ -17,7 +17,7 @@ export const ProfileStudent = () => {
 
             const profileData = await request('api/user/profileStudent', 'GET', null, {'Authorization': `Bearer ${authContext.token}`})
 
-            setDataProfile(profileData.user);
+            setDataProfile(profileData);
 
         }catch (e){}
     },[authContext, request]);
