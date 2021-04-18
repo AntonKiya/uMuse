@@ -10,26 +10,26 @@ const router = Router();
 router.get('/profileStudent',
     authMiddleware,
     async (req, res) => {
-    try{
+        try{
 
-        if (req.user.role !== 'student') {
-            return res.status(403).json('У вас нет прав доступа')
+            if (req.user.role !== 'student') {
+                return res.status(403).json('У вас нет прав доступа')
+            }
+
+            const userId = req.user.userId;
+
+            const user = await pool.query('SELECT "id_student", "emailStudent", "nameStudent", "ageStudent", "aboutStudent", "photo" FROM student WHERE "id_student" = $1', [userId]);
+
+            if (!user.rows[0]) {
+                return res.status(404).json({message: 'Пользователь не найден!'})
+            }
+
+            res.json({user: user.rows[0]});
+
+        }catch (e){
+            res.status(500).json({message: 'Что-то пошло не так в блоке профиля студента'});
         }
-
-        const userId = req.user.userId;
-
-        const user = await pool.query('SELECT "id_student", "emailStudent", "nameStudent", "ageStudent", "aboutStudent", "photo" FROM student WHERE "id_student" = $1', [userId]);
-
-        if (!user.rows[0]) {
-            return res.status(404).json({message: 'Пользователь не найден!'})
-        }
-
-        res.json({user: user.rows[0]});
-
-    }catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке профиля студента'});
-    }
-});
+    });
 
 
 
