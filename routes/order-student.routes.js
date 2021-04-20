@@ -110,7 +110,7 @@ router.post('/allResponses', authMiddleware, async (req, res) => {
         const orderId = req.body.orderId;
 
         const respondMentors = await pool.query(
-            'SELECT "id_mentor", "id_response", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
+            'SELECT "id_mentor", "id_response", "photoMentor","emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
             'FROM "mentor", "responses", "order", "direction", "experience", "city", "sex" ' +
             'WHERE "responses"."order_id" = $1' +
             'AND "mentor"."id_mentor" = "responses"."mentor_id" ' +
@@ -142,18 +142,37 @@ router.post('/oneResponse', authMiddleware, async (req, res) => {
 
         const {mentorId, orderId} = req.body;
 
-        const respondMentor = await pool.query(
-            'SELECT "id_mentor", "id_response", "emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
-            'FROM "mentor", "responses", "direction", "experience", "city", "sex" ' +
+        const data = await pool.query(
+            'SELECT "id_mentor", "id_response", "emailMentor", "photoMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited", "interest", "id_response" ' +
+            'FROM "mentor", "responses", "direction", "experience", "city", "sex", "interestsMentor", "interest" ' +
             'WHERE "mentor".id_mentor = $1 ' +
             'AND "responses".mentor_id = $1 ' +
-            'AND "responses".order_id = $2 ' +
+            'AND "responses"."order_id" = $2 ' +
             'AND "mentor"."directionMentor_id" = "direction".id_direction ' +
+            'AND "interest"."id_interest" = "interestsMentor"."interestMentor_id" ' +
+            'AND "interestsMentor"."mentor_id" = $1 ' +
             'AND "mentor"."experienceMentor_id" = "experience".id_experience ' +
             'AND "mentor"."cityMentor_id" = "city".id_city ' +
-            'AND "mentor"."sexMentor_id" = "sex".id_sex;', [mentorId, orderId]);
+            'AND "mentor"."sexMentor_id" = "sex".id_sex ', [mentorId, orderId]);
 
-        res.json(respondMentor.rows[0]);
+        let mentor = {};
+
+        for (item of data.rows) {
+
+            const {id_mentor, interest, photoMentor,id_response, sex, nameMentor, city, connectMentor, emailMentor, ageMentor, aboutMentor, experience, educationMentor, invited, direction} = item;
+
+
+            if (mentor.hasOwnProperty('id_mentor')) {
+
+                mentor.interests.push(interest);
+            }
+            else {
+
+                mentor = {id_mentor, interests: [interest], photoMentor,nameMentor,city, id_response, sex,emailMentor,connectMentor,ageMentor,aboutMentor,experience,educationMentor, invited, direction};
+            }
+        }
+
+        res.json(mentor);
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке получения профиля откликнувшегося на заявку ментору' + e});
@@ -176,6 +195,8 @@ router.patch('/invite', authMiddleware, async (req, res) => {
        const idResponse = req.body.idResponse;
 
        const mentorId = req.body.mentorId;
+
+       console.log('idResponse:',idResponse, "mentorId:",mentorId, "orderId:", orderId);
 
        const result = await pool.query('UPDATE "responses" SET "invited" = true  WHERE "responses"."order_id" = $1 AND "responses"."mentor_id" = $2 RETURNING "invited";', [orderId, mentorId]);
 

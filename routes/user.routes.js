@@ -18,16 +18,23 @@ router.get('/profileStudent',
 
             const userId = req.user.userId;
 
-            const user = await pool.query('SELECT "id_student", "emailStudent", "nameStudent", "ageStudent", "aboutStudent", "photo" FROM student WHERE "id_student" = $1', [userId]);
+            const user = await pool.query('SELECT "id_student", "emailStudent", "connectStudent","nameStudent", "ageStudent", "aboutStudent", "city", "photoStudent" ' +
+                'FROM "student", "city" ' +
+                'WHERE "id_student" = $1' +
+                'AND city."id_city" = student."cityStudent_id" ', [userId]);
 
             if (!user.rows[0]) {
                 return res.status(404).json({message: 'Пользователь не найден!'})
             }
 
-            res.json({user: user.rows[0]});
+            const interests = await pool.query('SELECT "interest" from "interestsStudent", "interest" WHERE "interestsStudent"."student_id" = $1 AND "interest"."id_interest" = "interestsStudent"."interestStudent_id";', [userId]);
+
+            user.rows[0].interests = interests.rows;
+
+            res.json( user.rows[0]);
 
         }catch (e){
-            res.status(500).json({message: 'Что-то пошло не так в блоке профиля студента'});
+            res.status(500).json({message: 'Что-то пошло не так в блоке профиля студента ' + e.message});
         }
     });
 
@@ -45,7 +52,7 @@ router.get('/profileMentor',
 
             const userId = req.user.userId;
 
-            const user = await pool.query('SELECT "id_mentor", "emailMentor","nameMentor" ,"ageMentor","educationMentor" ,"direction", "experience", "city", "sex","aboutMentor", "photo"\n' +
+            const user = await pool.query('SELECT "id_mentor", "emailMentor", "connectMentor", "nameMentor" ,"ageMentor","educationMentor" ,"direction", "experience", "city", "sex", "photoMentor","aboutMentor" ' +
                 'FROM mentor, direction, experience, city, sex ' +
                 'WHERE mentor.id_mentor = $1' +
                 'AND city."id_city" = mentor."cityMentor_id" ' +
@@ -56,6 +63,10 @@ router.get('/profileMentor',
             if (!user.rows[0]) {
                 return res.status(404).json({message: 'Пользователь не найден!'})
             }
+
+            const interests = await pool.query('SELECT "interest" from "interestsMentor", "interest" WHERE "interestsMentor"."mentor_id" = $1 AND "interest"."id_interest" = "interestsMentor"."interestMentor_id";', [userId]);
+
+            user.rows[0].interests = interests.rows;
 
             res.json({user: user.rows[0]});
 

@@ -39,7 +39,7 @@ router.get('/suitable0rders', authMiddleware,async (req, res) => {
 
                 if(result.rows[0].invited === 'true') {
                     const email = await pool.query(
-                        'SELECT "emailStudent" ' +
+                        'SELECT "id_student", "emailStudent" ' +
                         'FROM "student", "responses", "order"' +
                         'WHERE "order"."id_order" = $1' +
                         'AND "student"."id_student" = "order"."student_id" ' +
@@ -98,7 +98,7 @@ router.get('/oneOrderM/:idOrder', authMiddleware, async (req, res) => {
 
                 if(result.rows[0].invited === 'true') {
                     const email = await pool.query(
-                        'SELECT "emailStudent" ' +
+                        'SELECT "id_student", "emailStudent" ' +
                         'FROM "student", "responses", "order"' +
                         'WHERE "order"."id_order" = $1' +
                         'AND "student"."id_student" = "order"."student_id" ' +
@@ -118,7 +118,49 @@ router.get('/oneOrderM/:idOrder', authMiddleware, async (req, res) => {
     }
 });
 
+// /api/order-mentor/orderOwner
+router.post('/orderOwner', authMiddleware, async (req, res) => {
+    try {
 
+        if (req.user.role !== 'mentor') {
+            return res.status(403).json({message: 'У вас нет прав доступа'});
+        }
+
+        const userId = req.user.userId;
+
+        const {studentId, orderId} = req.body;
+
+        const data = await pool.query(
+            'SELECT "id_student", "emailStudent", "photoStudent", "connectStudent", "nameStudent", "city", "ageStudent", "aboutStudent", "interest" ' +
+            'FROM "student", "city", "interest", "interestsStudent" ' +
+            'WHERE "student".id_student = $1 ' +
+            'AND "interest"."id_interest" = "interestsStudent"."interestStudent_id" ' +
+            'AND "interestsStudent"."student_id" = $1 ' +
+            'AND "student"."cityStudent_id" = "city".id_city;', [studentId]);
+
+        let student = {};
+
+        for (item of data.rows) {
+
+            const {id_student, interest, nameStudent, photoStudent, city, connectStudent, emailStudent, ageStudent, aboutStudent} = item;
+
+
+            if (student.hasOwnProperty('id_student')) {
+
+                student.interests.push(interest);
+            }
+            else {
+
+                student = {id_student, nameStudent, photoStudent, city, emailStudent, connectStudent, ageStudent, interests: [interest], aboutStudent};
+            }
+        }
+
+        res.json(student);
+
+    }catch (e){
+        res.status(500).json({message: 'Что-то пошло не так в блоке получения профиля студента' + e});
+    }
+});
 
 //                              \/
 // /api/order-mentor/responses
@@ -138,7 +180,7 @@ router.get('/responses', authMiddleware, async (req,res) => {
 
 
             const result = await pool.query(
-                'SELECT "invited"' +
+                'SELECT "id_response", "invited"' +
                 'FROM "responses"' +
                 'WHERE "responses"."order_id" = $1' +
                 'AND "responses"."mentor_id" = $2;', [item.order_id, userId]);
@@ -155,6 +197,8 @@ router.get('/responses', authMiddleware, async (req,res) => {
                 );
 
                 item.email = email.rows[0].emailStudent;
+
+                item.id_response = result.rows[0].id_response;
 
             }
 
