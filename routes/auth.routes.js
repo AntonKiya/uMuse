@@ -30,7 +30,7 @@ router.post(
                 });
             }
 
-            const {name, email, password} = req.body;
+            const {name, email, connect, interests, city, password} = req.body;
 
             const condidate = await pool.query(`SELECT * FROM student WHERE "emailStudent" = ($1)`, [email]);
 
@@ -40,7 +40,14 @@ router.post(
 
             const hashedPassword = await bcryptn.hash(password, 12);
 
-            await pool.query(`INSERT INTO student ("emailStudent","nameStudent","passwordStudent") values ($1, $2, $3)`, [email, name, hashedPassword]);
+            const data = await pool.query(`INSERT INTO student ("emailStudent", "nameStudent", "connectStudent", "cityStudent_id","passwordStudent") values ($1, $2, $3, $4, $5) RETURNING "id_student";`, [email, name, connect, city, hashedPassword]);
+
+            const idStudent = data.rows[0].id_student;
+
+            await interests.forEach((item) => {
+
+                pool.query('INSERT INTO "interestsStudent" ("student_id", "interestStudent_id") values ($1, $2);', [idStudent, item]);
+            });
 
             res.status(201).json({message: 'Студент создан'});
 
@@ -73,7 +80,7 @@ router.post('/registerMentor',
                 })
             }
 
-            const {name, email, direction, experience, city, sex, age, password} = req.body;
+            const {name, email, connect, direction, experience, interests, city, sex, age, password} = req.body;
 
             const condidate = await pool.query('SELECT * FROM mentor WHERE "emailMentor" = $1;', [email]);
 
@@ -83,7 +90,14 @@ router.post('/registerMentor',
 
             const hashedPassword = await bcryptn.hash(password,12);
 
-            await pool.query('INSERT INTO mentor ("emailMentor", "nameMentor", "directionMentor_id","experienceMentor_id", "cityMentor_id", "sexMentor_id", "ageMentor", "passwordMentor")values ($1, $2, $3, $4, $5, $6, $7, $8);', [email,name,direction,experience,city, sex,age,hashedPassword]);
+            const data = await pool.query('INSERT INTO mentor ("emailMentor", "nameMentor", "connectMentor","directionMentor_id","experienceMentor_id", "cityMentor_id", "sexMentor_id", "ageMentor", "passwordMentor")values ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING "id_mentor";', [email, name, connect, direction, experience, city, sex, age, hashedPassword]);
+
+            const idMentor = data.rows[0].id_mentor;
+
+            await interests.forEach((item) => {
+
+                pool.query('INSERT INTO "interestsMentor" ("mentor_id", "interestMentor_id") values ($1, $2);', [idMentor, item]);
+            });
 
             res.status(201).json({message: 'Ментор создан'});
 
@@ -110,7 +124,9 @@ router.post('/loginStudent',
                 });
             }
 
-            const {email, password} = req.body;
+            const {email, password} =
+
+                req.body;
 
             const condidate = await pool.query('SELECT * FROM student WHERE "emailStudent" = $1;', [email]);
 
@@ -133,9 +149,7 @@ router.post('/loginStudent',
                 {expiresIn: '1h'}
             );
 
-            res.json({ token: token,
-
-                userId: condidate.rows[0].id_student, userRole: 'student' });
+            res.json({ token: token, userId: condidate.rows[0].id_student, userRole: 'student' });
 
         }catch (e) {
             res.status(500).json({message: 'Что-то пошло не так в блоке авторизациии студента'});
