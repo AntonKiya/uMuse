@@ -14,11 +14,25 @@ export const AuthStudent = () => {
     const loginHandler = async () => {
         try {
 
+            for (const field in form) {
+
+                if(form[field] === '') {
+
+                    throw {
+                        name: 'InputError',
+                        message: `Вы забыли ввести ${field}`
+                    }
+                };
+            }
+
             const data = await request('/api/auth/loginStudent','POST',{...form});
             // alert(JSON.stringify(data));
             authContext.login(data.token, data.userId, data.userRole);
 
-        }catch (e){}
+        }catch (e){
+
+            if (e.name === 'InputError') alert(e.message);
+        }
     };
 
     useEffect(() => {
@@ -28,7 +42,7 @@ export const AuthStudent = () => {
         }
         clearError();
 
-    },[error, clearError]);
+    },[error]);
 
     const [form, setForm] = useState({
         email: '',

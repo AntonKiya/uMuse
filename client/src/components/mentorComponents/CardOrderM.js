@@ -35,6 +35,7 @@ export const CardOrderM = ({orders}) => {
                                         <Link to={`/viewProfappM/${item.id_order || item.order_id}`}>
                                             <div className="card-content">
                                                 <p>{item.suggestions}</p>
+                                                <p>Была создана {item.datetime}</p>
                                             </div>
                                         </Link>
                                         <div className="card-action">
@@ -53,7 +54,9 @@ export const CardOrderM = ({orders}) => {
                                                 </button>
                                             }
                                         </div>
-                                        <h5 style={{'color':'#a62bdb', 'fontWeight': 'bold'}}>Контакты для связи: <span style={{'color':'#f4033b'}}>{item.email || 'Контактов пока нет🤕'}</span></h5>
+                                        <Link to={`/viewProfstudent/${item.id_order || item.order_id}/${item.student_id}`}>
+                                            <h5 style={{'color':'#a62bdb', 'fontWeight': 'bold'}}>Контакты для связи: <span style={{'color':'#f4033b'}}>{item.email || 'Контактов пока нет🤕'}</span></h5>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

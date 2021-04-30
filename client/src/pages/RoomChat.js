@@ -3,6 +3,7 @@ import {useParams} from 'react-router-dom';
 import io from '../socket-io-client';
 import {AuthContext} from "../context/auth.context";
 import {State} from '../State';
+import styles from '../cssModules/Interests.module.css';
 
 
 export const RoomChat = () => {
@@ -12,6 +13,7 @@ export const RoomChat = () => {
     const authContext = useContext(AuthContext)
 
     const userId = authContext.userId;
+    const userRole = authContext.userRole;
 
     const [form, setForm] = useState(null);
 
@@ -51,7 +53,7 @@ export const RoomChat = () => {
 
         const time = date.getHours() + ':' + date.getMinutes()
 
-        io.emit('NEW_MESSAGE', {roomId: roomId, message: {userId: userId, text: form, date: time} });
+        io.emit('NEW_MESSAGE', {roomId: roomId, message: {userId: userId, userRole: userRole, text: form, date: time} });
 
     };
 
@@ -76,10 +78,11 @@ export const RoomChat = () => {
                         state.messages.map((item) => {
 
                             return(
-                                <div>
-                                    <h5>{item.text}</h5>
-                                    <p>{item.userId}</p>
-                                    <p>{item.date}</p>
+                                <div className={userRole === item.userRole && `${styles.message} ${styles.owner}` || `${styles.message}`}>
+                                    <div className={styles.messageContent}>
+                                        <h5 className={styles.text}>{item.text}</h5>
+                                    </div>
+                                    <p className={styles.date}>{item.date}</p>
                                 </div>
                             );
 

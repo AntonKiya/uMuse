@@ -17,7 +17,7 @@ router.post('/create', authMiddleware, async (req, res) => {
 
         const userId = req.user.userId;
 
-         const { direction_id, experience_id, city_id, sex_id, type_id, priceFrom, priceTo, ageFrom, ageTo, suggestions } = req.body;
+        const { direction_id, experience_id, city_id, sex_id, type_id, priceFrom, priceTo, ageFrom, ageTo, suggestions } = req.body;
 
         const order = await pool.query(
             'INSERT INTO "order" ' +
@@ -183,41 +183,39 @@ router.post('/oneResponse', authMiddleware, async (req, res) => {
 
 // /api/order-student/invite
 router.patch('/invite', authMiddleware, async (req, res) => {
-   try {
+    try {
 
-       if (req.user.role !== 'student') {
-           return res.status(403).json({message: 'У вас нет прав достпа'});
-       }
-       const userId = req.user.userId;
+        if (req.user.role !== 'student') {
+            return res.status(403).json({message: 'У вас нет прав достпа'});
+        }
+        const userId = req.user.userId;
 
-       const orderId = req.body.orderId;
+        const orderId = req.body.orderId;
 
-       const idResponse = req.body.idResponse;
+        const idResponse = req.body.idResponse;
 
-       const mentorId = req.body.mentorId;
+        const mentorId = req.body.mentorId;
 
-       console.log('idResponse:',idResponse, "mentorId:",mentorId, "orderId:", orderId);
+        console.log('idResponse:',idResponse, "mentorId:",mentorId, "orderId:", orderId);
 
-       const result = await pool.query('UPDATE "responses" SET "invited" = true  WHERE "responses"."order_id" = $1 AND "responses"."mentor_id" = $2 RETURNING "invited";', [orderId, mentorId]);
+        const result = await pool.query('UPDATE "responses" SET "invited" = true  WHERE "responses"."order_id" = $1 AND "responses"."mentor_id" = $2 RETURNING "invited";', [orderId, mentorId]);
 
-       await pool.query('INSERT INTO roomchat ("response_id", "student_id", "mentor_id") VALUES ($1, $2, $3);', [idResponse, userId, mentorId]);
+        await pool.query('INSERT INTO roomchat ("response_id", "student_id", "mentor_id") VALUES ($1, $2, $3);', [idResponse, userId, mentorId]);
 
-       const roomchatM = new RoomChat({idResponse: idResponse});
+        const roomchatM = new RoomChat({idResponse: idResponse});
 
-       await roomchatM.save();
+        await roomchatM.save();
 
-       if(result.rows[0].invited) {
+        if(result.rows[0].invited) {
 
-           res.json({message: 'Вы успешно пригласили ментора'});
+            res.json({message: 'Вы успешно пригласили ментора'});
 
-       }
+        }
 
-   }catch(e){
-       res.status(500).json({message: 'Что-то пошло не так в блоке приглашения ментора за заявку' + e});
-   }
+    }catch(e){
+        res.status(500).json({message: 'Что-то пошло не так в блоке приглашения ментора за заявку' + e});
+    }
 });
 
 
 module.exports = router;
-
-

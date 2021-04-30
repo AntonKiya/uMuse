@@ -12,13 +12,13 @@ export const ResponsesOrderS = ({responses}) => {
 
     const {idOrder} = useParams();
 
-    const invite = async (idMentor) => {
+    const invite = async ({mentorId, idResponse}) => {
         try {
 
             const status = await request(
                 '/api/order-student/invite',
                 'PATCH',
-                {orderId: idOrder, mentorId: idMentor},
+                {orderId: idOrder, idResponse, mentorId},
                 {'Authorization': `Bearer ${authContext.token}`}
             );
 
@@ -38,7 +38,10 @@ export const ResponsesOrderS = ({responses}) => {
                                     <Link to={`/viewProfmentor/${idOrder}/${item.id_mentor}`}>
                                         <div className="card-content">
                                             <h4 className="header">{item.direction}</h4>
-                                            <h5>{item.nameMentor}</h5>
+                                            <h5>
+                                                <img style={{"display":"inline-block", "borderRadius":"5px", "width":"30px", "height":"30px"}} src={`http://localhost:5000/api/user/getPhoto/${item.photoMentor}`}/>
+                                                {item.nameMentor}
+                                            </h5>
                                             <p>{item.city}</p>
                                             <p>{item.experience} опыт</p>
                                         </div>
@@ -51,7 +54,7 @@ export const ResponsesOrderS = ({responses}) => {
                                         item.invited !== 'true'
                                         &&
                                         <div className="card-action">
-                                            <button onClick={() => invite(item.id_mentor, item.id_response)} disabled={loading} className={'btn orange'}>Пригласить</button>
+                                            <button onClick={() => invite({mentorId: item.id_mentor, idResponse: item.id_response})} disabled={loading} className={'btn orange'}>Пригласить</button>
                                             <button className={'btn red'}>Отказать</button>
                                         </div>
                                         ||

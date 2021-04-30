@@ -18,8 +18,6 @@ export const ProfileMentor = () => {
 
             const profileData = await request('/api/user/profileMentor', 'GET', null, {'Authorization': `Bearer ${authContext.token}`})
 
-            console.log(profileData.user)
-
             setDataProfile(profileData.user);
 
 

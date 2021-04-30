@@ -35,10 +35,10 @@ export const ProfileDataM = ({getProfileData, dataProfile}) => {
     return(
         <div>
             <div>
-                <img style={{"display":"inline-block", "borderRadius":"5px", "width":"300px", "height":"300px"}} src={`http://localhost:5000/api/user/getPhoto/${dataProfile.photoMentor}`} />
+                <img style={{"display":"inline-block", "borderRadius":"5px", "width":"200px", "height":"200px"}} src={`http://localhost:5000/api/user/getPhoto/${dataProfile.photoMentor}`} />
                 <button onClick={send}>Обновить</button>
 
-                <input ref={fileInput} style={{"display":"inline-block", "borderRadius":"5px", "width":"300px", "height":"300px"}} type="file"/>
+                <input ref={fileInput} style={{"display":"inline-block", "borderRadius":"5px"}} type="file"/>
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>id: <span style={{'color':'#03a9f4'}}>{dataProfile.id_mentor}</span></h5>
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Имя: <span style={{'color':'#03a9f4'}}>{dataProfile.nameMentor}</span></h5>
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Email: <span style={{'color':'#03a9f4'}}>{dataProfile.emailMentor}</span></h5>

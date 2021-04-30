@@ -34,7 +34,19 @@ export const ProfileOrderM = ({order}) => {
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст от: <span style={{'color':'#03a9f4'}}>{order.ageFrom}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст до: <span style={{'color':'#03a9f4'}}>{order.ageTo}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пожелания к заявке: <span style={{'color':'#03a9f4'}}>{order.suggestions}</span></h5>
-                    <h5 style={{'color':'#a62bdb', 'fontWeight': 'bold'}}>Контакты для связи: <span style={{'color':'#f4033b'}}>{order.email || 'Контактов пока нет🤕'}</span></h5>
+                    <p>Была создана {order.datetime}</p>
+                    <h5 style={{'color':'#a62bdb', 'fontWeight': 'bold'}}>
+                        Контакты для связи:
+                        <span style={{'color':'#f4033b'}}>
+                        {
+                            <Link to={`/viewProfstudent/${order.id_order}/${order.student_id}`}>
+                                {order.email}
+                            </Link>
+                            ||
+                            'Контактов пока нет🤕'
+                        }
+                        </span>
+                    </h5>
                 </div>
                 {
                     order.email

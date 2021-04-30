@@ -39,7 +39,7 @@ router.get('/mentors', authMiddleware, async (req, res) => {
 
             if (result) {
 
-               result.interests.push(mentor.interest);
+                result.interests.push(mentor.interest);
             }
             else {
 

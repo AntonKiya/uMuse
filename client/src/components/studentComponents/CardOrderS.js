@@ -21,6 +21,7 @@ export const CardOrderS = ({orders}) => {
                                             <div className="card-content">
                                                 <p>{item.suggestions}</p>
                                             </div>
+                                            <p>Была создана {item.datetime}</p>
                                         </Link>
                                         <div className="card-action">
                                             <Link to={`/allResp/${item.id_order}`} className={'btn orange'}>Отклики</Link>

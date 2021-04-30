@@ -88,28 +88,28 @@ router.get('/oneOrderM/:idOrder', authMiddleware, async (req, res) => {
 
         console.log();
 
-            const result = await pool.query(
-                'SELECT "invited"' +
-                'FROM "responses"' +
-                'WHERE "responses"."order_id" = $1' +
-                'AND "responses"."mentor_id" = $2;', [order.rows[0].id_order, userId]);
+        const result = await pool.query(
+            'SELECT "invited"' +
+            'FROM "responses"' +
+            'WHERE "responses"."order_id" = $1' +
+            'AND "responses"."mentor_id" = $2;', [order.rows[0].id_order, userId]);
 
-            if(result.rows[0]) {
+        if(result.rows[0]) {
 
-                if(result.rows[0].invited === 'true') {
-                    const email = await pool.query(
-                        'SELECT "id_student", "emailStudent" ' +
-                        'FROM "student", "responses", "order"' +
-                        'WHERE "order"."id_order" = $1' +
-                        'AND "student"."id_student" = "order"."student_id" ' +
-                        'AND "responses"."order_id" = "order"."id_order";', [order.rows[0].id_order]
-                    );
+            if(result.rows[0].invited === 'true') {
+                const email = await pool.query(
+                    'SELECT "id_student", "emailStudent" ' +
+                    'FROM "student", "responses", "order"' +
+                    'WHERE "order"."id_order" = $1' +
+                    'AND "student"."id_student" = "order"."student_id" ' +
+                    'AND "responses"."order_id" = "order"."id_order";', [order.rows[0].id_order]
+                );
 
-                    order.rows[0].email = email.rows[0].emailStudent;
-
-                }
+                order.rows[0].email = email.rows[0].emailStudent;
 
             }
+
+        }
 
         res.json(order.rows[0]);
 
@@ -231,7 +231,7 @@ router.post('/respond', authMiddleware, async (req, res) => {
         }
 
         await pool.query('INSERT INTO "responses" ("order_id", "mentor_id") VALUES ($1, $2);', [orderId, mentorId]);
-        
+
         res.status(201).json({message: 'Вы успешно отликнулись на заявку'});
 
     }catch (e){
