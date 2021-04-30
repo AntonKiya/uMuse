@@ -8,17 +8,17 @@ export const ProfileMentorS = ({mentor}) => {
 
     const {request, loading} = useHttp();
 
-    const {idResponses} = useParams();
+    const {idOrder} = useParams();
 
     const authContext = useContext(AuthContext);
 
-    const invite = async (idMentor) => {
+    const invite = async ({mentorId, idResponse}) => {
         try {
 
             const status = await request(
                 '/api/order-student/invite',
                 'PATCH',
-                {orderId: idResponses, mentorId: idMentor},
+                {orderId: idOrder, mentorId, idResponse},
                 {'Authorization': `Bearer ${authContext.token}`}
             );
 
@@ -31,6 +31,7 @@ export const ProfileMentorS = ({mentor}) => {
         <div>
             {
                 <div>
+                    <img style={{"display":"inline-block", "borderRadius":"5px", "width":"300px", "height":"300px"}} src={`http://localhost:5000/api/user/getPhoto/${mentor.photoMentor}`}/>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>id: <span style={{'color':'#03a9f4'}}>{mentor.id_mentor}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Имя: <span style={{'color':'#03a9f4'}}>{mentor.nameMentor}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Email: <span style={{'color':'#03a9f4'}}>{mentor.emailMentor}</span></h5>
@@ -41,14 +42,20 @@ export const ProfileMentorS = ({mentor}) => {
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст: <span style={{'color':'#03a9f4'}}>{mentor.ageMentor} лет</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Образование: <span style={{'color':'#03a9f4'}}>{mentor.educationMentor}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>О менторе: <span style={{'color':'#03a9f4'}}>{mentor.aboutMentor}</span></h5>
-                    {/*<div className="card-action">*/}
-                    {/*    <button onClick={() => invite(mentor.id_mentor)} disabled={loading} className={'btn orange'}>Пригласить</button>*/}
-                    {/*    <button className={'btn red'}>Отказать</button>*/}
-                    {/*</div>*/}
+                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>О менторе: <span style={{'color':'#03a9f4'}}>{mentor.id_response}</span></h5>
+                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Интересы:
+                        {
+                            mentor.interests.map((item) => {
+                                return(
+                                    <div style={{'display':'inline-block','backgroundColor':'red', 'padding':'5px', 'marginLeft':'3px'}}>{item}</div>
+                                )
+                            })
+                        }
+                    </h5>
                     {mentor.invited !== 'true'
                     &&
                     <div className="card-action">
-                        <button onClick={() => invite(mentor.id_mentor)} disabled={loading} className={'btn orange'}>Пригласить</button>
+                        <button onClick={() => invite({mentorId:mentor.id_mentor, idResponse: mentor.id_response})} disabled={loading} className={'btn orange'}>Пригласить</button>
                         <button className={'btn red'}>Отказать</button>
                     </div>
                     ||

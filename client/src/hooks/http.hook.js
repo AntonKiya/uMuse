@@ -1,10 +1,13 @@
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useContext} from 'react';
+import {AuthContext} from "../context/auth.context";
 
 
 export const useHttp = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const authContext = useContext(AuthContext);
 
     const request = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
         try{
@@ -22,6 +25,12 @@ export const useHttp = () => {
             const data = await response.json();
 
             if (!response.ok){
+
+                if (response.status === 401) {
+
+                    authContext.logout()
+                }
+
                 throw new Error(data.message || 'Что-то пошло не так при запросе на сервер');
             }
 
@@ -31,7 +40,6 @@ export const useHttp = () => {
         }catch (e){
             setLoading(false);
             setError(e.message);
-            throw e;
         }
     }, []);
 

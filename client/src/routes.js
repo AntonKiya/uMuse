@@ -18,12 +18,20 @@ import {ViewProfileStudentMentor} from "./pages/mentorPages/ViewProfileStudentMe
 import {EditStudent} from "./pages/studentPages/EditStudent";
 import {EditMentor} from "./pages/mentorPages/EditMentor";
 import {RoomChat} from "./pages/RoomChat";
+import {Main} from "./pages/studentPages/Main";
+import {RecMentor} from "./pages/studentPages/RecMentor";
 
 export const useRoutes = (isAuthenticated, role) => {
 
     if (isAuthenticated && role === 'student') {
         return(
           <Switch>
+              <Route path={'/main'}>
+                  <Main/>
+              </Route>
+              <Route path={'/recMentor/:idMentor'}>
+                  <RecMentor/>
+              </Route>
               <Route path={'/profilest'}>
                   <ProfileStudent/>
               </Route>
@@ -48,7 +56,7 @@ export const useRoutes = (isAuthenticated, role) => {
               <Route path={'/chat/:roomId'}>
                   <RoomChat />
               </Route>
-              <Redirect to={'/profilest'} />
+              <Redirect to={'/main'} />
           </Switch>
         );
     }
@@ -70,13 +78,13 @@ export const useRoutes = (isAuthenticated, role) => {
                 <Route path={'/viewProfappM/:idApp'}>
                     <ViewProfileApplicationMentor/>
                 </Route>
-                <Route path={'/viewProfstudent/:idStudent'}>
+                <Route path={'/viewProfstudent/:idOrder/:idStudent'}>
                     <ViewProfileStudentMentor/>
                 </Route>
                 <Route path={'/chat/:roomId'}>
                     <RoomChat />
                 </Route>
-                <Redirect to={'/profilemen'} />
+                <Redirect to={'/suitableapp'} />
             </Switch>
         );
     }

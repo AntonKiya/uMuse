@@ -8,15 +8,6 @@ export const RegistrMentor = () => {
 
     const {request, loading, error, clearError} = useHttp();
 
-    const registrHandler = async () => {
-        try {
-
-            const data = await request('/api/auth/registerMentor', 'POST', {...form});
-            alert(data.message);
-
-        }catch (e){}
-    };
-
     useEffect(() => {
 
         if (error){
@@ -39,6 +30,15 @@ export const RegistrMentor = () => {
         password: '',
     });
 
+    const registrHandler = async () => {
+        try {
+
+            const data = await request('/api/auth/registerMentor', 'POST', {...form});
+            alert(data.message);
+
+        }catch (e){}
+    };
+
     const changeInputHandler = (event) => {
         setForm({...form, [event.target.name]: event.target.value})
     };
@@ -53,13 +53,11 @@ export const RegistrMentor = () => {
 
             form.interests.push(id);
             setForm({...form});
-            console.log('Elem', id, 'pushed');
         }
         else {
 
             form.interests.splice(index, 1);
             setForm({...form});
-            console.log('Elem', id, 'deleted');
         }
 
     }

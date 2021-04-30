@@ -19,6 +19,7 @@ export const ProfileOrderS = ({order}) => {
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст от: <span style={{'color':'#03a9f4'}}>{order.ageFrom}</span></h5>
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст до: <span style={{'color':'#03a9f4'}}>{order.ageTo}</span></h5>
                 <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пожелания к заявке: <span style={{'color':'#03a9f4'}}>{order.suggestions}</span></h5>
+                <p>Была создана {order.datetime}</p>
             </div>
             <Link to={`/allResp/${order.id_order}`} className={'btn orange'}>Отклики</Link>
             <button className="waves-effect waves-light btn red">Удалить</button>
