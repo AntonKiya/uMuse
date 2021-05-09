@@ -26,11 +26,12 @@ router.patch('/editStudent', authMiddleware, async (req, res) => {
         });
 
         if (update.rowCount > 0) {
-            res.json({message: 'Данные обновлены.'});
+
+            res.json({message: 'Data updated.'});
         }
         else {
 
-            throw new Error('Non-correct data', 'edit-data.js');
+            throw new Error('Non-correct data');
         }
 
     }catch (e){
@@ -49,7 +50,7 @@ router.get('/infstudent', authMiddleware, async (req, res) => {
 
         const userId = req.user.userId;
 
-        const data = await pool.query('SELECT "nameStudent", "ageStudent", "aboutStudent", "interestStudent_id" ' +
+        const data = await pool.query('SELECT "nameStudent", "ageStudent", "connectStudent","aboutStudent", "interestStudent_id" ' +
             'FROM "student", "interestsStudent" ' +
             'WHERE "student".id_student = $1 ' +
             'AND "interestsStudent".student_id = $1; ', [userId]);
@@ -69,7 +70,15 @@ router.get('/infstudent', authMiddleware, async (req, res) => {
 
         }
 
-        res.json(student);
+        if (data.rowCount > 0) {
+
+            res.json(student);
+        }
+        else {
+
+            throw new Error('No data found');
+        }
+
 
     }
     catch (e){
@@ -88,15 +97,22 @@ router.patch('/editMentor', authMiddleware, async (req, res) => {
 
         const userId = req.user.userId;
 
-        const {name, direction, experience, city, sex, age, education, about} = req.body;
+        const {name, direction, experience, city, sex, age, education, about, interests} = req.body;
 
         const update = await pool.query('UPDATE "mentor" SET "nameMentor" = $1, "directionMentor_id" = $2, "experienceMentor_id" = $3, "cityMentor_id" = $4, "sexMentor_id" = $5, "ageMentor" = $6, "educationMentor" = $7, "aboutMentor" = $8 WHERE id_mentor = $9 ;', [name, direction, experience, city, sex, age, education, about, userId]);
 
+        await pool.query('DELETE FROM "interestsMentor" WHERE "mentor_id" = $1', [userId]);
+
+        await interests.forEach((item) => {
+            pool.query('insert into "interestsMentor" ("mentor_id", "interestMentor_id") VALUES ($1, $2) ', [userId, item]);
+        });
+
         if (update.rowCount > 0) {
-            res.json({message: 'Данные обновлены.'});
+
+            res.json({message: 'Data updated.'});
         }
         else {
-            throw new Error('Non-correct data', 'edit-data.js');
+            throw new Error('Non-correct data');
         }
 
     }catch (e){
@@ -115,7 +131,7 @@ router.get('/infmentor', authMiddleware, async (req, res) => {
 
         const userId = req.user.userId;
 
-        const data = await pool.query('SELECT "nameMentor", "directionMentor_id", "experienceMentor_id", "cityMentor_id", "sexMentor_id", "ageMentor", "educationMentor", "aboutMentor", "interestMentor_id"\n' +
+        const data = await pool.query('SELECT "nameMentor", "directionMentor_id", "connectMentor","experienceMentor_id", "cityMentor_id", "sexMentor_id", "ageMentor", "educationMentor", "aboutMentor", "interestMentor_id"\n' +
             'FROM mentor, "interestsMentor" ' +
             'WHERE mentor."id_mentor" = $1 ' +
             'AND "interestsMentor".mentor_id = $1 ;', [userId]);
@@ -135,7 +151,14 @@ router.get('/infmentor', authMiddleware, async (req, res) => {
 
         }
 
-        res.json(mentor);
+        if (data.rowCount > 0) {
+
+            res.json(mentor);
+        }
+        else {
+
+            throw new Error('No data found');
+        }
 
     }
     catch (e){

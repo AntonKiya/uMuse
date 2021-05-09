@@ -24,14 +24,15 @@ router.get('/profileStudent',
                 'AND city."id_city" = student."cityStudent_id" ', [userId]);
 
             if (!user.rows[0]) {
-                return res.status(404).json({message: 'Пользователь не найден!'})
+
+                throw new Error('No data found');
             }
 
             const interests = await pool.query('SELECT "interest" from "interestsStudent", "interest" WHERE "interestsStudent"."student_id" = $1 AND "interest"."id_interest" = "interestsStudent"."interestStudent_id";', [userId]);
 
             user.rows[0].interests = interests.rows;
 
-            res.json( user.rows[0]);
+            res.json(user.rows[0]);
 
         }catch (e){
             res.status(500).json({message: 'Что-то пошло не так в блоке профиля студента ' + e.message});
@@ -61,7 +62,8 @@ router.get('/profileMentor',
                 'AND sex."id_sex" = mentor."sexMentor_id";', [userId]);
 
             if (!user.rows[0]) {
-                return res.status(404).json({message: 'Пользователь не найден!'})
+
+                throw new Error('No data found');
             }
 
             const interests = await pool.query('SELECT "interest" from "interestsMentor", "interest" WHERE "interestsMentor"."mentor_id" = $1 AND "interest"."id_interest" = "interestsMentor"."interestMentor_id";', [userId]);

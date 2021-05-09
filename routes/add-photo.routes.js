@@ -23,12 +23,12 @@ router.post('/photo', authMiddleware, uploader.single('image'), async (req, res)
 
         if (userRole === 'student') {
 
-            await pool.query("UPDATE student SET photo = $1 WHERE id_student = $2;", [filename, userId]);
+            await pool.query('UPDATE "student" SET "photoStudent" = $1 WHERE id_student = $2;', [filename, userId]);
 
         }
         else if (userRole === 'mentor') {
 
-            await pool.query("UPDATE mentor SET photo = $1 WHERE id_mentor = $2;", [filename, userId]);
+            await pool.query('UPDATE "mentor" SET photoMentor = $1 WHERE id_mentor = $2;', [filename, userId]);
 
         }
 

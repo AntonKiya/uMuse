@@ -39,7 +39,7 @@ router.get('/mentors', authMiddleware, async (req, res) => {
 
             if (result) {
 
-                result.interests.push(mentor.interest);
+               result.interests.push(mentor.interest);
             }
             else {
 
@@ -94,8 +94,14 @@ router.get('/oneMentor/:idMentor', authMiddleware, async (req, res) => {
             }
         }
 
-        res.json(mentor);
-        // res.json(data.rows);
+        if (mentor.id_mentor) {
+
+            res.json(mentor);
+        }
+        else {
+
+            throw new Error('No data found');
+        }
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке получения рекомендуемых наставников ' + e.message});
