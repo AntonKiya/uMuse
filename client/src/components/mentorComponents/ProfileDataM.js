@@ -1,7 +1,9 @@
-import React, {useRef, useContext} from 'react';
+import React, {useRef, useContext, useEffect} from 'react';
 import {Link} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
+import {State} from "../../State";
+import io from "../../socket-io-client";
 
 
 export const ProfileDataM = ({getProfileData, dataProfile}) => {
@@ -11,6 +13,37 @@ export const ProfileDataM = ({getProfileData, dataProfile}) => {
     const fileInput = useRef(null);
 
     const authContext = useContext(AuthContext);
+
+    const {state, dispatch} = State();
+
+    useEffect(() => {
+
+        io.emit('GET_NOTICES', {
+            userId: authContext.userId,
+            userRole: authContext.userRole
+        });
+
+        io.on('SET_NOTICE', (data) => {
+
+            console.log('SET_NOTICE')
+
+            dispatch({
+                type: 'SET_NOTICE',
+                payload: data
+            })
+        });
+
+    }, []);
+
+    const deleteNotice = async (id_notice) => {
+
+        await io.emit('DELETE_NOTICE', {
+            userId: authContext.userId,
+            userRole: authContext.userRole,
+            id_notice: id_notice,
+        });
+
+    };
 
     const send = async () => {
         try {
@@ -35,6 +68,19 @@ export const ProfileDataM = ({getProfileData, dataProfile}) => {
     return(
         <div>
             <div>
+                <div>
+                    {
+                        state.notices.map((item) => {
+                            return(
+                                item.noticeType === 'invite' && <div onClick={() => deleteNotice(item.id_noticeMentor)}><Link to={`/viewProfappM/${item.data}`}><p>{item.id_noticeMentor} Вас пригласили № {item.data}</p></Link><button onClick={() => deleteNotice(item.id_noticeMentor)} >Понятно</button></div>
+                                ||
+                                item.noticeType === 'uninvite' && <div onClick={() => deleteNotice(item.id_noticeMentor)}><Link to={`/viewProfappM/${item.data}`}><p>{item.id_noticeMentor} Вам отказали № {item.data}</p></Link><button onClick={() => deleteNotice(item.id_noticeMentor)} >Понятно</button></div>
+                                ||
+                                item.noticeType === 'message' && <div onClick={() => deleteNotice(item.id_noticeMentor)}><Link to={`/chat/${item.data}`}><p>{item.id_noticeMentor} У вас новое сообщение {item.data}</p></Link><button onClick={() => deleteNotice(item.id_noticeMentor)} >Понятно</button></div>
+                            );
+                        })
+                    }
+                </div>
                 <img style={{"display":"inline-block", "borderRadius":"5px", "width":"200px", "height":"200px"}} src={`http://localhost:5000/api/user/getPhoto/${dataProfile.photoMentor}`} />
                 <button onClick={send}>Обновить</button>
 

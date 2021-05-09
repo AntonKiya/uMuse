@@ -17,6 +17,7 @@ export const NavBarStudent = () => {
         <div className={styles.navbar}>
             <div className={styles.logo}>ЛОГО</div>
             <ul className={styles.navlinks}>
+                <li className={styles.navitem}><NavLink to="/likedStudent">Закладки</NavLink></li>
                 <li className={styles.navitem}><NavLink to="/createapp">Создать</NavLink></li>
                 <li className={styles.navitem}><NavLink to="/myapps">Мои заявки</NavLink></li>
                 <li className={styles.navitem}><NavLink to="/profilest">Профиль</NavLink></li>

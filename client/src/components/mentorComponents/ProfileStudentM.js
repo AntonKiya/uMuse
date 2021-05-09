@@ -16,7 +16,7 @@ export const ProfileStudentM = ({student}) => {
         <div>
             {
                 <div>
-                    <img style={{"display":"inline-block", "borderRadius":"5px", "width":"300px", "height":"300px"}} src={`http://localhost:5000/api/user/getPhoto/${student.photoMentor}`}/>
+                    <img style={{"display":"inline-block", "borderRadius":"5px", "width":"300px", "height":"300px"}} src={`http://localhost:5000/api/user/getPhoto/${student.photoStudent}`}/>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>id: <span style={{'color':'#03a9f4'}}>{student.id_student}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Имя: <span style={{'color':'#03a9f4'}}>{student.nameStudent}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Email: <span style={{'color':'#03a9f4'}}>{student.emailStudent}</span></h5>

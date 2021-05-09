@@ -82,6 +82,7 @@ export const AuthMentor = () => {
                             </button>
                             <h6 className="">Зарегистрироваться в uMuse <Link to='registermen'>Здесь</Link></h6>
                             <h6 className="">Я <Link to='/'>студент</Link></h6>
+                            <h6 className=""><Link to='/recoveryMentor'>Забыли пароль?</Link></h6>
                         </div>
                     </div>
                 </div>

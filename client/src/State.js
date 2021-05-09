@@ -4,7 +4,8 @@ import reducer from "./reducer";
 export const State = () => {
 
     const [state, dispatch] = useReducer(reducer, {
-        messages: []
+        messages: [],
+        notices: [],
     });
 
 

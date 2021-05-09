@@ -20,6 +20,10 @@ import {EditMentor} from "./pages/mentorPages/EditMentor";
 import {RoomChat} from "./pages/RoomChat";
 import {Main} from "./pages/studentPages/Main";
 import {RecMentor} from "./pages/studentPages/RecMentor";
+import {LikedStudent} from "./pages/studentPages/LikedStudent";
+import {LikedMentor} from "./pages/mentorPages/LikedMentor";
+import {RecoveryPasswordMentor} from "./pages/mentorPages/RecoveryPasswordMentor";
+import {RecoveryPasswordStudent} from "./pages/studentPages/RecoveryPasswordStudent";
 
 export const useRoutes = (isAuthenticated, role) => {
 
@@ -43,6 +47,9 @@ export const useRoutes = (isAuthenticated, role) => {
               </Route>
               <Route path={'/myapps'} exact>
                   <MyApplicationStudents/>
+              </Route>
+              <Route path={'/likedStudent'} exact>
+                  <LikedStudent/>
               </Route>
               <Route path={'/viewProfappS/:idApp'}>
                   <ViewProfileApplicationStudent/>
@@ -71,6 +78,9 @@ export const useRoutes = (isAuthenticated, role) => {
                 </Route>
                 <Route path={'/myresp'} exact>
                     <MyResponsesMentor/>
+                </Route>
+                <Route path={'/likedMentor'} exact>
+                    <LikedMentor/>
                 </Route>
                 <Route path={'/suitableapp'} exact>
                     <SuitableApplicationMentor/>
@@ -102,6 +112,12 @@ export const useRoutes = (isAuthenticated, role) => {
             </Route>
             <Route path={'/registermen'} exact>
                 <RegistrMentor/>
+            </Route>
+            <Route path={'/recoveryStudent'} exact>
+                <RecoveryPasswordStudent/>
+            </Route>
+            <Route path={'/recoveryMentor'} exact>
+                <RecoveryPasswordMentor/>
             </Route>
             <Redirect to={'/'} />
         </Switch>
