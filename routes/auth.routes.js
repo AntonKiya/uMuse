@@ -1,5 +1,5 @@
 const {Router} = require('express');
-const bcryptn = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const config = require('config');
 const jsonwebtoken = require('jsonwebtoken');
 const {check, validationResult} = require('express-validator');
@@ -38,7 +38,7 @@ router.post(
                 return res.status(400).json({message: 'Студент с таким email уже существует'});
             }
 
-            const hashedPassword = await bcryptn.hash(password, 12);
+            const hashedPassword = await bcrypt.hash(password, 12);
 
             const data = await pool.query(`INSERT INTO student ("emailStudent", "nameStudent", "connectStudent", "cityStudent_id","passwordStudent") values ($1, $2, $3, $4, $5) RETURNING "id_student";`, [email, name, connect, city, hashedPassword]);
 
@@ -88,7 +88,7 @@ router.post('/registerMentor',
                 return res.status(400).json({message: 'Ментор с таким email уже существует'});
             }
 
-            const hashedPassword = await bcryptn.hash(password,12);
+            const hashedPassword = await bcrypt.hash(password,12);
 
             const data = await pool.query('INSERT INTO mentor ("emailMentor", "nameMentor", "connectMentor","directionMentor_id","experienceMentor_id", "cityMentor_id", "sexMentor_id", "ageMentor", "passwordMentor")values ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING "id_mentor";', [email, name, connect, direction, experience, city, sex, age, hashedPassword]);
 
@@ -124,9 +124,7 @@ router.post('/loginStudent',
                 });
             }
 
-            const {email, password} =
-
-                req.body;
+            const {email, password} = req.body;
 
             const condidate = await pool.query('SELECT * FROM student WHERE "emailStudent" = $1;', [email]);
 
@@ -134,7 +132,7 @@ router.post('/loginStudent',
                 return res.status(400).json({message: 'Такого студента не существует, проверьте email'});
             }
 
-            const passwordsMatch = await bcryptn.compare(password, condidate.rows[0].passwordStudent);
+            const passwordsMatch = await bcrypt.compare(password, condidate.rows[0].passwordStudent);
 
             if (!passwordsMatch) {
                 return res.status(400).json({message: 'Неверный пароль'});
@@ -182,7 +180,7 @@ router.post('/loginMentor',
                 return res.status(400).json({message: 'Такого ментора не существует, проверьте email'});
             }
 
-            const passwordsMatch = await bcryptn.compare(password, condidate.rows[0].passwordMentor);
+            const passwordsMatch = await bcrypt.compare(password, condidate.rows[0].passwordMentor);
 
             if (!passwordsMatch) {
                 return res.status(400).json({message: 'Неверный пароль'});
