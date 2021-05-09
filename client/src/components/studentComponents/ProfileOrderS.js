@@ -1,8 +1,24 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React, {useContext} from 'react';
+import {Link, useHistory} from 'react-router-dom';
+import {useHttp} from "../../hooks/http.hook";
+import {AuthContext} from "../../context/auth.context";
 
 
 export const ProfileOrderS = ({order}) => {
+
+    const {request} = useHttp();
+
+    const history = useHistory();
+
+    const authContext = useContext(AuthContext);
+
+    const deleted = async (orderId) => {
+
+        await request('/api/order-student/deleteOrder', 'POST', {orderId}, {'Authorization': `Bearer ${authContext.token}`});
+
+        history.push('/myapps');
+
+    };
 
     return(
         <div className={'center'}>
@@ -22,7 +38,7 @@ export const ProfileOrderS = ({order}) => {
                 <p>Была создана {order.datetime}</p>
             </div>
             <Link to={`/allResp/${order.id_order}`} className={'btn orange'}>Отклики</Link>
-            <button className="waves-effect waves-light btn red">Удалить</button>
+            <button onClick={() => deleted(order.id_order)} className="waves-effect waves-light btn red">Удалить</button>
         </div>
     );
 };

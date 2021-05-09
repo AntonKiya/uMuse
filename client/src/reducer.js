@@ -15,6 +15,11 @@ export default (state, action) => {
                 messages: [...state.messages, action.payload.messages],
             }
 
+        case 'SET_NOTICE':
+            return {
+                ...state,
+                notices: action.payload,
+            }
     }
 
 };

@@ -35,7 +35,7 @@ export const SuitableApplicationMentor = () => {
     }
 
     return(
-        <div onClick={getOrders}>
+        <div>
             <CardOrderM orders={orders}/>
         </div>
     );

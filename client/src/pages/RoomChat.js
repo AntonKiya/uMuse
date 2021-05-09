@@ -53,7 +53,7 @@ export const RoomChat = () => {
 
         const time = date.getHours() + ':' + date.getMinutes()
 
-        io.emit('NEW_MESSAGE', {roomId: roomId, message: {userId: userId, userRole: userRole, text: form, date: time} });
+        io.emit('NEW_MESSAGE', {userId, userRole, roomId: roomId, noticeType: 'message', message: {userId: userId, userRole: userRole, text: form, date: time} });
 
     };
 

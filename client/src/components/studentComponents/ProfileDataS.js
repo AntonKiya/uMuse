@@ -1,7 +1,10 @@
-import React, {useRef, useContext} from 'react';
+import React, {useRef, useContext, useEffect, useCallback} from 'react';
 import {Link} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
+import {State} from '../../State';
+import io from '../../socket-io-client';
+import socket from "../../socket-io-client";
 
 export const ProfileDataS = ({getProfileData, dataProfile}) => {
 
@@ -10,6 +13,35 @@ export const ProfileDataS = ({getProfileData, dataProfile}) => {
     const fileInput = useRef(null);
 
     const authContext = useContext(AuthContext);
+
+    const {state, dispatch} = State();
+
+    useEffect(() => {
+
+        io.emit('GET_NOTICES', {
+            userId: authContext.userId,
+            userRole: authContext.userRole
+        });
+
+        io.on('SET_NOTICE', (data) => {
+
+            dispatch({
+                type: 'SET_NOTICE',
+                payload: data
+            })
+        });
+
+    }, []);
+
+    const deleteNotice = async (id_notice) => {
+
+        await io.emit('DELETE_NOTICE', {
+            userId: authContext.userId,
+            userRole: authContext.userRole,
+            id_notice: id_notice,
+        });
+
+    };
 
     const send = async () => {
         try {
@@ -33,9 +65,19 @@ export const ProfileDataS = ({getProfileData, dataProfile}) => {
 
     return(
         <div>
+            <div>
+                {
+                    state.notices.map((item) => {
+                        return(
+                            item.noticeType === 'response' && <div onClick={() => deleteNotice(item.id_noticeStudent)}><Link to={`/allResp/${item.data}`}><p>{item.id_noticeStudent} У вас новый отклик № {item.data}</p></Link><button onClick={() => deleteNotice(item.id_noticeStudent)} >Понятно</button></div>
+                            ||
+                            item.noticeType === 'message' && <div onClick={() => deleteNotice(item.id_noticeStudent)}><Link to={`/chat/${item.data}`}><p>{item.id_noticeStudent} У вас новое сообщение {item.data}</p></Link><button onClick={() => deleteNotice(item.id_noticeStudent)} >Понятно</button></div>
+                        );
+                    })
+                }
+            </div>
             <img style={{"display":"inline-block", "borderRadius":"5px", "width":"200px", "height":"200px"}} src={`http://localhost:5000/api/user/getPhoto/${dataProfile.photoStudent}`}/>
             <button onClick={send}>Обновить</button>
-
             <input ref={fileInput} style={{"display":"inline-block", "borderRadius":"5px"}} type="file"/>
             <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>id: <span style={{'color':'#03a9f4'}}>{dataProfile.id_student}</span></h5>
             <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Имя: <span style={{'color':'#03a9f4'}}>{dataProfile.nameStudent}</span></h5>
