@@ -83,7 +83,6 @@ router.get('/oneMentor/:idMentor', authMiddleware, async (req, res) => {
 
             const {id_mentor, interest, photoMentor, sex, nameMentor, city, connectMentor, emailMentor, ageMentor, aboutMentor, experience, educationMentor, direction} = item;
 
-
             if (mentor.hasOwnProperty('id_mentor')) {
 
                 mentor.interests.push(interest);

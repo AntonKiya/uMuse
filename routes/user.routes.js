@@ -25,7 +25,7 @@ router.get('/profileStudent',
 
             if (!user.rows[0]) {
 
-                throw new Error('No data found');
+                res.status(404).json({message: 'No data found'});
             }
 
             const interests = await pool.query('SELECT "interest" from "interestsStudent", "interest" WHERE "interestsStudent"."student_id" = $1 AND "interest"."id_interest" = "interestsStudent"."interestStudent_id";', [userId]);
@@ -63,7 +63,7 @@ router.get('/profileMentor',
 
             if (!user.rows[0]) {
 
-                throw new Error('No data found');
+                res.status(404).json({message: 'No data found'});
             }
 
             const interests = await pool.query('SELECT "interest" from "interestsMentor", "interest" WHERE "interestsMentor"."mentor_id" = $1 AND "interest"."id_interest" = "interestsMentor"."interestMentor_id";', [userId]);
@@ -82,9 +82,6 @@ router.get('/profileMentor',
 //  /api/user/getPhoto
 router.get('/getPhoto/:photo', (req, res) => {
     try {
-
-        // Здесь должна быть проверка пренадлежит ли запрашиваемое
-        // фото этому пользователю
 
         const photo = req.params.photo;
 

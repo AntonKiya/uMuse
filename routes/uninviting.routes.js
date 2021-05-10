@@ -10,6 +10,10 @@ const router = Router();
 router.post('/uninvitingStudent', authMiddleware, async (req, res) => {
     try {
 
+        if (req.user.role !== 'student') {
+            return res.status(403).json({message:'У вас нет прав доступа'});
+        }
+
         const userId = req.user.userId;
 
         const {orderId, mentorId} = req.body;
@@ -29,7 +33,7 @@ router.post('/uninvitingStudent', authMiddleware, async (req, res) => {
             throw new Error();
         }
 
-        res.json({mentor_id: mentorId});
+        res.json({mentor_id: mentorId, order_id: orderId});
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке отказа ментору ' + e.message});
@@ -40,6 +44,10 @@ router.post('/uninvitingStudent', authMiddleware, async (req, res) => {
 //  /api/uninviting/uninvitingMentor
 router.post('/uninvitingMentor', authMiddleware, async (req, res) => {
     try {
+
+        if (req.user.role !== 'mentor') {
+            return res.status(403).json({message:'У вас нет прав доступа'});
+        }
 
         const userId = req.user.userId;
 

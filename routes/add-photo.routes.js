@@ -1,6 +1,7 @@
 const {Router} = require('express');
 const authMiddleware = require('../middleware/auth.middleware');
 const uploader = require('../middleware/upload.middleware');
+const {check, validationResult} = require('express-validator');
 const pool = require('../pool');
 
 

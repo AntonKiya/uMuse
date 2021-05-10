@@ -23,23 +23,23 @@ router.post('/create', authMiddleware, async (req, res) => {
 
         const datetime = `${date.getDate()} ${months[date.getMonth()]} в ${date.getHours()}:${date.getSeconds()}`
 
-         const { direction_id, experience_id, city_id, sex_id, type_id, priceFrom, priceTo, ageFrom, ageTo, suggestions } = req.body;
+         const { direction_id, experience_id, city_id, sex_id, type_id, price, ageFrom, ageTo, suggestions } = req.body;
+
+
 
         const order = await pool.query(
             'INSERT INTO "order" ' +
-            '("student_id", "direction_id", "experience_id", "city_id", "sex_id", "type_id", "priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions", "datetime") ' +
-            'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)' +
+            '("student_id", "direction_id", "experience_id", "city_id", "sex_id", "type_id", "price", "ageFrom", "ageTo", "suggestions", "datetime") ' +
+            'VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)' +
             'RETURNING * ;',
-            [userId, direction_id, experience_id, city_id, sex_id, type_id, priceFrom, priceTo, ageFrom, ageTo, suggestions, datetime]);
+            [userId, direction_id, experience_id, city_id, sex_id, type_id, price, ageFrom, ageTo, suggestions, datetime]);
 
-        if (order.rowCount > 0) {
+        if (order.rowCount === 0) {
 
-            res.status(201).json(order.rows[0].id_order);
+            throw new Error('No data Found')
         }
-        else {
 
-            throw new Error();
-        }
+        res.status(201).json(order.rows[0].id_order);
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке создания заявки ' + e.message});
@@ -59,7 +59,7 @@ router.get('/allOrdersS', authMiddleware, async (req, res) => {
         const userId = req.user.userId;
 
         const orders = await pool.query(
-            'SELECT "id_order", "direction", "experience", "city", "sex","type" ,"priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions", "datetime" ' +
+            'SELECT "id_order", "direction", "experience", "city", "sex","type" ,"price", "ageFrom", "ageTo", "suggestions", "datetime" ' +
             'FROM "order", "direction", "experience", "city", "sex", "type" ' +
             'WHERE "order".student_id = $1 ' +
             'AND direction.id_direction = "order".direction_id ' +
@@ -89,7 +89,7 @@ router.get('/oneOrderS/:idApp', authMiddleware, async (req, res) => {
         const orderId = req.params.idApp;
 
         const order = await pool.query(
-            'SELECT "id_order", "direction", "experience", "city", "sex","type" ,"priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions", "datetime" ' +
+            'SELECT "id_order", "direction", "experience", "city", "sex","type" ,"price", "ageFrom", "ageTo", "suggestions", "datetime" ' +
             'FROM "order", "direction", "experience", "city", "sex", "type" ' +
             'WHERE "order".student_id = $1 ' +
             'AND "order".id_order = $2 ' +
@@ -99,14 +99,12 @@ router.get('/oneOrderS/:idApp', authMiddleware, async (req, res) => {
             'AND sex.id_sex = "order".sex_id ' +
             'AND type.id_type = "order".type_id;',[userId, orderId]);
 
-        if (order.rowCount > 0) {
+        if (order.rowCount === 0) {
 
-            res.json(order.rows[0]);
+            return res.status(400).json({message: 'Трунь...Ничего такого не нашлось'});
         }
-        else {
 
-            throw new Error('No data found');
-        }
+        res.json(order.rows[0]);
 
 
     }catch (e){
@@ -127,6 +125,13 @@ router.post('/allResponses', authMiddleware, async (req, res) => {
 
         const orderId = +req.body.orderId;
 
+        const status = await pool.query('SELECT * FROM "order" WHERE "order"."student_id" = $1 AND "order"."id_order" = $2 ', [userId, orderId]);
+
+        if (status.rowCount === 0) {
+
+            return res.status(400).json({message: 'Трунь...Ничего такого не нашлось'});
+        }
+
         const respondMentors = await pool.query(
             'SELECT "id_order", "id_mentor", "id_response", "photoMentor","emailMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited" ' +
             'FROM "mentor", "responses", "order", "direction", "experience", "city", "sex" ' +
@@ -143,15 +148,11 @@ router.post('/allResponses', authMiddleware, async (req, res) => {
 
         const uninvitings = await pool.query('select * from "uninvitingStudent" where "uninvitingStudent"."order_id" = $1 and "uninvitingStudent"."student_id" = $2;', [orderId, userId]);
 
-        if (uninvitings.rowCount > 0) {
-
-            console.log(uninvitings.rows);
+        if (uninvitings.rowCount !== 0) {
 
             uninvitings.rows.map( (uninviting) => {
 
                 respondMentors.rows.map( (respondMentor, index) => {
-
-                    // console.log(respondMentor.id_mentor, respondMentor.nameMentor, orderId);
 
                     if ( respondMentor.id_mentor === uninviting.mentor_id && uninviting.order_id === orderId ) {
 
@@ -182,7 +183,7 @@ router.post('/allResponses', authMiddleware, async (req, res) => {
 
         }
 
-            res.json(respondMentors.rows);
+        res.json(respondMentors.rows);
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке получения всех отликнувшихся на заявку ' + e.message});
@@ -218,6 +219,10 @@ router.post('/oneResponse', authMiddleware, async (req, res) => {
             'AND "mentor"."cityMentor_id" = "city".id_city ' +
             'AND "mentor"."sexMentor_id" = "sex".id_sex ', [mentorId, orderId, userId]);
 
+        if (data.rowCount === 0) {
+
+            return res.status(400).json({message: 'Трунь...Ничего такого не нашлось'});
+        }
 
         const liked = await pool.query(
             'select "mentor_id" from "likedStudent" ' +
@@ -229,17 +234,11 @@ router.post('/oneResponse', authMiddleware, async (req, res) => {
             data.rows[0].liked = true;
         }
 
-        if (!data.rows[0]) {
-
-            throw new Error('No data found');
-        }
-
         let mentor = {};
 
         for (item of data.rows) {
 
             const {id_mentor, interest, photoMentor,id_response, sex, nameMentor, city, connectMentor, emailMentor, ageMentor, aboutMentor, experience, educationMentor, invited, liked, direction} = item;
-
 
             if (mentor.hasOwnProperty('id_mentor')) {
 
@@ -275,8 +274,6 @@ router.patch('/invite', authMiddleware, async (req, res) => {
 
        const mentorId = req.body.mentorId;
 
-       console.log('idResponse:',idResponse, "mentorId:",mentorId, "orderId:", orderId);
-
        const result = await pool.query(
            'UPDATE "responses" SET "invited" = \'true\' ' +
            'WHERE "responses"."order_id" = $1 ' +
@@ -309,20 +306,67 @@ router.patch('/invite', authMiddleware, async (req, res) => {
 router.post('/deleteOrder', authMiddleware, async (req, res) => {
     try {
 
+        if (req.user.role !== 'student') {
+            return res.status(403).json({message:'У вас нет прав доступа'});
+        }
+
         const userId = req.user.userId;
 
         const orderId = req.body.orderId;
 
-        console.log({userId, orderId});
+        const responses = await pool.query(
+            'SELECT "id_response" FROM "responses" WHERE "order_id" = $1;', [orderId]);
 
         await pool.query(
-            'delete from "order" ' +
-            'where "order"."id_order" = $1 ' +
-            'and "order"."student_id" = $2;', [orderId, userId]);
+            'DELETE FROM "noticeMentor" where data = $1' +
+            'AND ("noticeTypeMentor_id" = 2 or "noticeTypeMentor_id" = 4);', [orderId]);
+
+        await pool.query('delete from "noticeStudent" where data = $1' +
+            'and "noticeTypeStudent_id" = 1;', [orderId]);
+
+        const noticesMessagesMentor = await pool.query(
+            'select DISTINCT "data" from "noticeMentor", "order", "roomchat", "responses", "noticeType" ' +
+            'WHERE "noticeType"."noticeType" = \'message\' ' +
+            'AND "noticeType"."id_noticeType" = "noticeMentor"."noticeTypeMentor_id" ' +
+            'AND "responses".order_id = "order".id_order ' +
+            'AND "order".id_order = $1 ' +
+            'AND "data" = responses.id_response;', [orderId]);
+
+        for (notice of noticesMessagesMentor.rows) {
+
+            await pool.query("DELETE FROM \"noticeMentor\" WHERE data = $1", [notice.data]);
+        }
+
+        const noticesMessagesStudent = await pool.query(
+            'select DISTINCT "data" from "noticeStudent", "order", "roomchat", "responses", "noticeType"\n' +
+            'WHERE "noticeType"."noticeType" = \'message\' ' +
+            'AND "noticeType"."id_noticeType" = "noticeStudent"."noticeTypeStudent_id" ' +
+            'AND "responses".order_id = "order".id_order ' +
+            'AND "order".id_order = $1 ' +
+            'AND "data" = responses.id_response order by "data";', [orderId]);
+
+        for (notice of noticesMessagesStudent.rows) {
+
+            await pool.query('DELETE FROM "noticeStudent" WHERE data = $1', [notice.data]);
+        }
+
+        for (item of responses.rows) {
+
+            RoomChat.findOneAndRemove({idResponse: {$eq: item.id_response}}, function (err) {
+
+                if (err) throw new Error('Ошибка при удалении сообщения.');
+            });
+
+        }
 
         await pool.query(
-        'delete from "likedStudent" ' +
-        'where "likedStudent"."order_id" = $1;', [orderId]);
+            'DELETE FROM "order" ' +
+            'WHERE "order"."id_order" = $1 ' +
+            'AND "order"."student_id" = $2;', [orderId, userId]);
+
+        await pool.query(
+        'DELETE FROM "likedStudent" ' +
+        'WHERE "likedStudent"."order_id" = $1;', [orderId]);
 
         res.json({message: 'Заявка удалена'});
 

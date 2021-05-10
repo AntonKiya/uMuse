@@ -1,16 +1,35 @@
 const {Router} = require('express');
 const nodemailer = require('nodemailer');
 const pool = require('../pool');
+const {check, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 
 const router = Router();
 
-router.post('/reqoveryRequestStudent', async (req, res) => {
+router.post('/reqoveryRequestStudent',
+    [
+        check('userEmail', 'Некорректный email').isEmail(),
+        check('userPassword', 'Минимальная длинна пароля 6 символов').isLength({min: 6}),
+    ],
+    async (req, res) => {
     try {
 
         const {userEmail, userPassword} = req.body;
 
-        const email = await pool.query('SELECT "emailStudent" FROM "student" WHERE "student"."emailStudent" = $1 ', [userEmail]);
+        const validationErrors = validationResult(req);
+
+        if (!validationErrors.isEmpty()) {
+
+            return res.status(400).json({
+                validationErrors: validationErrors.array(),
+                message: 'Некорректные данные при восстановлении пароля'
+            });
+        }
+
+        const email = await pool.query(
+            'SELECT "emailStudent" ' +
+            'FROM "student" ' +
+            'WHERE "student"."emailStudent" = $1 ', [userEmail]);
 
         if (email.rowCount === 0) {
 
@@ -30,10 +49,14 @@ router.post('/reqoveryRequestStudent', async (req, res) => {
             res.status(400).json({message: 'Вы уже подали заявку на сброс пароля'});
         }
 
-        await pool.query(
+        const recoveryStatus = await pool.query(
             'INSERT INTO "recoverystudent" ("emailStudent", "passwordStudent", "codeStudent") ' +
             'VALUES ($1, $2, $3);', [userEmail, hashPassword, code]);
 
+        if (recoveryStatus.rowCount === 0) {
+
+            throw new Error();
+        }
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -112,10 +135,25 @@ router.post('/reqoveryStudent', async (req, res) => {
 });
 
 
-router.post('/reqoveryRequestMentor', async (req, res) => {
+router.post('/reqoveryRequestMentor',
+    [
+        check('userEmail', 'Некорректный email').isEmail(),
+        check('userPassword', 'Минимальная длинна пароля 6 символов').isLength({min: 6}),
+    ],
+    async (req, res) => {
     try {
 
         const {userEmail, userPassword} = req.body;
+
+        const validationErrors = validationResult(req);
+
+        if (!validationErrors.isEmpty()) {
+
+            return res.status(400).json({
+                validationErrors: validationErrors.array(),
+                message: 'Некорректные данные при восстановлении пароля'
+            });
+        }
 
         const email = await pool.query('SELECT "emailMentor" FROM "mentor" WHERE "mentor"."emailMentor" = $1 ', [userEmail]);
 
@@ -137,10 +175,14 @@ router.post('/reqoveryRequestMentor', async (req, res) => {
             res.status(400).json({message: 'Вы уже подали заявку на сброс пароля'});
         }
 
-        await pool.query(
+        const recoveryStatus = await pool.query(
             'INSERT INTO "recoveryMentor" ("emailMentor", "passwordMentor", "codeMentor") ' +
             'VALUES ($1, $2, $3);', [userEmail, hashPassword, code]);
 
+        if (recoveryStatus.rowCount === 0) {
+
+            throw new Error();
+        }
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',

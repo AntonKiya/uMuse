@@ -5,7 +5,7 @@ const pool = require('../pool');
 
 const router = Router();
 
-
+// /api/liked/allLikedStudent
 router.get('/allLikedStudent', authMiddleware, async (req, res) => {
     try {
 
@@ -16,8 +16,8 @@ router.get('/allLikedStudent', authMiddleware, async (req, res) => {
         const userId = req.user.userId;
 
         const liked = await pool.query(
-            'SELECT id_response, id_order, "invited", id_mentor, "emailMentor", "nameMentor", "interestMentor_id","interest","direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "photoMentor", "connectMentor", "likedStudent"\n' +
-            'FROM "mentor", "responses", "order", "likedStudent", "interestsMentor", interest, direction, experience, city, sex\n' +
+            'SELECT "id_response", "id_order", "direction_id", "suggestions", "invited", id_mentor, "emailMentor", "nameMentor", "interestMentor_id","interest","direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "photoMentor", "connectMentor", "likedStudent" ' +
+            'FROM "mentor", "responses", "order", "likedStudent", "interestsMentor", interest, direction, experience, city, sex ' +
             'WHERE "order".student_id = $1 ' +
             'AND responses.order_id = "order".id_order ' +
             'AND mentor.id_mentor = responses.mentor_id ' +
@@ -34,11 +34,13 @@ router.get('/allLikedStudent', authMiddleware, async (req, res) => {
 
         for (likedUser of liked.rows) {
 
+            const direction = await pool.query('SELECT "direction" FROM "direction", "order" WHERE "order"."direction_id" = "direction"."id_direction" AND "order"."id_order" = $1 ', [likedUser.id_order]);
+
             if (!likedUsers.find(item => item.emailMentor === likedUser.emailMentor)) {
 
                 likedUsers.push({
                     id_response: likedUser.id_response,
-                    id_order: [likedUser.id_order],
+                    order: [{ order:likedUser.id_order, suggestions: likedUser.suggestions, direction: direction.rows[0].direction }],
                     invited: likedUser.invited,
                     id_mentor: likedUser.id_mentor,
                     emailMentor: likedUser.emailMentor,
@@ -54,7 +56,7 @@ router.get('/allLikedStudent', authMiddleware, async (req, res) => {
                     photoMentor: likedUser.photoMentor,
                     connectMentor: likedUser.connectMentor,
                     likedStudent: likedUser.likedStudent
-                })
+                });
 
             }
             else {
@@ -85,17 +87,26 @@ router.get('/allLikedStudent', authMiddleware, async (req, res) => {
 router.post('/studentLiked', authMiddleware,async (req, res) => {
     try {
 
+        if (req.user.role !== 'student') {
+            return res.status(403).json({message: 'У вас нет прав доступа'});
+        }
+
         const userId = req.user.userId;
 
         const mentorId = req.body.mentorId;
 
         const orderId = +req.body.orderId;
 
-        await pool.query(
+        const liked = await pool.query(
             'INSERT INTO "likedStudent" ("mentor_id", "student_id", "order_id","likedStudent")' +
             ' VALUES ($1, $2, $3, \'true\');', [mentorId, userId, orderId]);
 
-        res.json({message: 'inserted'});
+        if (liked.rowCount === 0) {
+
+            throw new Error();
+        }
+
+        res.json({message: 'Liked'});
 
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так в блоке добавления в избранное ментора ' + e.message});
@@ -106,16 +117,25 @@ router.post('/studentLiked', authMiddleware,async (req, res) => {
 router.post('/studentUnliked', authMiddleware,async (req, res) => {
     try {
 
+        if (req.user.role !== 'student') {
+            return res.status(403).json({message: 'У вас нет прав доступа'});
+        }
+
         const userId = req.user.userId;
 
         const mentorId = req.body.mentorId;
 
-        await pool.query(
+        const deleted = await pool.query(
             'DELETE FROM "likedStudent" ' +
             'WHERE "likedStudent"."mentor_id" = $1 ' +
             'AND "likedStudent"."student_id" = $2', [mentorId, userId]);
 
-        res.json({message: 'deleted'});
+        if (deleted.rowCount === 0) {
+
+            throw new Error();
+        }
+
+        res.json({message: 'Unliked'});
 
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так в блоке удаления в избранное ментора ' + e.message});
@@ -133,7 +153,7 @@ router.get('/allLikedMentor', authMiddleware, async (req, res) => {
         const userId = req.user.userId;
 
         const liked = await pool.query(
-            'SELECT "id_order", "direction", "experience", "city", "sex", "type", "priceFrom", "priceTo", "ageFrom", "ageTo", "suggestions", "datetime", "likedMentor"."likedMentor" as "liked" ' +
+            'SELECT "id_order", "direction", "experience", "city", "sex", "type", "price", "ageFrom", "ageTo", "suggestions", "datetime", "likedMentor"."likedMentor" as "liked" ' +
             'FROM "order", "likedMentor", direction, experience, city, sex, type ' +
             'WHERE "likedMentor"."mentor_id" = $1 ' +
             'AND "likedMentor"."order_id" = "order".id_order ' +
@@ -147,7 +167,6 @@ router.get('/allLikedMentor', authMiddleware, async (req, res) => {
 
         for(item of liked.rows) {
 
-
             const result = await pool.query(
                 'SELECT "id_response", "invited" ' +
                 'FROM "responses" ' +
@@ -157,6 +176,10 @@ router.get('/allLikedMentor', authMiddleware, async (req, res) => {
             if (result.rows[0]) {
 
                 if(result.rows[0].invited === 'true') {
+
+                    item.invited = result.rows[0].invited;
+
+                    item.id_response = result.rows[0].id_response;
 
                     const email = await pool.query(
                         'SELECT "emailStudent" ' +
@@ -168,12 +191,7 @@ router.get('/allLikedMentor', authMiddleware, async (req, res) => {
 
                     item.email = email.rows[0].emailStudent;
 
-
                 }
-
-                item.invited = result.rows[0].invited;
-
-                item.id_response = result.rows[0].id_response;
 
             }
 
@@ -190,15 +208,24 @@ router.get('/allLikedMentor', authMiddleware, async (req, res) => {
 router.post('/mentorLiked', authMiddleware,async (req, res) => {
     try {
 
+        if (req.user.role !== 'mentor') {
+            return res.status(403).json({message: 'У вас нет прав доступа'});
+        }
+
         const userId = req.user.userId;
 
         const orderId = req.body.orderId;
 
-        await pool.query(
+        const liked = await pool.query(
             'INSERT INTO "likedMentor" ("order_id", "mentor_id", "likedMentor") ' +
             'VALUES ($1, $2, \'true\');', [orderId,userId]);
 
-        res.json({message: 'inserted'});
+        if (liked.rowCount === 0) {
+
+            throw new Error();
+        }
+
+        res.json({message: 'liked'});
 
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так в блоке добавления в избранное ментора ' + e.message});
@@ -209,16 +236,25 @@ router.post('/mentorLiked', authMiddleware,async (req, res) => {
 router.post('/mentorUnliked', authMiddleware,async (req, res) => {
     try {
 
+        if (req.user.role !== 'mentor') {
+            return res.status(403).json({message: 'У вас нет прав доступа'});
+        }
+
         const userId = req.user.userId;
 
         const orderId = req.body.orderId;
 
-        await pool.query(
+        const deleted = await pool.query(
             'DELETE FROM "likedMentor" ' +
             'WHERE "likedMentor".order_id = $1 ' +
             'AND "likedMentor"."mentor_id" = $2 ', [orderId, userId]);
 
-        res.json({message: 'deleted'});
+        if (deleted.rowCount === 0) {
+
+            throw new Error();
+        }
+
+        res.json({message: 'unliked'});
 
     } catch (e) {
         res.status(500).json({message: 'Что-то пошло не так в блоке удаления в избранное ментора ' + e.message});

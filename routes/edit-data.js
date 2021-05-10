@@ -1,21 +1,42 @@
 const {Router} = require('express');
 const authMiddleware = require('../middleware/auth.middleware');
+const {check, validationResult} = require('express-validator');
 const pool = require('../pool');
 
 const router = Router();
 
 
 //  /api/edit-data/editStudent
-router.patch('/editStudent', authMiddleware, async (req, res) => {
+router.patch('/editStudent',
+    [
+        check('name', 'Некорректное имя').matches(/^[a-zA-Zа-яА-Я\s]+$/),
+        check('age', 'Возраст только цифрами').isNumeric().notEmpty(),
+    ],
+    authMiddleware, async (req, res) => {
     try {
 
         if (req.user.role !== 'student'){
             return res.status(401).json({message: 'У вас нет прав доступа'});
         }
 
+        const validationErrors = validationResult(req);
+
+        if (!validationErrors.isEmpty()) {
+
+            return res.status(400).json({
+                validationErrors: validationErrors.array(),
+                message: 'Некорректные данные, заполните все поля '
+            });
+        }
+
         const userId = req.user.userId;
 
         const {name, age, connect, about, interests} = req.body;
+
+        if (interests.length === 0) {
+
+            return res.status(400).json({message: 'Интересы должны содерать хотя бы один интерес'})
+        }
 
         const update = await pool.query('UPDATE "student" SET "nameStudent" = $1, "ageStudent" = $2, "connectStudent" = $3,"aboutStudent" = $4 WHERE "id_student" = $5;', [name, age, connect, about, userId]);
 
@@ -25,14 +46,12 @@ router.patch('/editStudent', authMiddleware, async (req, res) => {
             pool.query('insert into "interestsStudent" ("student_id", "interestStudent_id") VALUES ($1, $2) ', [userId, item]);
         });
 
-        if (update.rowCount > 0) {
+        if (update.rowCount === 0) {
 
-            res.json({message: 'Data updated.'});
+            throw new Error();
         }
-        else {
 
-            throw new Error('Non-correct data');
-        }
+        res.json({message: 'Data updated.'});
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке обновления профиля студента ' + e.message});
@@ -70,15 +89,12 @@ router.get('/infstudent', authMiddleware, async (req, res) => {
 
         }
 
-        if (data.rowCount > 0) {
-
-            res.json(student);
-        }
-        else {
+        if (data.rowCount === 0) {
 
             throw new Error('No data found');
         }
 
+        res.json(student);
 
     }
     catch (e){
@@ -88,16 +104,36 @@ router.get('/infstudent', authMiddleware, async (req, res) => {
 
 
 //  /api/edit-data/editMentor
-router.patch('/editMentor', authMiddleware, async (req, res) => {
+router.patch('/editMentor',
+    [
+        check('name', 'Некорректное имя').matches(/^[a-zA-Zа-яА-Я\s]+$/),
+        check('age', 'Возраст только цифрами').isNumeric().notEmpty(),
+    ],
+    authMiddleware, async (req, res) => {
     try {
 
         if (req.user.role !== 'mentor'){
             return res.status(401).json({message: 'У вас нет прав доступа'});
         }
 
+        const validationErrors = validationResult(req);
+
+        if (!validationErrors.isEmpty()) {
+
+            return res.status(400).json({
+                validationErrors: validationErrors.array(),
+                message: `Упс...${validationErrors.errors[0].msg}`
+            });
+        }
+
         const userId = req.user.userId;
 
         const {name, direction, experience, city, sex, age, education, about, interests} = req.body;
+
+        if (interests.length === 0) {
+
+            return res.status(400).json({message: 'Упс...Навыки должны содерать хотя бы один навык'});
+        }
 
         const update = await pool.query('UPDATE "mentor" SET "nameMentor" = $1, "directionMentor_id" = $2, "experienceMentor_id" = $3, "cityMentor_id" = $4, "sexMentor_id" = $5, "ageMentor" = $6, "educationMentor" = $7, "aboutMentor" = $8 WHERE id_mentor = $9 ;', [name, direction, experience, city, sex, age, education, about, userId]);
 
@@ -107,13 +143,13 @@ router.patch('/editMentor', authMiddleware, async (req, res) => {
             pool.query('insert into "interestsMentor" ("mentor_id", "interestMentor_id") VALUES ($1, $2) ', [userId, item]);
         });
 
-        if (update.rowCount > 0) {
+        if (update.rowCount === 0) {
 
-            res.json({message: 'Data updated.'});
-        }
-        else {
             throw new Error('Non-correct data');
+
         }
+
+        res.json({message: 'Data updated.'});
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке обновления профиля студента ' + e.message});
@@ -151,14 +187,12 @@ router.get('/infmentor', authMiddleware, async (req, res) => {
 
         }
 
-        if (data.rowCount > 0) {
-
-            res.json(mentor);
-        }
-        else {
+        if (data.rowCount === 0) {
 
             throw new Error('No data found');
         }
+
+        res.json(mentor);
 
     }
     catch (e){

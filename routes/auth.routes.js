@@ -10,10 +10,8 @@ const router = Router();
 // /api/auth/registerStudent
 router.post(
     '/registerStudent',
-// array of validators.
     [
         check('email', 'Некорректный email').isEmail(),
-//WARNING: Сделать regex для имени!
         check('name', 'Некорректное имя').exists(),
         check('password', 'Минимальная длинна пароля 6 символов').isLength({min: 6}),
     ],
@@ -23,7 +21,7 @@ router.post(
             const validationErrors = validationResult(req);
 
             if (!validationErrors.isEmpty()) {
-                console.log(validationErrors);
+
                 return res.status(400).json({
                     validationErrors: validationErrors.array(),
                     message: 'Некорректные данные при регистрации'
@@ -31,6 +29,11 @@ router.post(
             }
 
             const {name, email, connect, interests, city, password} = req.body;
+
+            if (interests.length === 0) {
+
+                return res.status(400).json({message: 'Интересы должны содерать хотя бы один интерес'})
+            }
 
             const condidate = await pool.query(`SELECT * FROM student WHERE "emailStudent" = ($1)`, [email]);
 
@@ -73,7 +76,7 @@ router.post('/registerMentor',
             const validationErrors = validationResult(req);
 
             if (!validationErrors.isEmpty()) {
-                console.log(validationErrors);
+
                 return res.status(400).json({
                     validationErrors: validationErrors.array(),
                     message: 'Некорректные данные при регистрации'
@@ -81,6 +84,11 @@ router.post('/registerMentor',
             }
 
             const {name, email, connect, direction, experience, interests, city, sex, age, password} = req.body;
+
+            if (interests.length === 0) {
+
+                return res.status(400).json({message: 'Навыки должны содерать хотя бы один навык'})
+            }
 
             const condidate = await pool.query('SELECT * FROM mentor WHERE "emailMentor" = $1;', [email]);
 
@@ -98,6 +106,11 @@ router.post('/registerMentor',
 
                 pool.query('INSERT INTO "interestsMentor" ("mentor_id", "interestMentor_id") values ($1, $2);', [idMentor, item]);
             });
+
+            if (data.rowCount === 0) {
+
+                throw new Error();
+            }
 
             res.status(201).json({message: 'Ментор создан'});
 
