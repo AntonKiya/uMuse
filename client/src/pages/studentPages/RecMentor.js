@@ -3,6 +3,7 @@ import {useParams, useHistory} from 'react-router-dom'
 import {AuthContext} from "../../context/auth.context";
 import {useHttp} from "../../hooks/http.hook";
 import {Loader} from "../../components/generalComponents/Loader";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const RecMentor = () => {
@@ -11,7 +12,19 @@ export const RecMentor = () => {
 
     const {idMentor} = useParams();
 
+    const [activeNotification, setActiveNotification] = useState(false);
+
     const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const [mentor, setMentor] = useState(null);
 
@@ -31,22 +44,18 @@ export const RecMentor = () => {
 
     }, []);
 
-    useEffect(() => {
+    if (loading && !mentor) {
+        return <Loader/>
+    }
 
-        if (error){
-            alert(error);
-            history.push('/main');
-        }
-        clearError();
+    if (!loading && !mentor) {
+        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
 
-    },[error]);
-
-    if (!mentor) {
-        return <Loader />;
-    };
+    }
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <img style={{"display":"inline-block", "borderRadius":"5px", "width":"200px", "height":"200px"}} src={`http://localhost:5000/api/user/getPhoto/${mentor.photoMentor}`}/>
             <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>id: <span style={{'color':'#03a9f4'}}>{mentor.id_mentor}</span></h5>
             <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Имя: <span style={{'color':'#03a9f4'}}>{mentor.nameMentor}</span></h5>

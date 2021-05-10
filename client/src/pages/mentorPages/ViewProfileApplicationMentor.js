@@ -4,11 +4,24 @@ import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Loader} from "../../components/generalComponents/Loader";
 import {ProfileOrderM} from "../../components/mentorComponents/ProfileOrderM";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const ViewProfileApplicationMentor = () => {
 
-    const {request, loading} = useHttp();
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
@@ -32,12 +45,18 @@ export const ViewProfileApplicationMentor = () => {
 
     }, [getOrder]);
 
-    if (loading || !order) {
+    if (loading && !order) {
         return <Loader/>
+    }
+
+    if (!loading && !order) {
+        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error} path={'/suitableapp'}/>
+
     }
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <ProfileOrderM order={order}/>
         </div>
     );

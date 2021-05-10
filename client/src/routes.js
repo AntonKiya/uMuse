@@ -24,6 +24,8 @@ import {LikedStudent} from "./pages/studentPages/LikedStudent";
 import {LikedMentor} from "./pages/mentorPages/LikedMentor";
 import {RecoveryPasswordMentor} from "./pages/mentorPages/RecoveryPasswordMentor";
 import {RecoveryPasswordStudent} from "./pages/studentPages/RecoveryPasswordStudent";
+import {UndefSt} from "./pages/studentPages/UndefSt";
+import {UndefMen} from "./pages/mentorPages/UndefMen";
 
 export const useRoutes = (isAuthenticated, role) => {
 
@@ -63,6 +65,9 @@ export const useRoutes = (isAuthenticated, role) => {
               <Route path={'/chat/:roomId'}>
                   <RoomChat />
               </Route>
+              <Route path={'/undef'}>
+                  <UndefSt />
+              </Route>
               <Redirect to={'/main'} />
           </Switch>
         );
@@ -93,6 +98,9 @@ export const useRoutes = (isAuthenticated, role) => {
                 </Route>
                 <Route path={'/chat/:roomId'}>
                     <RoomChat />
+                </Route>
+                <Route path={'/undef'}>
+                    <UndefMen />
                 </Route>
                 <Redirect to={'/suitableapp'} />
             </Switch>

@@ -4,13 +4,26 @@ import {AuthContext} from "../../context/auth.context";
 import {useHttp} from "../../hooks/http.hook";
 import {Loader} from "../../components/generalComponents/Loader";
 import {ProfileStudentM} from "../../components/mentorComponents/ProfileStudentM";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const ViewProfileStudentMentor = () => {
 
     const [student, setStudent] = useState(null);
 
-    const {request, loading} = useHttp();
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
@@ -37,12 +50,18 @@ export const ViewProfileStudentMentor = () => {
 
     }, [getStudent]);
 
-    if (!student || loading) {
+    if (loading && !student) {
         return <Loader/>
+    }
+
+    if (!loading && !student) {
+        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error} path={'/suitableapp'}/>
+
     }
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <ProfileStudentM student={student} />
         </div>
     );

@@ -4,11 +4,24 @@ import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import styles from '../../cssModules/Interests.module.css';
 import {connect} from "mongoose";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const EditStudent = () => {
 
-    const {request, loading} = useHttp();
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const history = useHistory();
 
@@ -68,23 +81,14 @@ export const EditStudent = () => {
     const edit = async () => {
         try {
 
-            if (!form.name || !form.age) {
-                return alert('Некорректное имя или возраст')
-            }
-
             const data = await request('/api/edit-data/editStudent', 'PATCH', {...form}, {'Authorization': `Bearer ${authContext.token}`});
-
-            setForm({ name: '', age: '', connect: '', about: '', interests: [] });
-
-            alert(data.message);
-
-            history.push('/profilest');
 
         }catch (e){}
     };
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <h5 className="blue-text">Редактирование профиля студента 🤨🛠</h5>
             <div className="card-content white-text">
                 <div>

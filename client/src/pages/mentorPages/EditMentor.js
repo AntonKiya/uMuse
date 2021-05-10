@@ -3,11 +3,24 @@ import {useHistory} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import styles from '../../cssModules/Interests.module.css'
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const EditMentor = () => {
 
-    const {request, loading} = useHttp();
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
 
     const history = useHistory();
 
@@ -85,34 +98,14 @@ export const EditMentor = () => {
     const edit = async () => {
         try {
 
-            if (!form.name || !form.age) {
-                return alert('Некорректное имя или возраст')
-            }
-
-            const data = await request('/api/edit-data/editMentor', 'PATCH', {...form}, {'Authorization': `Bearer ${authContext.token}`});
-
-            setForm({
-                name: '',
-                connect: '',
-                direction: '1',
-                experience: '1',
-                city: '1',
-                sex: '1',
-                age: '',
-                interests: [],
-                education: '',
-                about: ''
-            });
-
-            alert(data.message);
-
-            history.push('/profilemen');
+            await request('/api/edit-data/editMentor', 'PATCH', {...form}, {'Authorization': `Bearer ${authContext.token}`});
 
         }catch (e){}
     };
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <h5 className="blue-text">Редактирование профиля ментора 🤨🛠</h5>
             <div className="row">
                 <div className="input-field col s12">

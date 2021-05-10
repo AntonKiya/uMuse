@@ -1,13 +1,26 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link, useParams} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import io from "../../socket-io-client";
+import {Notification} from "../generalComponents/Notification";
 
 
 export const ResponsesOrderS = ({responses}) => {
 
-    const {request, loading} = useHttp();
+    const {request, loading, error, clearError} = useHttp();
+
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
@@ -31,8 +44,6 @@ export const ResponsesOrderS = ({responses}) => {
 
             setInvited([...invited, status.mentor_id]);
 
-            console.log(invited)
-
             await io.emit('NOTICE_STUDENT', {userId: authContext.userId, mentorId: mentorId, idResponse: idResponse,orderId: idOrder,noticeType: 'invite'});
 
 
@@ -50,10 +61,6 @@ export const ResponsesOrderS = ({responses}) => {
             );
 
             setHidden([...hidden, +status.mentor_id]);
-
-            alert(status.mentor_id);
-
-            console.log(hidden);
 
             await io.emit('NOTICE_STUDENT', {userId: authContext.userId, mentorId: mentorId, idResponse: idResponse, orderId: idOrder, noticeType: 'uninvite'});
 
@@ -79,6 +86,7 @@ export const ResponsesOrderS = ({responses}) => {
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             {
                 responses.map((item, index) => {
                     return(
@@ -91,7 +99,6 @@ export const ResponsesOrderS = ({responses}) => {
                                         <div className="card-content">
                                             <h4 className="header">{item.direction}</h4>
                                             <h5>
-                                                {/*<h5>qwerty { !!(invited.find(elem => elem.id_mentor == item.id_mentor) && alert(1)) || alert(2) }</h5>*/}
                                                 <img style={{"display":"inline-block", "borderRadius":"5px", "width":"30px", "height":"30px"}} src={`http://localhost:5000/api/user/getPhoto/${item.photoMentor}`}/>
                                                 {item.nameMentor}
                                             </h5>

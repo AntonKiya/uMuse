@@ -3,11 +3,24 @@ import {CardOrderS} from "../../components/studentComponents/CardOrderS";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Loader} from "../../components/generalComponents/Loader";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const MyApplicationStudents = () => {
 
-    const {request, loading} = useHttp();
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
@@ -29,12 +42,18 @@ export const MyApplicationStudents = () => {
 
     },[getOrders]);
 
-    if (loading || !orders) {
+    if (loading && !orders) {
         return <Loader/>
+    }
+
+    if (!loading && !orders) {
+        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
+
     }
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <CardOrderS orders={orders}/>
         </div>
     );

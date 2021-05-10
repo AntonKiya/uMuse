@@ -2,6 +2,7 @@ import React, {useContext} from 'react';
 import {NavLink} from "react-router-dom";
 import {AuthContext} from "../../context/auth.context";
 import styles from '../../cssModules/NavBar.module.css';
+import {Notification} from "../generalComponents/Notification";
 
 
 export const NavBarStudent = () => {

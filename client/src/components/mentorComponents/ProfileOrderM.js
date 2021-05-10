@@ -1,14 +1,27 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Link, useHistory} from "react-router-dom";
 import io from "../../socket-io-client";
+import {Notification} from "../generalComponents/Notification";
 
 
 
 export const ProfileOrderM = ({order}) => {
 
-    const {request, loadind} = useHttp();
+    const {request, loading, error, clearError} = useHttp();
+
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
@@ -22,8 +35,6 @@ export const ProfileOrderM = ({order}) => {
 
         const status = await request('/api/order-mentor/respond', 'POST', {orderId: orderId}, {Authorization: `Bearer ${authContext.token}`})
 
-        alert(status.id_order);
-
         setResponse(status.id_order);
 
         await io.emit('NOTICE_MENTOR', {userId: authContext.userId, orderId: orderId, noticeType: 'response'});
@@ -33,8 +44,6 @@ export const ProfileOrderM = ({order}) => {
     const unrespond = async (orderId) => {
 
         const status = await request('/api/uninviting/uninvitingMentor', 'POST', {orderId: orderId}, {Authorization: `Bearer ${authContext.token}`})
-
-        alert(status.message);
 
         if (status.order_id === orderId) history.push('/suitableapp');
 
@@ -48,9 +57,6 @@ export const ProfileOrderM = ({order}) => {
 
         setLiked({...liked, liked: true});
 
-        console.log(liked)
-
-
     }
 
     const deleted = async (orderId) => {
@@ -59,11 +65,11 @@ export const ProfileOrderM = ({order}) => {
 
         setLiked({...liked, liked: false});
 
-        console.log(liked)
     }
 
     return(
             <div className={'center'}>
+                <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
                 <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Заявка</h3>
                 <div>
                     {liked.liked && <h3 onClick={() => deleted(order.id_order)} style={{'color':'black'}}>❤️</h3> || <h3 onClick={() => insert(order.id_order)} style={{'color':'black'}}>🤍</h3>}
@@ -73,8 +79,7 @@ export const ProfileOrderM = ({order}) => {
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Город: <span style={{'color':'#03a9f4'}}>{order.city}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пол наставника: <span style={{'color':'#03a9f4'}}>{order.sex}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Тип занятий: <span style={{'color':'#03a9f4'}}>{order.type}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Цена от: <span style={{'color':'#03a9f4'}}>{order.priceFrom}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Цена до: <span style={{'color':'#03a9f4'}}>{order.priceTo}</span></h5>
+                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Цена от: <span style={{'color':'#03a9f4'}}>{order.price}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст от: <span style={{'color':'#03a9f4'}}>{order.ageFrom}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст до: <span style={{'color':'#03a9f4'}}>{order.ageTo}</span></h5>
                     <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пожелания к заявке: <span style={{'color':'#03a9f4'}}>{order.suggestions}</span></h5>
@@ -99,14 +104,14 @@ export const ProfileOrderM = ({order}) => {
                     <div>
                         <button
                             onClick={() => respond(order.id_order)}
-                            disabled={loadind}
+                            disabled={loading}
                             className="waves-effect waves-light btn blue"
                         >
                             Откликнуться
                         </button>
                         <button
                             onClick={() => unrespond(order.id_order)}
-                            disabled={loadind}
+                            disabled={loading}
                             className="waves-effect waves-light btn red"
                         >
                             Не интересно

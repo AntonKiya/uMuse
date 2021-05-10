@@ -2,12 +2,27 @@ import React, {useContext, useEffect, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 
 export const CreateApplication = () => {
 
+    const [activeNotification, setActiveNotification] = useState(false);
+
     const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            alert(error)
+
+            clearError();
+
+        }
+
+    }, [error])
 
     const authContext = useContext(AuthContext);
 
@@ -23,23 +38,13 @@ export const CreateApplication = () => {
         }catch (e){}
     };
 
-    useEffect(() => {
-
-        if (error){
-            alert(error)
-        }
-        clearError();
-
-    },[error, clearError]);
-
     const [form, setForm] = useState({
         direction_id: '1',
         experience_id: '1',
         city_id:'1',
         sex_id: '1',
         type_id: '1',
-        priceFrom: '0',
-        priceTo: '1300',
+        price: '0',
         ageFrom: '0',
         ageTo: '100',
         suggestions: '',
@@ -51,6 +56,7 @@ export const CreateApplication = () => {
 
     return(
         <div className={'row'}>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div className="s6 offset-s3 light-blue-text">
                 <h2>Найди своего наставника 🤩</h2>
                 <div className="card #ff9800 orange">
@@ -167,25 +173,13 @@ export const CreateApplication = () => {
                             <div className="row">
                                 <div className="input-field col s12">
                                     <input
-                                        id="priceFrom"
-                                        name="priceFrom"
+                                        id="price"
+                                        name="price"
                                         type="text"
-                                        value={form.priceFrom}
+                                        value={form.price}
                                         onChange={changeInputHandler}
                                     />
-                                    <label className="white-text" htmlFor="age">Price from</label>
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="input-field col s12">
-                                    <input
-                                        id="priceTo"
-                                        name="priceTo"
-                                        type="text"
-                                        value={form.priceTo}
-                                        onChange={changeInputHandler}
-                                    />
-                                    <label className="white-text" htmlFor="age">Price to</label>
+                                    <label className="white-text" htmlFor="age">Price</label>
                                 </div>
                             </div>
                             <div className="row">

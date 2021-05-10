@@ -1,12 +1,25 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
+import {Notification} from "../generalComponents/Notification";
 
 
 export const CardOrderS = ({orders}) => {
 
-    const {request} = useHttp();
+    const {request, loading, error, clearError} = useHttp();
+
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
@@ -22,6 +35,7 @@ export const CardOrderS = ({orders}) => {
 
     return(
         <div className={'center'}>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Все заявки которые вы создали😊🍑</h3>
             <div>
                 {

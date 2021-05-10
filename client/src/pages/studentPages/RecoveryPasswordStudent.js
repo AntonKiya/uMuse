@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useHttp} from "../../hooks/http.hook";
 import {useHistory} from "react-router-dom";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const RecoveryPasswordStudent = () => {
@@ -9,18 +10,17 @@ export const RecoveryPasswordStudent = () => {
 
     const history = useHistory();
 
+    const [activeNotification, setActiveNotification] = useState(false);
+
     useEffect(() => {
 
         if (error) {
 
-            alert(error)
-
-            clearError();
+            setActiveNotification(true);
 
         }
 
-    }, [error])
-
+    }, [error]);
 
     const requestCode = async () => {
 
@@ -77,6 +77,7 @@ export const RecoveryPasswordStudent = () => {
 
     return(
         <div className={'row'}>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div className="s6 offset-s3 light-blue-text">
                 <h2>uMuse recovery student</h2>
                 <div>

@@ -3,16 +3,29 @@ import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Link} from "react-router-dom";
 import {Loader} from "../../components/generalComponents/Loader";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 
 export const LikedStudent = () => {
 
-    const {request} = useHttp();
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
-    const [liked, setLiked] = useState([]);
+    const [liked, setLiked] = useState(null);
 
     useEffect(async () => {
 
@@ -21,10 +34,6 @@ export const LikedStudent = () => {
         setLiked(likedMentors);
 
     }, []);
-
-    if (!liked) {
-        return <Loader />;
-    };
 
     const insert = async ({mentorId, orderId, index}) => {
 
@@ -62,8 +71,18 @@ export const LikedStudent = () => {
 
     }
 
+    if (loading && !liked) {
+        return <Loader/>
+    }
+
+    if (!loading && !liked) {
+
+        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
+    }
+
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             {
                 liked.map((item, index) => {
                     return(
@@ -79,9 +98,16 @@ export const LikedStudent = () => {
                                     <h5>
                                         Откликнулся на заявки:
                                         {
-                                            item.id_order.map( (order) => {
+                                            item.order.map( (order) => {
                                                 return(
-                                                    <div><Link to={`/allResp/${order}`}>{order}</Link><br/></div>
+                                                    <div style={{'background-color':'#ee6e73', 'width':'auto'}} >
+                                                        <Link to={`/allResp/${order.order}`}>
+                                                            <h6>
+                                                                {order.direction}
+                                                            </h6>
+                                                            <p>{order.suggestions}...</p>
+                                                        </Link><br/>
+                                                    </div>
                                                 )
                                             })
                                         }

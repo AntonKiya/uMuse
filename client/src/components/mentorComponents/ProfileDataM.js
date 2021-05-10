@@ -1,14 +1,27 @@
-import React, {useRef, useContext, useEffect} from 'react';
+import React, {useRef, useContext, useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {State} from "../../State";
 import io from "../../socket-io-client";
+import {Notification} from "../generalComponents/Notification";
 
 
 export const ProfileDataM = ({getProfileData, dataProfile}) => {
 
-    const {request} = useHttp();
+    const {request, loading, error, clearError} = useHttp();
+
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const fileInput = useRef(null);
 
@@ -24,8 +37,6 @@ export const ProfileDataM = ({getProfileData, dataProfile}) => {
         });
 
         io.on('SET_NOTICE', (data) => {
-
-            console.log('SET_NOTICE')
 
             dispatch({
                 type: 'SET_NOTICE',
@@ -67,6 +78,7 @@ export const ProfileDataM = ({getProfileData, dataProfile}) => {
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div>
                 <div>
                     {

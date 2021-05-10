@@ -1,13 +1,26 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link, useParams, useHistory} from 'react-router-dom';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import io from "../../socket-io-client";
+import {Notification} from "../generalComponents/Notification";
 
 
 export const ProfileMentorS = ({mentor}) => {
 
-    const {request, loading} = useHttp();
+    const {request, loading, error, clearError} = useHttp();
+
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const {idOrder} = useParams();
 
@@ -31,11 +44,7 @@ export const ProfileMentorS = ({mentor}) => {
 
             setInvited([...invited, status.mentor_id]);
 
-            console.log(invited)
-
             await io.emit('NOTICE_STUDENT', {userId: authContext.userId, mentorId: mentorId, idResponse: idResponse, orderId: idOrder, noticeType: 'invite'});
-
-            alert(status.message);
 
         }catch (e){}
     };
@@ -50,8 +59,6 @@ export const ProfileMentorS = ({mentor}) => {
                 {'Authorization': `Bearer ${authContext.token}`}
             );
 
-            alert(status.order_id);
-
             history.push(`/allResp/${status.order_id}`);
 
             await io.emit('NOTICE_STUDENT', {userId: authContext.userId, mentorId: mentorId, idResponse: idResponse, orderId: idOrder, noticeType: 'uninvite'});
@@ -65,9 +72,6 @@ export const ProfileMentorS = ({mentor}) => {
 
         setLiked({...liked, liked: true});
 
-        console.log(liked)
-
-
     }
 
     const deleted = async (mentorId) => {
@@ -80,6 +84,7 @@ export const ProfileMentorS = ({mentor}) => {
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             {
                 <div>
                     {liked.liked && <h3 onClick={() => deleted(mentor.id_mentor)} style={{'color':'black'}}>❤️</h3> || <h3 onClick={() => insert(mentor.id_mentor)} style={{'color':'black'}}>🤍</h3>}

@@ -2,32 +2,36 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Link} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const AuthMentor = () => {
 
     const authContext = useContext(AuthContext);
 
+    const [activeNotification, setActiveNotification] = useState(false);
+
     const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
 
     const loginHandler = async () => {
         try {
 
             const data = await request('/api/auth/loginMentor','POST',{...form});
-            // alert(JSON.stringify(data));
+
             authContext.login(data.token, data.userId, data.userRole);
 
         }catch (e){}
     };
-
-    useEffect(() => {
-
-        if (error){
-            alert(error)
-        }
-        clearError();
-
-    },[error, clearError]);
 
     const [form, setForm] = useState({
         email: '',
@@ -40,6 +44,7 @@ export const AuthMentor = () => {
 
     return(
         <div className={'row'}>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div className="s6 offset-s3 light-blue-text">
                 <h2>uMuse</h2>
                 <div className="card #ff9800 orange">

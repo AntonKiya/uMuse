@@ -2,13 +2,27 @@ import React, {useContext, useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {useHttp} from '../../hooks/http.hook'
 import {AuthContext} from "../../context/auth.context";
+import {Notification} from "../../components/generalComponents/Notification";
+import {Loader} from "../../components/generalComponents/Loader";
 
 
 export const Main = () => {
 
     const authContext = useContext(AuthContext);
 
-    const {request, loading} = useHttp();
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const [mentors, setMentors] = useState([]);
 
@@ -27,8 +41,18 @@ export const Main = () => {
         }catch (e){}
     }, [setMentors]);
 
+    if (loading && !mentors) {
+        return <Loader/>
+    }
+
+    if (!loading && !mentors) {
+        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
+
+    }
+
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             {
                 mentors.map((item) => {
                     return(

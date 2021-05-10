@@ -3,10 +3,23 @@ import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Loader} from "../../components/generalComponents/Loader";
 import {ProfileDataS} from "../../components/studentComponents/ProfileDataS";
+import {Notification} from "../../components/generalComponents/Notification";
 
 export const ProfileStudent = () => {
 
-    const {request, loading} = useHttp();
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
@@ -24,15 +37,19 @@ export const ProfileStudent = () => {
 
     useEffect(() => {
         getProfileData();
-    },[getProfileData])
+    },[getProfileData]);
 
-    if(loading || !dataProfile) {
+    if (loading && !dataProfile) {
         return <Loader/>
     }
 
+    if (!loading && !dataProfile) {
+        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
+    }
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <ProfileDataS getProfileData={getProfileData} dataProfile={dataProfile}/>
         </div>
     );

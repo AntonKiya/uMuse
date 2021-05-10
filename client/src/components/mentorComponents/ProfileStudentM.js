@@ -1,12 +1,25 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link, useParams} from 'react-router-dom';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
+import {Notification} from "../generalComponents/Notification";
 
 
 export const ProfileStudentM = ({student}) => {
 
-    const {request, loading} = useHttp();
+    const {request, loading, error, clearError} = useHttp();
+
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const {idOrder} = useParams();
 
@@ -14,6 +27,7 @@ export const ProfileStudentM = ({student}) => {
 
     return(
         <div>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             {
                 <div>
                     <img style={{"display":"inline-block", "borderRadius":"5px", "width":"300px", "height":"300px"}} src={`http://localhost:5000/api/user/getPhoto/${student.photoStudent}`}/>

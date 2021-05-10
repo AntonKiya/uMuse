@@ -3,20 +3,29 @@ import {Link} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import io from '../../socket-io-client';
+import {Notification} from "../generalComponents/Notification";
 
 
 
 export const CardOrderM = ({orders}) => {
 
-    const {request, loadind, error, clearError} = useHttp();
+    const {request, loading, error, clearError} = useHttp();
+
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     const authContext = useContext(AuthContext);
 
     const [liked, setLiked] = useState([...orders]);
-
-    useEffect(() => {
-        console.log(orders);
-    })
 
     const [responses, setResponses] = useState([]);
 
@@ -25,8 +34,6 @@ export const CardOrderM = ({orders}) => {
     const respond = async (orderId) => {
 
         const status = await request('/api/order-mentor/respond', 'POST', {orderId: orderId}, {Authorization: `Bearer ${authContext.token}`});
-
-        alert(status.id_order);
 
         setResponses([...responses, status.id_order]);
 
@@ -37,8 +44,6 @@ export const CardOrderM = ({orders}) => {
     const unrespond = async (orderId) => {
 
         const status = await request('/api/uninviting/uninvitingMentor', 'POST', {orderId: orderId}, {Authorization: `Bearer ${authContext.token}`});
-
-        alert(status.order_id)
 
         setHidden([...hidden, status.order_id]);
 
@@ -64,7 +69,7 @@ export const CardOrderM = ({orders}) => {
 
     return(
         <div className={'center'}>
-            }
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Подходящие вас заявки😋🤝</h3>
             <div>
                 {
@@ -93,7 +98,7 @@ export const CardOrderM = ({orders}) => {
                                                 <div>
                                                     <button
                                                         onClick={ () => respond(item.order_id || item.id_order) }
-                                                        disabled={loadind}
+                                                        disabled={loading}
                                                         type="button"
                                                         className={'btn orange'}
                                                     >
@@ -101,7 +106,7 @@ export const CardOrderM = ({orders}) => {
                                                     </button>
                                                     <button
                                                         onClick={ () => unrespond(item.order_id || item.id_order) }
-                                                        disabled={loadind}
+                                                        disabled={loading}
                                                         type="button"
                                                         className={'btn red'}
                                                     >

@@ -1,25 +1,26 @@
 import React, {useState, useEffect} from 'react';
 import {useHttp} from "../../hooks/http.hook";
 import {useHistory} from "react-router-dom";
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const RecoveryPasswordMentor = () => {
 
-    const {request, loading, error, clearError} = useHttp();
-
     const history = useHistory();
+
+    const [activeNotification, setActiveNotification] = useState(false);
+
+    const {request, loading, error, clearError} = useHttp();
 
     useEffect(() => {
 
         if (error) {
 
-            alert(error)
-
-            clearError();
+            setActiveNotification(true);
 
         }
 
-    }, [error])
+    }, [error]);
 
 
     const requestCode = async () => {
@@ -38,7 +39,6 @@ export const RecoveryPasswordMentor = () => {
 
             }, 60000);
         }
-
 
     };
 
@@ -77,6 +77,7 @@ export const RecoveryPasswordMentor = () => {
 
     return(
         <div className={'row'}>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div className="s6 offset-s3 light-blue-text">
                 <h2>uMuse recovery mentor</h2>
                 <div>

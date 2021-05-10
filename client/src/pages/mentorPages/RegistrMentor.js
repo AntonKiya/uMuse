@@ -2,20 +2,24 @@ import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import {useHttp} from '../../hooks/http.hook';
 import styles from '../../cssModules/Interests.module.css'
+import {Notification} from "../../components/generalComponents/Notification";
 
 
 export const RegistrMentor = () => {
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const {request, loading, error, clearError} = useHttp();
 
     useEffect(() => {
 
-        if (error){
-            alert(error)
-        }
-        clearError();
+        if (error) {
 
-    },[error, clearError]);
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
 
     const [form, setForm] = useState({
         name: '',
@@ -34,7 +38,6 @@ export const RegistrMentor = () => {
         try {
 
             const data = await request('/api/auth/registerMentor', 'POST', {...form});
-            alert(data.message);
 
         }catch (e){}
     };
@@ -64,6 +67,7 @@ export const RegistrMentor = () => {
 
     return(
         <div className={'row'}>
+            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div className="s6 offset-s3 light-blue-text">
                 <h2>uMuse</h2>
                 <div className="card #ff9800 orange">

@@ -1,11 +1,14 @@
 import {useState, useCallback, useContext} from 'react';
 import {AuthContext} from "../context/auth.context";
+import {useHistory} from 'react-router-dom';
 
 
 export const useHttp = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const history = useHistory();
 
     const authContext = useContext(AuthContext);
 
@@ -29,6 +32,10 @@ export const useHttp = () => {
                 if (response.status === 401) {
 
                     authContext.logout()
+                }
+                if (response.status === 404) {
+
+                    history.push('/undef');
                 }
 
                 throw new Error(data.message || 'Что-то пошло не так при запросе на сервер');
