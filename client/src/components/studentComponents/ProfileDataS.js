@@ -4,24 +4,14 @@ import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {State} from '../../State';
 import io from '../../socket-io-client';
-import socket from "../../socket-io-client";
 import {Notification} from "../generalComponents/Notification";
+import styles from '../../cssModules/componentsStyles/ProfileData.module.css';
+import editButton from '../../images/editButton.svg';
+
 
 export const ProfileDataS = ({getProfileData, dataProfile}) => {
 
-    const {request, loading, error, clearError} = useHttp();
-
-    const [activeNotification, setActiveNotification] = useState(false);
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
+    const {request, error, clearError} = useHttp();
 
     const fileInput = useRef(null);
 
@@ -29,22 +19,7 @@ export const ProfileDataS = ({getProfileData, dataProfile}) => {
 
     const {state, dispatch} = State();
 
-    useEffect(() => {
-
-        io.emit('GET_NOTICES', {
-            userId: authContext.userId,
-            userRole: authContext.userRole
-        });
-
-        io.on('SET_NOTICE', (data) => {
-
-            dispatch({
-                type: 'SET_NOTICE',
-                payload: data
-            })
-        });
-
-    }, []);
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const deleteNotice = async (id_notice) => {
 
@@ -76,40 +51,92 @@ export const ProfileDataS = ({getProfileData, dataProfile}) => {
         }catch (e){}
     };
 
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
+
+    useEffect(() => {
+
+        io.emit('GET_NOTICES', {
+            userId: authContext.userId,
+            userRole: authContext.userRole
+        });
+
+        io.on('SET_NOTICE', (data) => {
+
+            dispatch({
+                type: 'SET_NOTICE',
+                payload: data
+            })
+        });
+
+    }, [authContext.userId, authContext.userRole, dispatch]);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
+
     return(
-        <div>
+        <div className={styles.profileData}>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-            <div>
-                {
-                    state.notices.map((item) => {
-                        return(
-                            item.noticeType === 'response' && <div onClick={() => deleteNotice(item.id_noticeStudent)}><Link to={`/allResp/${item.data}`}><p>{item.id_noticeStudent} У вас новый отклик № {item.data}</p></Link><button onClick={() => deleteNotice(item.id_noticeStudent)} >Понятно</button></div>
-                            ||
-                            item.noticeType === 'message' && <div onClick={() => deleteNotice(item.id_noticeStudent)}><Link to={`/chat/${item.data}`}><p>{item.id_noticeStudent} У вас новое сообщение {item.data}</p></Link><button onClick={() => deleteNotice(item.id_noticeStudent)} >Понятно</button></div>
-                        );
-                    })
-                }
+            <div className={styles.photoInfo}>
+                <Link to={'/editS'}><img className={styles.editButton} src={editButton} alt={'Редактировать'}/></Link>
+                <img className={styles.photo} src={`http://localhost:5000/api/user/getPhoto/${dataProfile.photoStudent}`} alt={'ava'}/><br/>
+                <label className={styles.btnLabel}>
+                    Обновить
+                    <input onChange={send} ref={fileInput} hidden={true} type="file"/>
+                </label>
             </div>
-            <img style={{"display":"inline-block", "borderRadius":"5px", "width":"200px", "height":"200px"}} src={`http://localhost:5000/api/user/getPhoto/${dataProfile.photoStudent}`}/>
-            <button onClick={send}>Обновить</button>
-            <input ref={fileInput} style={{"display":"inline-block", "borderRadius":"5px"}} type="file"/>
-            <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>id: <span style={{'color':'#03a9f4'}}>{dataProfile.id_student}</span></h5>
-            <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Имя: <span style={{'color':'#03a9f4'}}>{dataProfile.nameStudent}</span></h5>
-            <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Email: <span style={{'color':'#03a9f4'}}>{dataProfile.emailStudent}</span></h5>
-            <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Город: <span style={{'color':'#03a9f4'}}>{dataProfile.city}</span></h5>
-            <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Контакт для связи: <span style={{'color':'#03a9f4'}}>{dataProfile.connectStudent}</span></h5>
-            <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Интересы:
-                {
-                    dataProfile.interests.map((item) => {
-                        return(
-                            <div style={{'display':'inline-block','backgroundColor':'red', 'padding':'5px', 'marginLeft':'3px'}}>{item.interest}</div>
-                        )
-                    })
-                }
-            </h5>
-            <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст: <span style={{'color':'#03a9f4'}}>{dataProfile.ageStudent} лет</span></h5>
-            <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>О вас: <span style={{'color':'#03a9f4'}}>{dataProfile.aboutStudent}</span></h5>
-            <Link to={'/editS'}><button className="btn blue" >Редактировать</button></Link>
+            <div className={styles.notificationInfo}>
+                <p className={styles.noticeWord}>Уведомления ({state.notices.length})</p>
+                <div className={styles.notificationsContainer}>
+                    {
+                        state.notices.map((item) => {
+                            return(
+                                item.noticeType === 'response' && <div key={item.id_noticeStudent} className={styles.noticeItem} onClick={() => deleteNotice(item.id_noticeStudent)}><Link to={`/allResp/${item.data}`}><p>новый отклик</p></Link><button onClick={() => deleteNotice(item.id_noticeStudent)}>ок</button></div>
+                                ||
+                                item.noticeType === 'message' && <div key={item.id_noticeStudent} className={styles.noticeItem} onClick={() => deleteNotice(item.id_noticeStudent)}><Link to={`/chat/${item.data}`}><p>Сообщение</p></Link><button onClick={() => deleteNotice(item.id_noticeStudent)} >ок</button></div>
+                            );
+                        })
+                    }
+                </div>
+            </div>
+            <div className={styles.basicInfo}>
+                <div className={styles.nameContainer}> <p className={styles.name}>{dataProfile.nameStudent}</p> <p className={styles.email}>{dataProfile.emailStudent}</p></div>
+                <h5 className={styles.infoItem}>Контакт для связи: <span className={styles.infoItemContent}>{dataProfile.connectStudent}</span></h5>
+                <h5 className={styles.infoItem}>Город: <span className={styles.infoItemContent}>{dataProfile.city}</span></h5>
+                <h5 className={styles.infoItem}>Возраст: <span className={styles.infoItemContent}>{dataProfile.ageStudent} лет</span></h5>
+            </div>
+            <div className={styles.interestsInfo}>
+                    <p className={styles.noticeWord}>Интересы</p>
+                <div className={styles.interestsContainer}>
+                    {
+                        dataProfile.interests.map((item) => {
+                            return(
+                                <div key={item.interest} className={styles.interestItem}>#{item.interest}</div>
+                            )
+                        })
+                    }
+                </div>
+            </div>
+            <div className={styles.aboutMeInfo}>
+                <p className={styles.aboutMeTitle}>О себе</p>
+                <div className={styles.aboutMeContainer}>
+                    {dataProfile.aboutStudent}
+                </div>
+            </div>
         </div>
     );
 };

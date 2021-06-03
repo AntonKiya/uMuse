@@ -9,25 +9,15 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const ViewProfileMentorStudent = () => {
 
-    const [mentor, setMentor] = useState(null);
-
-    const [activeNotification, setActiveNotification] = useState(false);
-
     const {request, loading, error, clearError} = useHttp();
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
 
     const authContext = useContext(AuthContext)
 
     const {idOrder, idMentor} = useParams();
+
+    const [mentor, setMentor] = useState(null);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const getMentor = useCallback(async () => {
         try{
@@ -42,13 +32,23 @@ export const ViewProfileMentorStudent = () => {
             setMentor(mentor);
 
         }catch (e){}
-    },[request, authContext, idMentor]);
+    },[request, authContext, idMentor, idOrder]);
 
     useEffect(() => {
 
         getMentor();
 
     }, [getMentor]);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     if (loading && !mentor) {
         return <Loader/>

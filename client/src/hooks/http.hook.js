@@ -15,8 +15,8 @@ export const useHttp = () => {
     const request = useCallback(async (url, method = 'GET', body = null, headers = {}) => {
         try{
 
-            // 16 если вообще передаем body, то приводим его к строке
-            // 17 и явно указываем в headers что по сети передаем json
+            // если вообще передаем body и он не formData, то приводим его к строке
+            // и явно указываем в headers что по сети передаем json
             if (body && headers.type !== 'formData') {
                 body = JSON.stringify(body);
                 headers['Content-Type'] = 'application/json';
@@ -27,7 +27,7 @@ export const useHttp = () => {
             const response = await fetch(url, {method, body, headers});
             const data = await response.json();
 
-            if (!response.ok){
+            if (!response.ok) {
 
                 if (response.status === 401) {
 
@@ -48,7 +48,7 @@ export const useHttp = () => {
             setLoading(false);
             setError(e.message);
         }
-    }, []);
+    }, [history, authContext]);
 
     const clearError = useCallback(() => {
         setError(null);

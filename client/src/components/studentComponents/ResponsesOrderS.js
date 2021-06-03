@@ -4,27 +4,21 @@ import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import io from "../../socket-io-client";
 import {Notification} from "../generalComponents/Notification";
+import styles from "../../cssModules/componentsStyles/ResponsesOrder.module.css";
+import heartActive from "../../images/heartActive.svg";
+import heartNotActive from "../../images/heartNotActive.svg";
+import {PageTitle} from "../generalComponents/PageTitle";
 
 
-export const ResponsesOrderS = ({responses}) => {
+export const ResponsesOrderS = ({responses, content}) => {
 
     const {request, loading, error, clearError} = useHttp();
-
-    const [activeNotification, setActiveNotification] = useState(false);
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
 
     const authContext = useContext(AuthContext);
 
     const {idOrder} = useParams();
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const [liked, setLiked] = useState([...responses]);
 
@@ -66,7 +60,7 @@ export const ResponsesOrderS = ({responses}) => {
 
 
         }catch (e){}
-    }
+    };
 
     const insert = async (mentorId, index) => {
 
@@ -74,7 +68,7 @@ export const ResponsesOrderS = ({responses}) => {
 
         setLiked([...liked, liked[index].liked = true]);
 
-    }
+    };
 
     const deleted = async (mentorId, index) => {
 
@@ -82,52 +76,63 @@ export const ResponsesOrderS = ({responses}) => {
 
         setLiked([...liked, liked[index].liked = false]);
 
-    }
+    };
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     return(
-        <div>
+        <div className={styles.responsesOrder}>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
+            <PageTitle content={content}/>
             {
                 responses.map((item, index) => {
                     return(
-                        <div style={ hidden.indexOf(item.id_mentor) !== -1 && {'display':'none'} || {'display':'block'}} key={item.id_order}>
-                            <div className="card horizontal">
-                                <p>Сука {item.id_order}</p>
-                                <div className="card-stacked">
-                                    {liked[index].liked && <h3 onClick={() => deleted(item.id_mentor || item.mentor_id, index)} style={{'color':'black'}}>❤️</h3> || <h3 onClick={() => insert(item.id_mentor || item.mentor_id, index)} style={{'color':'black'}}>🤍</h3>}
-                                    <Link to={`/viewProfmentor/${idOrder}/${item.id_mentor}`}>
-                                        <div className="card-content">
-                                            <h4 className="header">{item.direction}</h4>
-                                            <h5>
-                                                <img style={{"display":"inline-block", "borderRadius":"5px", "width":"30px", "height":"30px"}} src={`http://localhost:5000/api/user/getPhoto/${item.photoMentor}`}/>
-                                                {item.nameMentor}
-                                            </h5>
-                                            <p>{item.city}</p>
-                                            <p>{item.experience} опыт</p>
+                        <div key={item.id_mentor}>
+                            <Link to={`/viewProfmentor/${idOrder}/${item.id_mentor}`}>
+                                <div className={styles.responseItem} style={ hidden.indexOf(item.id_mentor) !== -1 && {'display':'none'} || {'display':'inline-block'}} key={item.id_order}>
+                                    <div className={styles.likedContainer} onClick={event => event.preventDefault()}>
+                                        {liked[index].liked && <img src={heartActive} onClick={() => deleted(item.id_mentor || item.mentor_id, index)}/> || <img src={heartNotActive} onClick={() => insert(item.id_mentor || item.mentor_id, index)} />}
+                                    </div>
+                                    <div className={styles.infoContainer}>
+                                        <div className={styles.photoContainer}>
+                                            <img className={styles.photo} src={`http://localhost:5000/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
+                                            <div className={styles.direction}>{item.direction}</div>
                                         </div>
-                                    </Link>
-                                    {/*<div className="card-action">*/}
-                                    {/*    <button onClick={() => invite(item.id_mentor)} disabled={loading} className={'btn orange'}>Пригласить</button>*/}
-                                    {/*    <button className={'btn red'}>Отказать</button>*/}
-                                    {/*</div>*/}
-                                    {
-                                        (item.invited === 'true'
-                                        ||
-                                        invited.indexOf(item.id_mentor) !== -1
-                                        )
-                                        &&
-                                        <div>
-                                            <p>Ментор приглашен</p>
-                                            <Link to={`/chat/${item.id_response}`}><button className={'btn green'}>Чат</button></Link>
+                                        <div className={styles.basicInfoContainer}>
+                                            <h5 className={styles.name}>{item.nameMentor}</h5>
+                                            <p className={styles.email}>{item.emailMentor}</p>
+                                            <p className={styles.experienceContainer}><p className={styles.experience}>{item.experience}</p>опыт</p>
+                                            <p className={styles.about}>{item.aboutMentor}</p>
                                         </div>
-                                        ||
-                                        <div className="card-action">
-                                            <button onClick={() => invite({mentorId: item.id_mentor, idResponse: item.id_response})} disabled={loading} className={'btn orange'}>Пригласить</button>
-                                            <button onClick={() => uninvite({mentorId: item.id_mentor, idResponse: item.id_response})} className={'btn red'}>Отказать</button>
-                                        </div>
-                                    }
+                                    </div>
+                                    <div onClick={event => event.preventDefault()} className={styles.actionContainer}>
+                                        {
+                                            (item.invited === 'true'
+                                                ||
+                                                invited.indexOf(item.id_mentor) !== -1
+                                            )
+                                            &&
+                                            <div className={styles.invitedContainer}>
+                                                <p>Ментор приглашен</p>
+                                                <Link to={`/chat/${item.id_response}`}><button className={styles.chatBitton}>Чат</button></Link>
+                                            </div>
+                                            ||
+                                            <div className={styles.actionContainer}>
+                                                <button className={styles.responseButton} onClick={() => invite({mentorId: item.id_mentor, idResponse: item.id_response})} disabled={loading}>Пригласить</button>
+                                                <button className={styles.uninvitingButton} onClick={() => uninvite({mentorId: item.id_mentor, idResponse: item.id_response})}>Отказать</button>
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         </div>
                     );
                 })

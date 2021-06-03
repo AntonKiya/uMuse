@@ -1,4 +1,4 @@
-export default (state, action) => {
+export const reducer =  (state, action) => {
 
 
     switch (action.type) {
@@ -20,6 +20,9 @@ export default (state, action) => {
                 ...state,
                 notices: action.payload,
             }
+
+        default:
+            return state
     }
 
 };

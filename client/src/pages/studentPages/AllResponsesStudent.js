@@ -9,25 +9,15 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const AllResponsesStudent = () => {
 
-    const [responses, setResponses] = useState(null);
-
-    const [activeNotification, setActiveNotification] = useState(false);
-
     const {request, loading, error, clearError} = useHttp();
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true);
-
-        }
-
-    }, [error]);
 
     const authContext = useContext(AuthContext)
 
     const {idOrder} = useParams();
+
+    const [responses, setResponses] = useState(null);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const getResponses = useCallback(async () => {
         try{
@@ -50,6 +40,16 @@ export const AllResponsesStudent = () => {
 
     }, [getResponses]);
 
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
+
     if (loading && !responses) {
         return <Loader/>
     }
@@ -62,7 +62,7 @@ export const AllResponsesStudent = () => {
     return(
         <div>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-            <ResponsesOrderS responses={responses}/>
+            <ResponsesOrderS responses={responses} content={'Откликнувшиеся менторы'}/>
         </div>
     );
 };

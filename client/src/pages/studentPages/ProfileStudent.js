@@ -7,23 +7,13 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const ProfileStudent = () => {
 
-    const [activeNotification, setActiveNotification] = useState(false);
-
     const {request, loading, error, clearError} = useHttp();
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
 
     const authContext = useContext(AuthContext);
 
     const [dataProfile, setDataProfile] = useState(null);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const getProfileData = useCallback(async () => {
         try {
@@ -38,6 +28,16 @@ export const ProfileStudent = () => {
     useEffect(() => {
         getProfileData();
     },[getProfileData]);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     if (loading && !dataProfile) {
         return <Loader/>

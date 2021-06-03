@@ -9,11 +9,29 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const ViewProfileStudentMentor = () => {
 
+    const {request, loading, error, clearError} = useHttp();
+
+    const authContext = useContext(AuthContext);
+
+    const {idOrder, idStudent} = useParams();
+
     const [student, setStudent] = useState(null);
 
     const [activeNotification, setActiveNotification] = useState(false);
 
-    const {request, loading, error, clearError} = useHttp();
+    const getStudent = useCallback(async () => {
+        try{
+
+            const student = await request(
+                '/api/order-mentor/orderOwner',
+                'POST', {studentId: idStudent, orderId: idOrder},
+                {'Authorization': `Bearer ${authContext.token}`}
+            );
+
+            setStudent(student);
+
+        }catch (e){}
+    },[request, authContext, idStudent, idOrder]);
 
     useEffect(() => {
 
@@ -24,25 +42,6 @@ export const ViewProfileStudentMentor = () => {
         }
 
     }, [error]);
-
-    const authContext = useContext(AuthContext);
-
-    const {idOrder, idStudent} = useParams();
-
-    const getStudent = useCallback(async () => {
-        try{
-
-            const student = await request(
-                '/api/order-mentor/orderOwner',
-                'POST', {studentId: idStudent, orderId: idOrder},
-                {'Authorization': `Bearer ${authContext.token}`}
-
-            );
-
-            setStudent(student);
-
-        }catch (e){}
-    },[request, authContext, idStudent]);
 
     useEffect(() => {
 

@@ -9,25 +9,15 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const ViewProfileApplicationStudent = () => {
 
-    const [activeNotification, setActiveNotification] = useState(false);
-
     const {request, loading, error, clearError} = useHttp();
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
 
     const authContext = useContext(AuthContext);
 
     const orderId = useParams().idApp;
 
     const [order, setOrder] = useState(null);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const getOrder = useCallback(async () => {
         try {
@@ -44,6 +34,16 @@ export const ViewProfileApplicationStudent = () => {
         getOrder();
 
     }, [getOrder]);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     if (loading && !order) {
         return <Loader/>

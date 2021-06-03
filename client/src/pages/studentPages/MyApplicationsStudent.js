@@ -8,23 +8,13 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const MyApplicationStudents = () => {
 
-    const [activeNotification, setActiveNotification] = useState(false);
-
     const {request, loading, error, clearError} = useHttp();
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
 
     const authContext = useContext(AuthContext);
 
     const [orders, setOrders] = useState([]);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const getOrders = useCallback(async () => {
         try {
@@ -41,6 +31,16 @@ export const MyApplicationStudents = () => {
         getOrders();
 
     },[getOrders]);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     if (loading && !orders) {
         return <Loader/>

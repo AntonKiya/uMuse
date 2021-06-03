@@ -1,37 +1,37 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {useHttp} from '../../hooks/http.hook'
 import {AuthContext} from "../../context/auth.context";
 import {Notification} from "../../components/generalComponents/Notification";
 import {Loader} from "../../components/generalComponents/Loader";
+import styles from "../../cssModules/MentorList.module.css";
+import {PageTitle} from "../../components/generalComponents/PageTitle";
 
 
 export const Main = () => {
 
     const authContext = useContext(AuthContext);
 
+    const {request, loading, error, clearError} = useHttp();
+
+    const [mentors, setMentors] = useState([]);
+
     const [activeNotification, setActiveNotification] = useState(false);
 
-    const {request, loading, error, clearError} = useHttp();
+    const getRecommend = useCallback(async () => {
+
+        const data = await request('/api/recommend/mentors', 'GET', null, {'Authorization': `Bearer ${authContext.token}`});
+
+        setMentors(data);
+    }, [request, authContext.token]);
 
     useEffect(() => {
 
         if (error) {
 
             setActiveNotification(true)
-
         }
 
     }, [error]);
-
-    const [mentors, setMentors] = useState([]);
-
-    const getRecommend = async () => {
-
-        const data = await request('/api/recommend/mentors', 'GET', null, {'Authorization': `Bearer ${authContext.token}`});
-
-        setMentors(data);
-    };
 
     useEffect(() => {
         try {
@@ -39,7 +39,8 @@ export const Main = () => {
             getRecommend()
 
         }catch (e){}
-    }, [setMentors]);
+
+    }, [getRecommend]);
 
     if (loading && !mentors) {
         return <Loader/>
@@ -51,31 +52,36 @@ export const Main = () => {
     }
 
     return(
-        <div>
+        <div className={styles.mentorList}>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
+            <PageTitle content={'Рекомендуемые наставники'}/>
             {
                 mentors.map((item) => {
                     return(
-                        <div>
-                            <div className="card horizontal">
-                                <div className="card-stacked">
-                                    <Link to={`/recMentor/${item.id_mentor}`}>
-                                        <div className="card-content">
-                                            <h4 className="header">{item.direction}</h4>
-                                            <h5>{item.nameMentor}</h5>
-                                            <p>{item.city}</p>
-                                            <p>{item.experience} опыт</p>
-                                        </div>
-                                    </Link>
-                                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Интересы: <span style={{'color':'#03a9f4'}}>{
-                                        item.interests.map((item) => {
-                                            return(
-                                                <div>
-                                                    {item}
-                                                </div>
-                                            );
-                                        })
-                                    }</span></h5>
+                        <div key={item.id_mentor} className={styles.mentorItem}>
+                            <div className={styles.infoContainer}>
+                                <div className={styles.photoContainer}>
+                                    <img className={styles.photo} src={`http://localhost:5000/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
+                                    <div className={styles.direction}>{item.direction}</div>
+                                </div>
+                                <div className={styles.basicInfoContainer}>
+                                    <p className={styles.name}>{item.nameMentor}</p>
+                                    <p className={styles.connect}>Связаться {item.connectMentor}</p>
+                                    <p className={styles.experienceContainer}><p className={styles.experience}>{item.experience}</p>опыт</p>
+                                    <p className={styles.experienceContainer}>город <p className={styles.experience}>{item.city}</p></p>
+                                    <p className={styles.experienceContainer}><p className={styles.experience}>{item.ageMentor} лет</p></p>
+                                    <p className={styles.experienceContainer}>Образование <p className={styles.experience}>{item.educationMentor}</p></p>
+
+                                    <p className={styles.experienceContainer}>О себе: <p className={styles.experience}>{item.aboutMentor}</p></p>
+                                    <p className={styles.interestsContainer}>
+                                        {
+                                            item.interests.map((interest) => {
+                                                return(
+                                                    <div key={interest} className={styles.interestItem}>#{interest}</div>
+                                                );
+                                            })
+                                        }
+                                    </p>
                                 </div>
                             </div>
                         </div>

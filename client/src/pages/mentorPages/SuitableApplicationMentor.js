@@ -8,23 +8,13 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const SuitableApplicationMentor = () => {
 
-    const [activeNotification, setActiveNotification] = useState(false);
-
     const {request, loading, error, clearError} = useHttp();
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true);
-
-        }
-
-    }, [error]);
 
     const authContext = useContext(AuthContext);
 
     const [orders, setOrder] = useState(null);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const getOrders = useCallback( async () => {
         try {
@@ -43,6 +33,16 @@ export const SuitableApplicationMentor = () => {
 
     }, [getOrders]);
 
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
+
     if (loading && !orders) {
         return <Loader/>
     }
@@ -55,7 +55,7 @@ export const SuitableApplicationMentor = () => {
     return(
         <div>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-            <CardOrderM orders={orders}/>
+            <CardOrderM content={'Подходящие заявки'} orders={orders}/>
         </div>
     );
 };

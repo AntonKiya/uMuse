@@ -6,8 +6,7 @@ import {MyApplicationStudents} from "./pages/studentPages/MyApplicationsStudent"
 import {ViewProfileApplicationStudent} from "./pages/studentPages/ViewProfileApplicationStudent";
 import {ProfileMentor} from "./pages/mentorPages/ProfileMentor";
 import {SuitableApplicationMentor} from "./pages/mentorPages/SuitableApplicationMentor";
-import {AuthStudent} from "./pages/studentPages/AuthStudent";
-import {AuthMentor} from "./pages/mentorPages/AuthMentor";
+import {Auth} from "./pages/generalPages/Auth";
 import {RegistrStudent} from "./pages/studentPages/RegistrStudent";
 import {RegistrMentor} from "./pages/mentorPages/RegistrMentor";
 import {AllResponsesStudent} from "./pages/studentPages/AllResponsesStudent";
@@ -17,15 +16,12 @@ import {ViewProfileApplicationMentor} from "./pages/mentorPages/ViewProfileAppli
 import {ViewProfileStudentMentor} from "./pages/mentorPages/ViewProfileStudentMentor";
 import {EditStudent} from "./pages/studentPages/EditStudent";
 import {EditMentor} from "./pages/mentorPages/EditMentor";
-import {RoomChat} from "./pages/RoomChat";
+import {RoomChat} from "./pages/generalPages/RoomChat";
 import {Main} from "./pages/studentPages/Main";
-import {RecMentor} from "./pages/studentPages/RecMentor";
 import {LikedStudent} from "./pages/studentPages/LikedStudent";
 import {LikedMentor} from "./pages/mentorPages/LikedMentor";
-import {RecoveryPasswordMentor} from "./pages/mentorPages/RecoveryPasswordMentor";
-import {RecoveryPasswordStudent} from "./pages/studentPages/RecoveryPasswordStudent";
-import {UndefSt} from "./pages/studentPages/UndefSt";
-import {UndefMen} from "./pages/mentorPages/UndefMen";
+import {RecoveryPassword} from "./components/generalComponents/RecoveryPassword";
+import {Lending} from "./pages/generalPages/Lending";
 
 export const useRoutes = (isAuthenticated, role) => {
 
@@ -34,9 +30,6 @@ export const useRoutes = (isAuthenticated, role) => {
           <Switch>
               <Route path={'/main'}>
                   <Main/>
-              </Route>
-              <Route path={'/recMentor/:idMentor'}>
-                  <RecMentor/>
               </Route>
               <Route path={'/profilest'}>
                   <ProfileStudent/>
@@ -64,9 +57,6 @@ export const useRoutes = (isAuthenticated, role) => {
               </Route>
               <Route path={'/chat/:roomId'}>
                   <RoomChat />
-              </Route>
-              <Route path={'/undef'}>
-                  <UndefSt />
               </Route>
               <Redirect to={'/main'} />
           </Switch>
@@ -99,9 +89,6 @@ export const useRoutes = (isAuthenticated, role) => {
                 <Route path={'/chat/:roomId'}>
                     <RoomChat />
                 </Route>
-                <Route path={'/undef'}>
-                    <UndefMen />
-                </Route>
                 <Redirect to={'/suitableapp'} />
             </Switch>
         );
@@ -110,10 +97,10 @@ export const useRoutes = (isAuthenticated, role) => {
     return (
         <Switch>
             <Route path={'/'} exact>
-                <AuthStudent/>
+                <Lending/>
             </Route>
             <Route path={'/authmen'} exact>
-                <AuthMentor/>
+                <Auth/>
             </Route>
             <Route path={'/registerst'} exact>
                 <RegistrStudent/>
@@ -122,10 +109,7 @@ export const useRoutes = (isAuthenticated, role) => {
                 <RegistrMentor/>
             </Route>
             <Route path={'/recoveryStudent'} exact>
-                <RecoveryPasswordStudent/>
-            </Route>
-            <Route path={'/recoveryMentor'} exact>
-                <RecoveryPasswordMentor/>
+                <RecoveryPassword/>
             </Route>
             <Redirect to={'/'} />
         </Switch>

@@ -1,0 +1,150 @@
+body {
+    background-color: #ffffff;
+}
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 85%;
+    margin: 32px auto 5vh auto;
+
+}
+.headerNav {
+    width: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+.headerBurger {
+    width: 40px;
+    height: 30px;
+    position: relative;
+    display: none;
+}
+.burgerLine {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #0E0E0E;
+    position: absolute;
+    left: 0;
+}
+.burgerLine:nth-of-type(1) {
+    position: absolute;
+    top: 0;
+}
+.burgerLine:nth-of-type(2) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.burgerLine:nth-of-type(3) {
+    position: absolute;
+    bottom: 0;
+}
+
+.navbar * {
+    text-decoration: none;
+}
+
+.logo_container {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo_word {
+    font-weight: 700;
+    font-size: 24px;
+    font-family: Inter, serif;
+    color: black;
+}
+
+.student_ul, .mentor_ul, .auth_ul {
+    display: flex;
+}
+
+.navitem_auth * {
+    font-family: Inter, serif;
+    font-size: 18px;
+    color: black;
+    text-decoration: none;
+}
+
+.navitem {
+    margin-left: 40px;
+}
+
+.navitem_auth * {
+    font-family: Inter, serif;
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    background-color: #5E22F0;
+    padding: 12px 24px;
+    border-radius: 8px;
+}
+.navitem_auth {
+    list-style-type: none;
+}
+
+.navitem *{
+    font-family: Inter, serif;
+    color: #5C22F1;
+    text-transform: uppercase;
+}
+
+.navitem:last-of-type *{
+    text-transform: none;
+    font-weight: 700;
+    border-radius: 6px;
+    background-color: #E72E5A;
+    padding: 10px;
+    color: white;
+}
+
+@media screen and (max-width: 768px){
+    .navbar {
+    }
+    .headerBurger {
+        display: block;
+    }
+    .student_ul, .mentor_ul {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: #d1beff;
+        z-index: 10;
+        margin-left: 0;
+        padding-top: 25%;
+        align-items: center;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: .2s;
+    }
+    .student_ul_active, .mentor_ul_active {
+        transform: translateX(0);
+        transition: .2s;
+    }
+    .navitem {
+        color: white;
+        font-weight: bold;
+        font-size: 21px;
+        margin-bottom: 40px;
+        margin-left: 0;
+    }
+    .headerClose {
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 11;
+        color: #ff3868;
+        font-family: Inter, serif;
+        font-size: 35px;
+    }
+}

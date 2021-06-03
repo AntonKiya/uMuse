@@ -12,16 +12,6 @@ export const ProfileMentor = () => {
 
     const {request, loading, error, clearError} = useHttp();
 
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true);
-
-        }
-
-    }, [error]);
-
     const authContext = useContext(AuthContext);
 
     const [dataProfile, setDataProfile] = useState(null);
@@ -36,6 +26,16 @@ export const ProfileMentor = () => {
 
         }catch (e){}
     }, [request, authContext]);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
 
     useEffect(() => {
 

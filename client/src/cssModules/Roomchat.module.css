@@ -1,0 +1,70 @@
+.roomChat {
+    max-width: 85vw;
+    margin: 0 auto;
+}
+.roomChatContent {
+    height: 80vh;
+    position: relative;
+}
+.messageContainer {
+    overflow-y: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 20vh;
+    display: flex;
+    flex-direction: column;
+}
+.messageContainer::-webkit-scrollbar {
+    min-height: 1px;
+    width: 0;
+}
+.message {
+    max-width: 50%;
+    border-radius: 8px;
+    font-family: Inter, serif;
+    font-size: 22px;
+    margin-bottom: 3px;
+    padding: 7px;
+    background-color: #B193FF;
+    align-self: flex-start;
+}
+.date {
+    color: #3e3e3e;
+    margin-top: 3px;
+    font-size: 13px;
+}
+.owner {
+    align-self: flex-end;
+    background-color: #FF7797;
+}
+.chatForm {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+.chatForm textarea {
+    box-sizing: border-box;
+    background-color: #F7F7F8;
+    border: none;
+    border-radius: 8px;
+    font-family: Inter, serif;
+    color: #0E0E0E;
+    width: 100%;
+    font-size: 18px;
+    resize: none;
+    padding: 4px;
+    margin-bottom: 10px;
+}
+.sendButton {
+    font-family: Inter, serif;
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    background-color: #5E22F0;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+}

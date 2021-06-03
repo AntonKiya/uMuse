@@ -1,39 +1,24 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Link} from "react-router-dom";
 import {Loader} from "../../components/generalComponents/Loader";
 import {Notification} from "../../components/generalComponents/Notification";
-
+import styles from "../../cssModules/MentorList.module.css";
+import heartActive from "../../images/heartActive.svg";
+import heartNotActive from "../../images/heartNotActive.svg";
+import {PageTitle} from "../../components/generalComponents/PageTitle";
 
 
 export const LikedStudent = () => {
 
-    const [activeNotification, setActiveNotification] = useState(false);
-
     const {request, loading, error, clearError} = useHttp();
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
 
     const authContext = useContext(AuthContext);
 
     const [liked, setLiked] = useState(null);
 
-    useEffect(async () => {
-
-        const likedMentors = await request('api/liked/allLikedStudent', 'GET', null, {'Authorization':`Bearer ${authContext.token}`});
-
-        setLiked(likedMentors);
-
-    }, []);
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const insert = async ({mentorId, orderId, index}) => {
 
@@ -51,7 +36,7 @@ export const LikedStudent = () => {
 
         setLiked(newLiked)
 
-    }
+    };
 
     const deleted = async ({mentorId, orderId, index}) => {
 
@@ -68,8 +53,30 @@ export const LikedStudent = () => {
         });
 
         setLiked(newLiked)
+    };
 
-    }
+    const getLiked = useCallback( async () => {
+
+        const likedMentors = await request('api/liked/allLikedStudent', 'GET', null, {'Authorization':`Bearer ${authContext.token}`});
+
+        setLiked(likedMentors);
+    }, [request, authContext.token]);
+
+    useEffect(() => {
+
+        getLiked();
+
+    }, [getLiked]);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
 
     if (loading && !liked) {
         return <Loader/>
@@ -81,37 +88,61 @@ export const LikedStudent = () => {
     }
 
     return(
-        <div>
+        <div className={styles.mentorList}>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
+            <PageTitle content={'Закладки'}/>
             {
                 liked.map((item, index) => {
                     return(
-                        <div className="col s12 m7" key={item.id_order}>
-                            <div className="card horizontal">
-                                <div className="card-stacked">
-                                    {item.likedStudent && liked[index].likedStudent && <h3 onClick={() => deleted({orderId: item.id_order, mentorId: item.id_mentor, index})} style={{'color':'black'}}>❤️</h3> || <h3 onClick={() => insert({orderId: item.id_order, mentorId: item.id_mentor, index})} style={{'color':'black'}}>🤍</h3>}
-                                    <img style={{"display":"inline-block", "borderRadius":"5px", "width":"50px", "height":"50px"}} src={`http://localhost:5000/api/user/getPhoto/${item.photoMentor}`}/>
-                                    <p>Ментор айди{item.id_mentor}</p>
-                                    <p>email {item.emailMentor}</p>
-                                    <p>Имя {item.nameMentor}</p>
-                                    <p>Направление {item.directionMentor}</p>
-                                    <h5>
-                                        Откликнулся на заявки:
+                        <div key={item.id_mentor} className={styles.mentorItem}>
+                            {item.likedStudent && liked[index].likedStudent && <img className={styles.heart} src={heartActive} onClick={() => deleted({orderId: item.id_order, mentorId: item.id_mentor, index})} alt={'❤️'}/> || <img className={styles.heart} src={heartNotActive} onClick={() => insert({orderId: item.id_order, mentorId: item.id_mentor, index})} alt={'🤍'}/>}
+                            <div className={styles.infoContainer}>
+                                <div className={styles.photoContainer}>
+                                    <img className={styles.photo} src={`http://localhost:5000/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
+                                    <div className={styles.direction}>{item.directionMentor}</div>
+                                </div>
+                                <div className={styles.basicInfoContainer}>
+                                    <p className={styles.name}>{item.nameMentor}</p>
+                                    <p className={styles.connect}>Связаться {item.connectMentor}</p>
+                                    <p className={styles.experienceContainer}><p className={styles.experience}>{item.experienceMentor}</p>опыт</p>
+                                    <p className={styles.experienceContainer}>город <p className={styles.experience}>{item.cityMentor}</p></p>
+                                    <p className={styles.experienceContainer}>Возраст <p className={styles.experience}>{item.ageMentor}</p></p>
+                                    <p className={styles.experienceContainer}>Образование <p className={styles.experience}>{item.educationMentor}</p></p>
+                                    <p className={styles.interestsContainer}>
                                         {
-                                            item.order.map( (order) => {
+                                            item.interestsMentor.map((interest) => {
                                                 return(
-                                                    <div style={{'background-color':'#ee6e73', 'width':'auto'}} >
-                                                        <Link to={`/allResp/${order.order}`}>
-                                                            <h6>
-                                                                {order.direction}
-                                                            </h6>
-                                                            <p>{order.suggestions}...</p>
-                                                        </Link><br/>
-                                                    </div>
-                                                )
+                                                    <div key={item} className={styles.interestItem}>#{interest}</div>
+                                                );
                                             })
                                         }
-                                    </h5>
+                                    </p>
+                                    <p className={styles.experienceContainer}>
+                                        Откликнулся на заявки
+                                        <div className={styles.responseOrdersContainer}>
+                                            {
+                                                item.order.map( (order) => {
+                                                    return(
+                                                        <div className={styles.responseOrder}>
+                                                            <Link to={`/allResp/${order.order}`}>
+                                                                <h3 className={styles.responseDirection}>
+                                                                    {order.direction}
+                                                                </h3>
+                                                                <p className={styles.responseSuggestion}>
+                                                                    {
+                                                                        order.suggestions
+                                                                        ||
+                                                                        "Описания нет"
+                                                                    }
+
+                                                                </p>
+                                                            </Link>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </p>
                                 </div>
                             </div>
                         </div>

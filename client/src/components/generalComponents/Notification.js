@@ -3,21 +3,29 @@ import {useHistory} from 'react-router-dom';
 import styles from '../../cssModules/Notification.module.css';
 
 
-export const Notification = ({active, setActive, clearError, error, path}) => {
+export const Notification = ({clientError, setClientError, clientErrorMsg, active, setActive, clearError, error, path}) => {
 
     const history = useHistory();
 
     const hiddenNotification = () => {
 
-        setActive(false);
-        setTimeout(()=>{
-            clearError();
-        }, 300);
+        if (clientError) {
 
-        console.log(!!path)
+            setActive(false);
+            setTimeout(()=>{
+                setClientError(false);
+            }, 300);
+        }
+        else {
 
-        if (path) {
-            history.push(path);
+            setActive(false);
+            setTimeout(()=>{
+                clearError();
+            }, 300);
+
+            if (path) {
+                history.push(path);
+            }
         }
     }
 
@@ -26,6 +34,10 @@ export const Notification = ({active, setActive, clearError, error, path}) => {
             <div onClick={ (e) => e.stopPropagation()} className={styles.notification_content}>
                 <div className={styles.notification_text}>
                     {
+                        clientError
+                        &&
+                        clientErrorMsg
+                        ||
                         error
                     }
                 </div>

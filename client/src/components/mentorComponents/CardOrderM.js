@@ -1,29 +1,22 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Link} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import io from '../../socket-io-client';
 import {Notification} from "../generalComponents/Notification";
+import styles from '../../cssModules/componentsStyles/Order.module.css';
+import heartActive from '../../images/heartActive.svg';
+import heartNotActive from '../../images/heartNotActive.svg';
+import {PageTitle} from "../generalComponents/PageTitle";
 
 
-
-export const CardOrderM = ({orders}) => {
+export const CardOrderM = ({orders, content}) => {
 
     const {request, loading, error, clearError} = useHttp();
 
-    const [activeNotification, setActiveNotification] = useState(false);
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
-
     const authContext = useContext(AuthContext);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const [liked, setLiked] = useState([...orders]);
 
@@ -47,8 +40,6 @@ export const CardOrderM = ({orders}) => {
 
         setHidden([...hidden, status.order_id]);
 
-        // await io.emit('NOTICE_MENTOR', {userId: authContext.userId, orderId: orderId, noticeType: 'response'});
-
     };
 
     const insert = async (orderId, index) => {
@@ -65,42 +56,51 @@ export const CardOrderM = ({orders}) => {
 
         setLiked([...liked, liked[index].liked = false]);
 
-    }
+    };
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
 
     return(
-        <div className={'center'}>
+        <div className={styles.cardOrder}>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-            <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Подходящие вас заявки😋🤝</h3>
-            <div>
+            <PageTitle content={content}/>
+            <div className={styles.cardsContainer}>
                 {
                     orders.map((item, index)=> {
                         return (
-                            <div style={ hidden.indexOf(item.id_order || item.order_id) !== -1 && {'display':'none'} || {'display':'block'} } className="col s12 m7" key={item.id_order || item.order_id}>
-                                {liked[index].liked && <h3 onClick={() => deleted(item.id_order || item.order_id, index)} style={{'color':'black'}}>❤️</h3> || <h3 onClick={() => insert(item.id_order || item.order_id, index)} style={{'color':'black'}}>🤍</h3>}
-                                <Link to={`/viewProfappM/${item.id_order || item.order_id}`}>
-                                    <h2 className="header">{index} and {liked[index].liked}</h2>
-                                    <h2 className="header">{item.direction}</h2>
-                                </Link>
-                                <div className="card horizontal">
-                                    <div className="card-stacked">
-                                        <Link to={`/viewProfappM/${item.id_order || item.order_id}`}>
-                                            <div className="card-content">
-                                                <p>{item.suggestions}</p>
-                                                <p>Была создана {item.datetime}</p>
-                                            </div>
-                                        </Link>
-                                        <div className="card-action">
+                            <NavLink to={`/viewProfappM/${item.id_order || item.order_id}`} className={styles.orderCard} style={ hidden.indexOf(item.id_order || item.order_id) !== -1 && {'display':'none'} || {'display':'inline-block'} } key={item.id_order || item.order_id}>
+                                <div className={styles.directionContainer}>
+                                    <h2>{item.direction}</h2>
+                                    <div className={styles.likedContainer} onClick={event => event.preventDefault()} >
+                                        {liked[index].liked && <img src={heartActive} onClick={() => deleted(item.id_order || item.order_id, index)}/> || <img src={heartNotActive} onClick={() => insert(item.id_order || item.order_id, index)} />}
+                                    </div>
+                                </div>
+                                <div className={styles.suggestions}>
+                                    <p>{item.suggestions}</p>
+                                </div>
+                                <div className={styles.infoContainer}>
+                                    <div className={styles.created}>была создана <p className={styles.datetime}>{item.datetime}</p></div>
+                                    <div className={styles.statusContainer}>
+                                        <div onClick={event => event.preventDefault()} className={styles.action}>
                                             {
-                                                item.invited === 'true' && <Link to={`/chat/${item.id_response}`}><button className={'btn green'}>Чат</button></Link>
+                                                item.invited === 'true' && <NavLink to={`/chat/${item.id_response}`}><button className={styles.chatButton}>Чат</button></NavLink>
                                                 ||
-                                                ( item.id_response || responses.indexOf(item.id_order || item.order_id) !== -1 ) && <p>Вы откликнулись на данную заявку</p>
+                                                ( item.id_response || responses.indexOf(item.id_order || item.order_id) !== -1 ) && <p className={styles.responseStatus}>Вы откликнулись</p>
                                                 ||
                                                 <div>
                                                     <button
                                                         onClick={ () => respond(item.order_id || item.id_order) }
                                                         disabled={loading}
                                                         type="button"
-                                                        className={'btn orange'}
+                                                        className={styles.responseButton}
                                                     >
                                                         Откликнуться
                                                     </button>
@@ -108,25 +108,25 @@ export const CardOrderM = ({orders}) => {
                                                         onClick={ () => unrespond(item.order_id || item.id_order) }
                                                         disabled={loading}
                                                         type="button"
-                                                        className={'btn red'}
+                                                        className={styles.uninvitingButton}
                                                     >
                                                         Не интересно
                                                     </button>
                                                 </div>
                                             }
                                         </div>
-                                        <h5 style={{'color':'#f4033b'}}>
-                                        {
-                                            item.invited === 'true' && <Link to={`/viewProfstudent/${item.id_order || item.order_id}/${item.student_id}`}>{item.email}</Link>
-                                            ||
-                                            item.invited === 'reject' && 'Вам отказали, но не расстраивайтесь🤕'
-                                            ||
-                                            item.invited === 'null' && ' Контактов пока нет'
-                                        }
-                                        </h5>
+                                        <div className={styles.status}>
+                                            {
+                                                item.invited === 'true' && <NavLink className={styles.email} to={`/viewProfstudent/${item.id_order || item.order_id}/${item.id_student || item.student_id}`}>{item.email}</NavLink>
+                                                ||
+                                                item.invited === 'reject' && <p className={styles.email}>Вам отказали 🤕</p>
+                                                ||
+                                                item.invited === 'null' && <p className={styles.email}>Контактов пока нет 🤕</p>
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </NavLink>
                         );
                     })
                 }

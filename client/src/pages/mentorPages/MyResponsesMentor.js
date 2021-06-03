@@ -8,21 +8,11 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const MyResponsesMentor = () => {
 
-    const [activeNotification, setActiveNotification] = useState(false);
+    const authContext = useContext(AuthContext);
 
     const {request, loading, error, clearError} = useHttp();
 
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true);
-
-        }
-
-    }, [error]);
-
-    const authContext = useContext(AuthContext);
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const [orders, setOrders] = useState(null);
 
@@ -46,6 +36,16 @@ export const MyResponsesMentor = () => {
 
     }, [getOrders]);
 
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
+
     if (loading && !orders) {
         return <Loader/>
     }
@@ -58,7 +58,7 @@ export const MyResponsesMentor = () => {
     return(
         <div>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-            <CardOrderM orders={orders} />
+            <CardOrderM content={'Ваши отклики'} orders={orders} />
         </div>
     );
 };

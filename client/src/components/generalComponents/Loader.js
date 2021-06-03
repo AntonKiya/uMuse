@@ -1,12 +1,12 @@
 import React from 'react';
-
+import styles from '../../cssModules/componentsStyles/Loader.module.css';
 
 export const Loader = () => {
 
 
     return(
-        <div>
-            <h1 style={{"color": '#ffb300', "fontWeight": 'bold', "textAlign": 'center', "marginTop": '20%'}}>Wait...</h1>
+        <div className={styles.loader}>
+            <h1 className={styles.text}>Подождите...</h1>
         </div>
     );
 };

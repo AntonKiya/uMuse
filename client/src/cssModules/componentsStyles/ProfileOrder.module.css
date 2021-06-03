@@ -1,0 +1,87 @@
+.profileOrder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 85vw;
+    margin: 0 auto;
+}
+.orderCard {
+    background-color: #FAFAFA;
+    position: relative;
+    border-radius: 20px;
+    display: inline-block;
+    text-align: center;
+    padding: 12px 100px 30px 100px;
+}
+
+.orderTitle {
+    font-family: Inter, serif;
+    font-size: 35px;
+    margin-bottom: 20px;
+}
+
+.contentItem {
+    font-family: Inter, serif;
+    font-size: 26px;
+    color: #696969;
+    margin-bottom: 10px;
+}
+
+.contentItem span {
+    color: #A786FF;
+    font-weight: bold;
+}
+.actions {
+    color: #9B9B9B;
+    font-family: Inter, serif;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+.status {
+    font-family: Inter, serif;
+    font-size: 21px;
+    color: #E72E5A;
+}
+.responseButton, .uninvitingButton, .chatButton {
+    border: none;
+    padding: 7px 15px;
+    font-family: Inter, serif;
+    border-radius: 5px;
+}
+.responseButton {
+    background-color: #007AFF;
+    color: white;
+    margin-right: 10px;
+}
+.uninvitingButton {
+    color: #0E0E0E;
+    background-color: #F0EBEB;
+}
+.chatButton {
+    color: white;
+    background-color: #00CD9C;
+}
+.heart {
+    position: absolute;
+    top: 12px;
+    right: 30px;
+}
+
+@media screen and (max-width: 425px){
+    .orderCard {
+        max-width: 85vw;
+        padding: 7px 50px 15px 50px;
+    }
+    .contentItem {
+        font-family: Inter, serif;
+        font-size: 20px;
+        color: #696969;
+        margin-bottom: 10px;
+    }
+    .status {
+        font-size: 17px;
+    }
+    .actions {
+        display: flex;
+    }
+}

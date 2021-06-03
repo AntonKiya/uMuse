@@ -1,0 +1,262 @@
+.profileData {
+    max-width: 85vw;
+    margin: 0 auto;
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 2vw;
+    row-gap: 2vh;
+    margin-bottom: 20px;
+}
+.photoInfo {
+    display: inline-block;
+    position: relative;
+    text-align: center;
+    width: 18vw;
+}
+.photo {
+    background-size: contain;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    object-fit: cover;
+}
+.editButton {
+    text-decoration: none;
+    position: absolute;
+    right: 0;
+}
+.editProfileButton {
+    border: none;
+}
+.notificationInfo {
+    padding: 25px 15px;
+    background-color: #FAFAFA;
+    grid-column-start: 1;
+    grid-row-end: 3;
+    width: 18vw;
+    height: 30vh;
+    border-radius: 6px;
+}
+.noticeWord {
+    font-family: Inter, serif;
+    font-size: 20px;
+    color: #696969;
+    margin-bottom: 12px;
+}
+.notificationsContainer {
+    height: 90%;
+    overflow: scroll;
+}
+.noticeItem {
+    font-family: Inter, serif;
+    font-size: 16px;
+    background-color: #E7DEFE;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 11px 8px;
+    border-radius: 6px;
+    margin-bottom: 11px;
+}
+.noticeItem button {
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 2px 5px;
+    background-color: #ff9191;
+}
+
+.basicInfo {
+    padding: 25px 15px;
+    background-color: #FAFAFA;
+    width: 35vw;
+    border-radius: 8px;
+}
+.nameContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Inter, serif;
+    margin-bottom: 7px;
+}
+.infoItem {
+    font-family: Inter, serif;
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #9D9D9D;
+}
+.infoItemContent {
+    font-weight: 700;
+    color: #A786FF;
+}
+.infoItem:first-of-type .infoItemContent{
+    color: #E72E5A;
+}
+.name {
+    font-size: 28px;
+    color: #696969;
+}
+.email {
+    color: #E72E5A;
+}
+.interestsInfo {
+    padding: 25px 15px;
+    background-color: #FAFAFA;
+    max-height: 32.5vh;
+    border-radius: 8px;
+}
+.interestsContainer {
+    max-height: 90%;
+    overflow-y: scroll;
+}
+.interestItem {
+    color: white;
+    border-radius: 3px;
+    font-family: Inter, serif;
+    background-color: #A786FF;
+    display: inline-block;
+    padding: 8px 5px;
+    margin-bottom: 15px;
+    margin-left: 12px;
+}
+
+.aboutMeInfo {
+    padding: 25px 15px;
+    background-color: #FAFAFA;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    max-width: 60vw;
+    border-radius: 8px;
+    height: auto;
+}
+.aboutMeTitle {
+    font-family: Inter, serif;
+    font-size: 23px;
+    margin-bottom: 12px;
+    color: #A786FF;
+}
+.aboutMeContainer {
+    font-size: 19px;
+    font-family: Inter, serif;
+    color: #696969;
+    height: 90%;
+    overflow: scroll;
+}
+.buttonContainer {
+    text-align: center;
+}
+.actionContainer {
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+}
+.chatButton {
+    border: none;
+    padding: 15px;
+    font-family: Inter, serif;
+    color: white;
+    border-radius: 5px;
+    background-color: #007AFF;
+}
+.responseButton, .uninvitingButton {
+    border: none;
+    padding: 7px 15px;
+    font-family: Inter, serif;
+    border-radius: 5px;
+}
+.responseButton {
+    background-color: #007AFF;
+    color: white;
+    margin-right: 10px;
+}
+.uninvitingButton {
+    color: #0E0E0E;
+    background-color: #F0EBEB;
+}
+.btnLabel {
+    background-color: #007AFF;
+    color: white;
+    font-family: Inter, serif;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 8px;
+    display: inline-block;
+}
+
+@media screen and (max-width: 1024px){
+    .profileData {
+        display: grid;
+    }
+    .nameContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        font-family: Inter, serif;
+        margin-bottom: 7px;
+    }
+    .notificationInfo {
+        grid-row-start: 1;
+        grid-column-start: 2;
+        max-height: 16vh;
+    }
+    .aboutMeInfo {
+        grid-row-start: 2;
+    }
+    .photoInfo {
+        display: inline-block;
+        position: relative;
+        text-align: center;
+        width: 23vw;
+    }
+    .photo {
+        width: 23vw;
+        height: 23vw;
+    }
+}
+
+@media screen and (max-width: 767px){
+    .profileData {
+        display: flex;
+        flex-direction: column;
+    }
+    .photoInfo {
+        display: inline-block;
+        position: relative;
+        text-align: center;
+        width: 100%;
+    }
+    .notificationInfo {
+        box-sizing: border-box;
+        width: 100%;
+    }
+    .noticeItem {
+    }
+    .basicInfo {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .photo {
+        max-width: 100%;
+    }
+    .infoItem {
+        font-family: Inter, serif;
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: #9D9D9D;
+    }
+    .infoItemContent {
+        font-weight: 700;
+        color: #A786FF;
+    }
+    .infoItem:first-of-type .infoItemContent{
+        color: #E72E5A;
+    }
+    .aboutMeInfo {
+        min-width: 100%;
+        box-sizing: border-box;
+    }
+}
+

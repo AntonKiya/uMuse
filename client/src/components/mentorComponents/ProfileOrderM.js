@@ -1,9 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
-import {Link, useHistory} from "react-router-dom";
+import {NavLink, useHistory} from "react-router-dom";
 import io from "../../socket-io-client";
 import {Notification} from "../generalComponents/Notification";
+import styles from "../../cssModules/componentsStyles/ProfileOrder.module.css";
+import heartActive from "../../images/heartActive.svg";
+import heartNotActive from "../../images/heartNotActive.svg";
 
 
 
@@ -11,25 +14,15 @@ export const ProfileOrderM = ({order}) => {
 
     const {request, loading, error, clearError} = useHttp();
 
-    const [activeNotification, setActiveNotification] = useState(false);
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
-
     const authContext = useContext(AuthContext);
+
+    const history = useHistory();
 
     const [liked, setLiked] = useState({...order});
 
     const [response, setResponse] = useState(null);
 
-    const history = useHistory();
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const respond = async (orderId) => {
 
@@ -46,8 +39,6 @@ export const ProfileOrderM = ({order}) => {
         const status = await request('/api/uninviting/uninvitingMentor', 'POST', {orderId: orderId}, {Authorization: `Bearer ${authContext.token}`})
 
         if (status.order_id === orderId) history.push('/suitableapp');
-
-        // await io.emit('NOTICE_MENTOR', {userId: authContext.userId, orderId: orderId, noticeType: 'response'});
 
     };
 
@@ -67,57 +58,68 @@ export const ProfileOrderM = ({order}) => {
 
     }
 
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
+
     return(
-            <div className={'center'}>
+            <div className={styles.profileOrder}>
                 <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-                <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Заявка</h3>
-                <div>
-                    {liked.liked && <h3 onClick={() => deleted(order.id_order)} style={{'color':'black'}}>❤️</h3> || <h3 onClick={() => insert(order.id_order)} style={{'color':'black'}}>🤍</h3>}
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Уникальный номер заявки: <span style={{'color':'#03a9f4'}}>{order.id_order}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Музыкальное направление: <span style={{'color':'#03a9f4'}}>{order.direction}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Опыт наставника: <span style={{'color':'#03a9f4'}}>{order.experience}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Город: <span style={{'color':'#03a9f4'}}>{order.city}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пол наставника: <span style={{'color':'#03a9f4'}}>{order.sex}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Тип занятий: <span style={{'color':'#03a9f4'}}>{order.type}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Цена от: <span style={{'color':'#03a9f4'}}>{order.price}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст от: <span style={{'color':'#03a9f4'}}>{order.ageFrom}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Возраст до: <span style={{'color':'#03a9f4'}}>{order.ageTo}</span></h5>
-                    <h5 style={{'color':'#ffa000', 'fontWeight': 'bold'}}>Пожелания к заявке: <span style={{'color':'#03a9f4'}}>{order.suggestions}</span></h5>
-                    <p>Была создана {order.datetime}</p>
-                    <h5 style={{'color':'#a62bdb', 'fontWeight': 'bold'}}>
-                        <span style={{'color':'#f4033b'}}>
+                <div className={styles.orderCard}>
+                    <h1 className={styles.orderTitle}>Заявка</h1>
+                    {liked.liked && <img className={styles.heart} src={heartActive} onClick={() => deleted(order.id_order)}/> || <img className={styles.heart} src={heartNotActive} onClick={() => insert(order.id_order)} />}
+                    <div className={styles.orderContent}>
+                        <h5 className={styles.contentItem} >Музыкальное направление: <span>{order.direction}</span></h5>
+                        <h5 className={styles.contentItem} >Опыт : <span>{order.experience}</span></h5>
+                        <h5 className={styles.contentItem} >Тип занятий: <span>{order.type}</span></h5>
+                        <h5 className={styles.contentItem}>Описания заявки: <span >{order.suggestions || 'пусто'}</span></h5>
+                        <h5 className={styles.contentItem} >Стоимость час: <span>{order.price}</span></h5>
+                        <h5 className={styles.contentItem} >Пол: <span>{order.sex}</span></h5>
+                        <h5 className={styles.contentItem} >Возраст: <span>{order.ageFrom} - {order.ageTo} лет</span></h5>
+                        <h5 className={styles.contentItem} >Город: <span>{order.city}</span></h5>
+                    </div>
+                    <div className={styles.orderStatus}>
+                        <div className={styles.actions}>
                             {
-                                order.invited === 'true' && <Link to={`/viewProfstudent/${order.id_order}/${order.student_id}`}>{order.email}</Link>
+                                order.invited === 'true' && <NavLink to={`/chat/${order.id_response}`}><button className={styles.chatButton}>Чат</button></NavLink>
+                                ||
+                                (order.id_response || response) && <div>Вы откликнулись</div>
+                                ||
+                                <div>
+                                    <button
+                                        onClick={() => respond(order.id_order)}
+                                        disabled={loading}
+                                        className={styles.responseButton}
+                                    >
+                                        Откликнуться
+                                    </button>
+                                    <button
+                                        onClick={() => unrespond(order.id_order)}
+                                        disabled={loading}
+                                        className={styles.uninvitingButton}
+                                    >
+                                        Не интересно
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                        <div className={styles.status}>
+                            {
+                                order.invited === 'true' && <NavLink className={styles.status} to={`/viewProfstudent/${order.id_order}/${order.student_id}`}>{order.email}</NavLink>
                                 ||
                                 order.invited === 'reject' && 'Вам отказали, но не расстраивайтесь🤕'
                                 ||
                                 order.invited === 'null' && ' Контактов пока нет'
                             }
-                        </span>
-                    </h5>
-                </div>
-                {
-                    order.invited === 'true' && <Link to={`/chat/${order.id_response}`}><button className={'btn green'}>Чат</button></Link>
-                    ||
-                    (order.id_response || response) && <p>Вы откликнулись на данную заявку</p>
-                    ||
-                    <div>
-                        <button
-                            onClick={() => respond(order.id_order)}
-                            disabled={loading}
-                            className="waves-effect waves-light btn blue"
-                        >
-                            Откликнуться
-                        </button>
-                        <button
-                            onClick={() => unrespond(order.id_order)}
-                            disabled={loading}
-                            className="waves-effect waves-light btn red"
-                        >
-                            Не интересно
-                        </button>
+                        </div>
                     </div>
-                }
+                </div>
             </div>
     );
 };

@@ -2,30 +2,19 @@ import React, {useState, useContext, useEffect, useCallback} from 'react';
 import {useHistory} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
-import styles from '../../cssModules/Interests.module.css';
-import {connect} from "mongoose";
 import {Notification} from "../../components/generalComponents/Notification";
+import styles from "../../cssModules/ProfileDataForm.module.css";
 
 
 export const EditStudent = () => {
 
-    const [activeNotification, setActiveNotification] = useState(false);
-
     const {request, loading, error, clearError} = useHttp();
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
 
     const history = useHistory();
 
     const authContext = useContext(AuthContext);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const [form, setForm] = useState({
         name: '',
@@ -35,13 +24,15 @@ export const EditStudent = () => {
         about: ''
     });
 
+    const [clientError, setClientError] = useState(false);
+
     const changeHandler = (event) => {
 
         setForm({...form, [event.target.name]: event.target.value});
 
     };
 
-    const log = (event) => {
+    const include = (event) => {
 
         const id = +event.target.id;
 
@@ -57,7 +48,7 @@ export const EditStudent = () => {
             form.interests.splice(index, 1);
             setForm({...form});
         }
-    }
+    };
 
     const getProfileData = useCallback(async () => {
         try {
@@ -72,128 +63,159 @@ export const EditStudent = () => {
 
     },[authContext, request]);
 
-    useEffect(() => {
-
-        getProfileData();
-
-    }, []);
-
     const edit = async () => {
         try {
 
+            if (!form.name || !form.connect || form.interests.length === 0 || !form.age) {
+
+                setClientError(true);
+
+                return setActiveNotification(true);
+            }
+
             const data = await request('/api/edit-data/editStudent', 'PATCH', {...form}, {'Authorization': `Bearer ${authContext.token}`});
+
+            if (data && data.status === 'ok') history.push('/profilest');
 
         }catch (e){}
     };
 
+    useEffect(() => {
+
+        getProfileData();
+
+    }, [getProfileData]);
+
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
+
     return(
-        <div>
-            <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-            <h5 className="blue-text">Редактирование профиля студента 🤨🛠</h5>
-            <div className="card-content white-text">
-                <div>
-                    <div className="row">
-                        <div className="input-field col s12">
-                            <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                value={form.name}
-                                onChange={changeHandler}
-                            />
-                            <label className="orange-text" htmlFor="name">Name</label>
+        <div className={styles.profileDataForm}>
+            <Notification
+                active={activeNotification}
+                clientError={clientError}
+                setClientError={setClientError}
+                clientErrorMsg={'Заполните все поля'}
+                clearError={clearError}
+                setActive={setActiveNotification}
+                error={error}/>
+            <div className={styles.profileForm}>
+                <h4 className={styles.profileTitle}>Редактирование профиля</h4>
+                <div className={styles.profileContent}>
+                    <div className={styles.profileLeft}>
+                        <div className={styles.inputContainer}>
+                            <div className={styles.inputItem}>
+                                <input
+                                    id="name"
+                                    name="name"
+                                    type="text"
+                                    value={form.name}
+                                    onChange={changeHandler}
+                                />
+                                <label className="orange-text" htmlFor="name">Имя</label>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="input-field col s12">
-                            <input
-                                id="age"
-                                name="age"
-                                type="text"
-                                value={form.age}
-                                onChange={changeHandler}
-                            />
-                            <label className="orange-text" htmlFor="age">Age</label>
+                        <div className={styles.inputContainer}>
+                            <div className={styles.inputItem}>
+                                <input
+                                    id="age"
+                                    name="age"
+                                    type="text"
+                                    value={form.age}
+                                    onChange={changeHandler}
+                                />
+                                <label className="orange-text" htmlFor="age">Возраст</label>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="input-field col s12">
-                            <input
-                                id="connect"
-                                name="connect"
-                                type="text"
-                                value={form.connect}
-                                onChange={changeHandler}
-                            />
-                            <label className="orange-text" htmlFor="age">Connect</label>
+                        <div className={styles.inputContainer}>
+                            <div className={styles.inputItem}>
+                                <input
+                                    id="connect"
+                                    name="connect"
+                                    type="text"
+                                    value={form.connect}
+                                    onChange={changeHandler}
+                                />
+                                <label className="orange-text" htmlFor="age">Connect</label>
+                            </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="input-field col s12">
-                            <div onClick={log} className={form.interests.includes(1) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={1}>
-                                Гитара
-                            </div>
-                            <div onClick={log} className={form.interests.includes(2) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={2}>
-                                Вокал
-                            </div>
-                            <div onClick={log} className={form.interests.includes(3) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={3}>
-                                Дабстеп
-                            </div>
-                            <div onClick={log} className={form.interests.includes(4) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={4}>
-                                Хип-хоп
-                            </div>
-                            <div onClick={log} className={form.interests.includes(5) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={5}>
-                                Битмэйкинг
-                            </div>
-                            <div onClick={log} className={form.interests.includes(6) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={6}>
-                                Звукозапись
-                            </div>
-                            <div onClick={log} className={form.interests.includes(7) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={7}>
-                                Барабаны
-                            </div>
-                            <div onClick={log} className={form.interests.includes(8) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={8}>
-                                Виолончель
-                            </div>
-                            <div onClick={log} className={form.interests.includes(9) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={9}>
-                                Пианино
-                            </div>
-                            <div onClick={log} className={form.interests.includes(10) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={10}>
-                                Бас-гитара
-                            </div>
-                            <div onClick={log} className={form.interests.includes(11) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={11}>
-                                Синтезатор
-                            </div>
-                            <div onClick={log} className={form.interests.includes(12) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={12}>
-                                Укулеле
-                            </div>
-                            <div onClick={log} className={form.interests.includes(13) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={13}>
-                                Фортепиано
-                            </div>
-                            <div onClick={log} className={form.interests.includes(14) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={14}>
-                                Скрипка
-                            </div>
-                            <div onClick={log} className={form.interests.includes(15) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={15}>
-                                Флейта
-                            </div>
-                            <div onClick={log} className={form.interests.includes(16) ? `${styles.interestsItemSelected}` : `${styles.interestsItem}`} id={16}>
-                                Саксофон
+                        <div>
+                            <div className={`${styles.inputItem} ${styles.aboutInput}`}>
+                                <textarea
+                                    id="about"
+                                    name="about"
+                                    type="text"
+                                    value={form.about}
+                                    onChange={changeHandler}
+                                />
+                                <label className="orange-text" htmlFor="email">О себе</label>
                             </div>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="input-field col s12">
-                            <input
-                                id="about"
-                                name="about"
-                                type="text"
-                                value={form.about}
-                                onChange={changeHandler}
-                            />
-                            <label className="orange-text" htmlFor="email">About</label>
+                    <div className={styles.profileRight}>
+                        <div className={styles.interestsContainer}>
+                            <label className={styles.interestsLabel} htmlFor="connect">Теги интересов</label>
+                            <div className={styles.interestsItem}>
+                                <div onClick={include} className={form.interests.includes(1) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={1}>
+                                    #Гитара
+                                </div>
+                                <div onClick={include} className={form.interests.includes(2) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={2}>
+                                    #Вокал
+                                </div>
+                                <div onClick={include} className={form.interests.includes(3) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={3}>
+                                    #Дабстеп
+                                </div>
+                                <div onClick={include} className={form.interests.includes(4) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={4}>
+                                    #Хип-хоп
+                                </div>
+                                <div onClick={include} className={form.interests.includes(5) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={5}>
+                                    #Битмэйкинг
+                                </div>
+                                <div onClick={include} className={form.interests.includes(6) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={6}>
+                                    #Звукозапись
+                                </div>
+                                <div onClick={include} className={form.interests.includes(7) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={7}>
+                                    #Барабаны
+                                </div>
+                                <div onClick={include} className={form.interests.includes(8) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={8}>
+                                    #Виолончель
+                                </div>
+                                <div onClick={include} className={form.interests.includes(9) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={9}>
+                                    #Пианино
+                                </div>
+                                <div onClick={include} className={form.interests.includes(10) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={10}>
+                                    #Бас-гитара
+                                </div>
+                                <div onClick={include} className={form.interests.includes(11) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={11}>
+                                    #Синтезатор
+                                </div>
+                                <div onClick={include} className={form.interests.includes(12) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={12}>
+                                    #Укулеле
+                                </div>
+                                <div onClick={include} className={form.interests.includes(13) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={13}>
+                                    #Фортепиано
+                                </div>
+                                <div onClick={include} className={form.interests.includes(14) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={14}>
+                                    #Скрипка
+                                </div>
+                                <div onClick={include} className={form.interests.includes(15) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={15}>
+                                    #Флейта
+                                </div>
+                                <div onClick={include} className={form.interests.includes(16) ? `${styles.interestItem} ${styles.interestsItemSelected}` : `${styles.interestItem}`} id={16}>
+                                    #Саксофон
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <button onClick={edit} disabled={loading} type="button" className="btn blue">Применить</button>
                 </div>
+                <button onClick={edit} disabled={loading} type="button" className={styles.sendButton}>Применить</button>
             </div>
         </div>
     )

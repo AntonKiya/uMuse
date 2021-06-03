@@ -1,0 +1,135 @@
+a {
+    color: #000;
+    text-decoration: none
+}
+.cardOrder {
+    max-width: 85vw;
+    margin: 0 auto;
+}
+.cardsContainer {
+    text-align: center;
+}
+.orderCard {
+    text-align: start;
+    display: inline-block;
+    padding: 20px 20px 12px 20px;
+    width: 60vw;
+    border-radius: 8px;
+    background-color: #FAFAFA;
+    margin-bottom: 15px;
+}
+.directionContainer {
+    display: flex;
+    justify-content: space-between;
+    font-family: Inter, serif;
+    font-size: 47px;
+    margin-bottom: 20px;
+}
+.likedContainer {
+    display: flex;
+    align-items: flex-start;
+}
+.suggestions {
+    font-size: 16px;
+    font-family: Inter, serif;
+    margin-bottom: 10px;
+}
+.infoContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+.created {
+    color: #9D9D9D;
+    display: flex;
+    font-family: Inter, serif;
+    font-size: 14px;
+}
+.datetime {
+    margin-left: 5px;
+    color: #0E0E0E;
+}
+.statusContainer {
+    display: flex;
+    align-items: center;
+}
+.email {
+    margin-left: 10px;
+    font-family: Inter, serif;
+    color: #E72E5A;
+}
+.chatButton {
+    border: none;
+    padding: 7px 15px;
+    font-family: Inter, serif;
+    color: white;
+    border-radius: 5px;
+    background-color: #00CD9C;
+}
+.responseStatus {
+    font-family: Inter, serif;
+    color: #00CD9C;
+}
+.responseButton, .uninvitingButton, .deleteButton {
+    border: none;
+    padding: 7px 15px;
+    font-family: Inter, serif;
+    border-radius: 5px;
+}
+.responseButton {
+    text-align: center;
+    background-color: #007AFF;
+    color: white;
+    margin-right: 10px;
+}
+.uninvitingButton {
+    color: #0E0E0E;
+    background-color: #F0EBEB;
+}
+.deleteButton {
+    color: white;
+    background-color: #E72E5A;
+}
+
+@media screen and (max-width: 800px){
+    .infoContainer {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+    }
+    .statusContainer {
+        margin-bottom: 5px;
+        display: flex;
+    }
+    .created {
+        color: #9D9D9D;
+        display: flex;
+        font-family: Inter, serif;
+        font-size: 13px;
+    }
+    .chatButton {
+        margin-top: 5px;
+    }
+    .statusContainer div:last-child {
+        margin-top: 5px;
+        margin-left: 0;
+    }
+    .email {
+        margin-left: 10px;
+    }
+
+}
+
+@media screen and (max-width: 500px){
+    .action {
+        text-align: center;
+    }
+    .responseButton {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+    .statusContainer {
+        display: flex;
+        flex-direction: column;
+    }
+}

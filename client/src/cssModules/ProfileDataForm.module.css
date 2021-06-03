@@ -1,0 +1,120 @@
+.profileDataForm {
+    max-width: 85vw;
+    margin: 0 auto;
+    text-align: center;
+}
+.profileForm {
+    display: inline-block;
+    text-align: start;
+    padding: 25px 32px 40px 32px;
+    border-radius: 25px;
+    background-color: #FAFAFA;
+}
+.profileTitle {
+    font-size: 25px;
+    font-family: Inter, serif;
+    margin-bottom: 35px;
+}
+.profileContent {
+    display: flex;
+}
+.profileMiddle, .profileRight{
+    margin-left: 40px;
+}
+.inputItem {
+    display: flex;
+    flex-direction: column-reverse;
+}
+.inputItem label,
+.interestsContainer label {
+    font-size: 18px;
+    font-family: Inter, serif;
+    margin-bottom: 5px;
+}
+.inputSelect {
+    border: none;
+    background-color: #F7F7F8;
+    padding: 10px;
+    border-radius: 8px;
+    color: #A786FF;
+}
+.interestsContainer {
+    width: 22vw;
+}
+.interestsItem {
+    background-color: #F7F7F8;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+.interestItem {
+    padding: 7px;
+    margin-left: 12px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    font-family: Inter, serif;
+    font-size: 13px;
+    color: white;
+    background-color: #d1beff;
+    display: inline-block;
+}
+
+.interestsItemSelected {
+    background-color: #5E22F0;
+}
+.inputItem input,
+.inputItem textarea,
+.inputItem select{
+    border: none;
+    width: 22vw;
+    resize: none;
+    background-color: #F7F7F8;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 8px;
+    padding-left: 5px;
+    color: #A786FF;
+}
+.inputItem textarea {
+    height: 13vh;
+    font-family: Inter, serif;
+    font-size: 16px;
+}
+.inputItem label,
+.interestsLabel {
+    margin-top: 10px;
+}
+.sendButton {
+    font-family: Inter, serif;
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    background-color: #5E22F0;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+}
+@media screen and (max-width: 768px){
+    .profileForm {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 16px 20px 17px;
+    }
+    .profileContent {
+        flex-direction: column;
+    }
+    .profileMiddle, .profileRight{
+        margin-left: 0;
+    }
+    .inputItem input,
+    .inputItem textarea,
+    .inputItem select{
+        width: 100%;
+    }
+    .interestsContainer {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

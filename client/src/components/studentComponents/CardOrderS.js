@@ -1,27 +1,19 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Link} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import {useHttp} from "../../hooks/http.hook";
 import {AuthContext} from "../../context/auth.context";
 import {Notification} from "../generalComponents/Notification";
+import styles from "../../cssModules/componentsStyles/Order.module.css";
+import {PageTitle} from "../generalComponents/PageTitle";
 
 
 export const CardOrderS = ({orders}) => {
 
-    const {request, loading, error, clearError} = useHttp();
-
-    const [activeNotification, setActiveNotification] = useState(false);
-
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true)
-
-        }
-
-    }, [error]);
+    const {request, error, clearError} = useHttp();
 
     const authContext = useContext(AuthContext);
+
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const [hidden, setHidden] = useState([]);
 
@@ -33,33 +25,45 @@ export const CardOrderS = ({orders}) => {
 
     };
 
+    useEffect(() => {
+
+        if (error) {
+
+            setActiveNotification(true)
+
+        }
+
+    }, [error]);
+
     return(
-        <div className={'center'}>
+        <div className={styles.cardOrder}>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-            <h3 style={{'backgroundColor': '#4dc3ff','color':'white','fontWeight':'bold'}}>Все заявки которые вы создали😊🍑</h3>
-            <div>
+            <PageTitle content={'Ваши заявки'}/>
+            <div className={styles.cardsContainer}>
                 {
                     orders.map((item)=> {
                         return (
-                            <div style={hidden.indexOf(item.id_order) !== -1 && {'display':'none'} || {'display':'block'}} className="col s12 m7" key={item.id_order}>
-                                <Link to={`/viewProfappS/${item.id_order}`}>
-                                    <h2 className="header">{item.direction}</h2>
-                                </Link>
-                                <div className="card horizontal">
-                                    <div className="card-stacked">
-                                        <Link to={`/viewProfappS/${item.id_order}`}>
-                                            <div className="card-content">
-                                                <p>{item.suggestions}</p>
-                                            </div>
-                                            <p>Была создана {item.datetime}</p>
-                                        </Link>
-                                        <div className="card-action">
-                                            <Link to={`/allResp/${item.id_order}`} className={'btn orange'}>Отклики</Link>
-                                            <button onClick={() => deleted(item.id_order)} className={'btn red'}>Удалить</button>
-                                        </div>
+                            <NavLink className={styles.orderCard} to={`/viewProfappS/${item.id_order}`} style={hidden.indexOf(item.id_order) !== -1 && {'display':'none'} || {'display':'inline-block'}} key={item.id_order}>
+                                <div className={styles.directionContainer}>
+                                    <h2>{item.direction}</h2>
+                                </div>
+                                <div className={styles.suggestions}>
+                                    <p>{item.suggestions}</p>
+                                </div>
+                                <div className={styles.infoContainer}>
+                                    <div className={styles.created}>была создана <p className={styles.datetime}>{item.datetime}</p></div>
+                                    <div className={styles.statusContainer}>
+                                        <NavLink className={styles.responseButton} to={`/allResp/${item.id_order}`}><div>Отклики</div></NavLink>
+                                        <button onClick={event =>{
+                                            event.preventDefault();
+                                            deleted(item.id_order);
+                                        }}
+                                        className={styles.deleteButton}>
+                                            Удалить
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
+                            </NavLink>
                         );
                     })
                 }

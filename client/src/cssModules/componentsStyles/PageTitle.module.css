@@ -1,0 +1,11 @@
+.pageTitle {
+    background-color: #54a2ff;
+    margin-bottom: 3vh;
+    text-align: start;
+    padding: 5px 0 5px 22px;
+    font-size: 22px;
+    font-family: Inter, serif;
+    font-weight: 600;
+    color: white;
+    border-radius: 3px;
+}

@@ -1,0 +1,273 @@
+.lending_container {
+    max-width: 85%;
+    margin: 0 auto;
+}
+.title {
+    font-family: Inter, serif;
+    font-weight: 700;
+    font-size: 50px;
+    max-width: 55vw;
+    line-height: 130%;
+    margin-bottom: 54px;
+}
+.buttons {
+    display: flex;
+}
+.buttonItem {
+    width: 100%;
+    padding: 75px 95px;
+    background-color: #F7D9FE;
+    cursor: pointer;
+}
+.buttonItem:last-child {
+    margin-left: 24px;
+}
+.buttonItem {
+    color: #0E0E0E;
+    position: relative;
+    font-size: 32px;
+    font-family: Inter, serif;
+    border-radius: 24px;
+}
+
+.lendingStudent {
+    bottom: 0;
+    right: 0;
+    position: absolute;
+}
+
+.lendingMentor {
+    top: 0;
+    right: 0;
+    position: absolute;
+}
+
+.RegStud {
+    height: 100vh;
+    width: 100vw;
+    background-color:rgba(0, 0, 0, .5);
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0;
+    transition: 0.3s;
+}
+.ActiveRegStud {
+
+    opacity: 1;
+    pointer-events: all;
+    transition: 0.4s;
+}
+.RegStudContect {
+    background-color: white;
+    padding: 25px 53px;
+    border-radius: 9px;
+}
+.titleContainer {
+    font-family: Inter, serif;
+    font-size: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 37px;
+}
+.RegStudContent {
+    display: flex;
+    margin-bottom: 57px;
+}
+.RegStudContent_left {
+    margin-right: 100px;
+}
+.inputItem {
+    display: flex;
+    flex-direction: column-reverse;
+}
+.inputItem label,
+.interestsContainer label {
+    font-size: 18px;
+    font-family: Inter, serif;
+    margin-bottom: 5px;
+}
+.inputItem input,
+.inputItem select{
+    border: none;
+    width: 22vw;
+    background-color: #F7F7F8;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    color: #A786FF;
+}
+.inputSelect {
+    border: none;
+    background-color: #F7F7F8;
+    padding: 10px;
+    border-radius: 8px;
+    color: #A786FF;
+}
+.interestsContainer {
+    width: 22vw;
+}
+.interestsItem {
+    background-color: #F7F7F8;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+.interestItem {
+    padding: 7px;
+    margin-left: 12px;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    font-family: Inter, serif;
+    font-size: 13px;
+    color: white;
+    background-color: #d1beff;
+    display: inline-block;
+}
+
+.interestsItemSelected {
+    background-color: #5E22F0;
+}
+.sendButton {
+    font-family: Inter, serif;
+    font-size: 18px;
+    color: white;
+    text-decoration: none;
+    background-color: #5E22F0;
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+}
+
+@media screen and (max-width: 425px){
+    .lending_container {
+        max-width: 85vw;
+        margin: 0 auto;
+    }
+
+    .title {
+        font-family: Inter, serif;
+        font-weight: 700;
+        font-size: 25px;
+        max-width: 80vw;
+        line-height: 130%;
+        margin-bottom: 20px;
+    }
+    .buttons {
+        display: grid;
+        justify-content: space-between;
+    }
+    .buttonItem {
+        width: 55vw;
+        padding: 35px 56px;
+    }
+    .buttonItem:last-child {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+    .buttonItem {
+        font-size: 25px;
+        border-radius: 8px;
+    }
+    .lendingStudent {
+        max-width: 35%;
+    }
+    .lendingMentor {
+        max-width: 35%;
+    }
+    .ActiveRegStud {
+
+        opacity: 1;
+        pointer-events: all;
+        transition: 0.4s;
+    }
+    .RegStudContect {
+        background-color: white;
+        padding: 25px 53px;
+        border-radius: 9px;
+    }
+    .titleContainer {
+        font-family: Inter, serif;
+        font-size: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 37px;
+    }
+    .RegStudContent {
+        display: flex;
+        margin-bottom: 57px;
+    }
+    .RegStudContent_left {
+        margin-right: 100px;
+    }
+    .inputItem {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    .inputItem label,
+    .interestsContainer label {
+        font-size: 18px;
+        font-family: Inter, serif;
+        margin-bottom: 5px;
+    }
+    .inputItem input,
+    .inputItem select{
+        border: none;
+        width: 22vw;
+        background-color: #F7F7F8;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        color: #A786FF;
+    }
+    .inputSelect {
+        border: none;
+        background-color: #F7F7F8;
+        padding: 10px;
+        border-radius: 8px;
+        color: #A786FF;
+    }
+    .interestsContainer {
+        width: 22vw;
+    }
+    .interestsItem {
+        background-color: #F7F7F8;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+    }
+    .interestItem {
+        padding: 7px;
+        margin-left: 12px;
+        margin-bottom: 5px;
+        border-radius: 6px;
+        font-family: Inter, serif;
+        font-size: 13px;
+        color: white;
+        background-color: #d1beff;
+        display: inline-block;
+    }
+
+    .interestsItemSelected {
+        background-color: #5E22F0;
+    }
+    .sendButton {
+        font-family: Inter, serif;
+        font-size: 18px;
+        color: white;
+        text-decoration: none;
+        background-color: #5E22F0;
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: none;
+    }
+}

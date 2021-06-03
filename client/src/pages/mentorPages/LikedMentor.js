@@ -7,21 +7,11 @@ import {Notification} from "../../components/generalComponents/Notification";
 
 export const LikedMentor = () => {
 
-    const [activeNotification, setActiveNotification] = useState(false);
+    const authContext = useContext(AuthContext);
 
     const {request, loading, error, clearError} = useHttp();
 
-    useEffect(() => {
-
-        if (error) {
-
-            setActiveNotification(true);
-
-        }
-
-    }, [error]);
-
-    const authContext = useContext(AuthContext);
+    const [activeNotification, setActiveNotification] = useState(false);
 
     const [orders, setOrders] = useState(null);
 
@@ -35,6 +25,16 @@ export const LikedMentor = () => {
 
     useEffect(() => {
 
+        if (error) {
+
+            setActiveNotification(true);
+
+        }
+
+    }, [error]);
+
+    useEffect(() => {
+
         getOrders();
 
     }, [getOrders]);
@@ -44,14 +44,14 @@ export const LikedMentor = () => {
     }
 
     if (!loading && !orders) {
-        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
 
+        return <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
     }
 
     return(
         <div>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
-            <CardOrderM orders={orders} />
+            <CardOrderM content={'Ваши закладки'} orders={orders} />
         </div>
     );
 };

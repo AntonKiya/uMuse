@@ -1,0 +1,13 @@
+.loader {
+    text-align: center;
+}
+.text {
+    color: #5E22F0;
+    font-family: Inter, serif;
+    font-weight: 600;
+    font-size: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30vh;
+    display: inline-block;
+}
