@@ -8,8 +8,8 @@ const router = Router();
 
 router.post('/reqoveryRequestStudent',
     [
-        check('userEmail', 'Некорректный email').isEmail(),
-        check('userPassword', 'Минимальная длинна пароля 6 символов').isLength({min: 6}),
+        check('userEmail', 'некорректный email').isEmail(),
+        check('userPassword', 'минимальная длинна пароля 6 символов').isLength({min: 6}),
     ],
     async (req, res) => {
     try {
@@ -22,7 +22,7 @@ router.post('/reqoveryRequestStudent',
 
             return res.status(400).json({
                 validationErrors: validationErrors.array(),
-                message: 'Некорректные данные при восстановлении пароля'
+                message: `Некорректные данные: ${validationErrors.array()[0].msg}`
             });
         }
 
@@ -93,7 +93,7 @@ router.post('/reqoveryRequestStudent',
         });
 
     }catch (e) {
-        res.status(500).json({message: 'Что-то погло не так в блоке запроса на восстановление пароля студенту ' + e.message})
+        res.status(500).json({message: 'Что-то погло не так в блоке запроса на восстановление пароля ученику ' + e.message})
     }
 });
 
@@ -107,7 +107,7 @@ router.post('/reqoveryStudent', async (req, res) => {
             'SELECT "emailStudent", "passwordStudent", "codeStudent" ' +
             'FROM "recoverystudent" ' +
             'WHERE "emailStudent" = $1 ' +
-            'AND "codeStudent" = $2; ', [userEmail, code]);
+            'AND "codeStudent" = $2; ', [userEmail, +code]);
 
         if (result.rowCount === 0) {
 
@@ -130,15 +130,15 @@ router.post('/reqoveryStudent', async (req, res) => {
         res.json({message: 'Пароль был успешно изменен', status: 'ok'});
 
     }catch (e) {
-        res.status(500).json({message: 'Что-то погло не так в блоке запроса на восстановление пароля студенту ' + e.message})
+        res.status(500).json({message: 'Что-то погло не так в блоке запроса на восстановление пароля ученику ' + e.message})
     }
 });
 
 
 router.post('/reqoveryRequestMentor',
     [
-        check('userEmail', 'Некорректный email').isEmail(),
-        check('userPassword', 'Минимальная длинна пароля 6 символов').isLength({min: 6}),
+        check('userEmail', 'некорректный email').isEmail(),
+        check('userPassword', 'минимальная длинна пароля 6 символов').isLength({min: 6}),
     ],
     async (req, res) => {
     try {
@@ -151,7 +151,7 @@ router.post('/reqoveryRequestMentor',
 
             return res.status(400).json({
                 validationErrors: validationErrors.array(),
-                message: 'Некорректные данные при восстановлении пароля'
+                message: `Некорректные данные: ${validationErrors.array()[0].msg}`
             });
         }
 
@@ -177,7 +177,7 @@ router.post('/reqoveryRequestMentor',
 
         const recoveryStatus = await pool.query(
             'INSERT INTO "recoveryMentor" ("emailMentor", "passwordMentor", "codeMentor") ' +
-            'VALUES ($1, $2, $3);', [userEmail, hashPassword, code]);
+            'VALUES ($1, $2, $3);', [userEmail, hashPassword, +code]);
 
         if (recoveryStatus.rowCount === 0) {
 
@@ -256,7 +256,7 @@ router.post('/reqoveryMentor', async (req, res) => {
         res.json({message: 'Пароль был успешно изменен', status: 'ok'});
 
     }catch (e) {
-        res.status(500).json({message: 'Что-то погло не так в блоке запроса на восстановление пароля студенту ' + e.message})
+        res.status(500).json({message: 'Что-то погло не так в блоке запроса на восстановление пароля ученика ' + e.message})
     }
 });
 

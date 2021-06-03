@@ -9,8 +9,8 @@ const router = Router();
 //  /api/edit-data/editStudent
 router.patch('/editStudent',
     [
-        check('name', 'Некорректное имя').matches(/^[a-zA-Zа-яА-Я\s]+$/),
-        check('age', 'Возраст только цифрами').isNumeric().notEmpty(),
+        check('name', 'некорректное имя').matches(/^[a-zA-Zа-яА-Я\s]+$/),
+        check('age', 'возраст только цифрами').isNumeric().notEmpty(),
     ],
     authMiddleware, async (req, res) => {
     try {
@@ -25,7 +25,7 @@ router.patch('/editStudent',
 
             return res.status(400).json({
                 validationErrors: validationErrors.array(),
-                message: 'Некорректные данные, заполните все поля '
+                message: `Некорректные данные: ${validationErrors.array()[0].msg}`,
             });
         }
 
@@ -51,10 +51,10 @@ router.patch('/editStudent',
             throw new Error();
         }
 
-        res.json({message: 'Data updated.'});
+        res.json({message: 'Data updated.', status: 'ok'});
 
     }catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке обновления профиля студента ' + e.message});
+        res.status(500).json({message: 'Что-то пошло не так в блоке обновления профиля ученика ' + e.message});
     }
 });
 
@@ -98,7 +98,7 @@ router.get('/infstudent', authMiddleware, async (req, res) => {
 
     }
     catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке ред информации о студенте ' + e.message});
+        res.status(500).json({message: 'Что-то пошло не так в блоке ред информации о ученике ' + e.message});
     }
 });
 
@@ -106,8 +106,8 @@ router.get('/infstudent', authMiddleware, async (req, res) => {
 //  /api/edit-data/editMentor
 router.patch('/editMentor',
     [
-        check('name', 'Некорректное имя').matches(/^[a-zA-Zа-яА-Я\s]+$/),
-        check('age', 'Возраст только цифрами').isNumeric().notEmpty(),
+        check('name', 'некорректное имя').matches(/^[a-zA-Zа-яА-Я\s]+$/),
+        check('age', 'некорректный возраст').isInt({min: 1}).notEmpty(),
     ],
     authMiddleware, async (req, res) => {
     try {
@@ -122,7 +122,7 @@ router.patch('/editMentor',
 
             return res.status(400).json({
                 validationErrors: validationErrors.array(),
-                message: `Упс...${validationErrors.errors[0].msg}`
+                message: `Некорректные данные: ${validationErrors.array()[0].msg}`,
             });
         }
 
@@ -149,10 +149,10 @@ router.patch('/editMentor',
 
         }
 
-        res.json({message: 'Data updated.'});
+        res.json({message: 'Data updated.', status: 'ok'});
 
     }catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке обновления профиля студента ' + e.message});
+        res.status(500).json({message: 'Что-то пошло не так в блоке обновления профиля ученика ' + e.message});
     }
 });
 
@@ -196,7 +196,7 @@ router.get('/infmentor', authMiddleware, async (req, res) => {
 
     }
     catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке ред информации о студенте ' + e.message});
+        res.status(500).json({message: 'Что-то пошло не так в блоке ред информации о ученике ' + e.message});
     }
 });
 

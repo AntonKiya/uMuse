@@ -16,7 +16,7 @@ router.get('/allLikedStudent', authMiddleware, async (req, res) => {
         const userId = req.user.userId;
 
         const liked = await pool.query(
-            'SELECT "id_response", "id_order", "direction_id", "suggestions", "invited", id_mentor, "emailMentor", "nameMentor", "interestMentor_id","interest","direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "photoMentor", "connectMentor", "likedStudent" ' +
+            'SELECT "id_response", "id_order", "direction_id", "suggestions", "invited", id_mentor, "emailMentor", "nameMentor", "interestMentor_id","interest","direction", "ageMentor",  "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "photoMentor", "connectMentor", "likedStudent" ' +
             'FROM "mentor", "responses", "order", "likedStudent", "interestsMentor", interest, direction, experience, city, sex ' +
             'WHERE "order".student_id = $1 ' +
             'AND responses.order_id = "order".id_order ' +
@@ -50,9 +50,9 @@ router.get('/allLikedStudent', authMiddleware, async (req, res) => {
                     experienceMentor: likedUser.experience,
                     cityMentor: likedUser.city,
                     sexMentor: likedUser.sex,
-                    ageMentor: likedUser.age,
-                    educationMentor: likedUser.education,
-                    aboutMentor: likedUser.about,
+                    ageMentor: likedUser.ageMentor,
+                    educationMentor: likedUser.educationMentor,
+                    aboutMentor: likedUser.aboutMentor,
                     photoMentor: likedUser.photoMentor,
                     connectMentor: likedUser.connectMentor,
                     likedStudent: likedUser.likedStudent
@@ -63,10 +63,12 @@ router.get('/allLikedStudent', authMiddleware, async (req, res) => {
 
                 const mentor = likedUsers.find(item => item.emailMentor === likedUser.emailMentor);
 
-                if (mentor.id_order.indexOf(likedUser.id_order) === -1) {
+                if(!mentor.order.find(orderItem => orderItem.order === likedUser.id_order)) {
 
-                    mentor.id_order.push(likedUser.id_order)
+                    mentor.order.push({order:likedUser.id_order, suggestions: likedUser.suggestions, direction: direction.rows[0].direction});
+
                 }
+
                 if (mentor.interestsMentor.indexOf(likedUser.interest) === -1) {
 
                     mentor.interestsMentor.push(likedUser.interest)
@@ -79,6 +81,7 @@ router.get('/allLikedStudent', authMiddleware, async (req, res) => {
         res.json(likedUsers);
 
     }catch (e) {
+
         res.status(500).json({message: 'Что-то пошло не так в блоке получения всех избранных менторов' + e.message})
     }
 });
@@ -95,11 +98,9 @@ router.post('/studentLiked', authMiddleware,async (req, res) => {
 
         const mentorId = req.body.mentorId;
 
-        const orderId = +req.body.orderId;
-
         const liked = await pool.query(
-            'INSERT INTO "likedStudent" ("mentor_id", "student_id", "order_id","likedStudent")' +
-            ' VALUES ($1, $2, $3, \'true\');', [mentorId, userId, orderId]);
+            'INSERT INTO "likedStudent" ("mentor_id", "student_id", "likedStudent")' +
+            ' VALUES ($1, $2, \'true\');', [mentorId, userId]);
 
         if (liked.rowCount === 0) {
 
@@ -109,6 +110,7 @@ router.post('/studentLiked', authMiddleware,async (req, res) => {
         res.json({message: 'Liked'});
 
     } catch (e) {
+
         res.status(500).json({message: 'Что-то пошло не так в блоке добавления в избранное ментора ' + e.message});
     }
 });
@@ -175,21 +177,23 @@ router.get('/allLikedMentor', authMiddleware, async (req, res) => {
 
             if (result.rows[0]) {
 
+                item.id_response = result.rows[0].id_response;
+
+                item.invited = result.rows[0].invited;
+
                 if(result.rows[0].invited === 'true') {
 
-                    item.invited = result.rows[0].invited;
-
-                    item.id_response = result.rows[0].id_response;
-
-                    const email = await pool.query(
-                        'SELECT "emailStudent" ' +
+                    const data = await pool.query(
+                        'SELECT "emailStudent", "id_student" ' +
                         'FROM "student", "responses", "order"' +
                         'WHERE "order"."id_order" = $1' +
                         'AND "student"."id_student" = "order"."student_id" ' +
                         'AND "responses"."order_id" = "order"."id_order";', [item.id_order]
                     );
 
-                    item.email = email.rows[0].emailStudent;
+                    item.email = data.rows[0].emailStudent;
+
+                    item.id_student = data.rows[0].id_student;
 
                 }
 

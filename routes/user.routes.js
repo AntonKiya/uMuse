@@ -35,7 +35,7 @@ router.get('/profileStudent',
             res.json(user.rows[0]);
 
         }catch (e){
-            res.status(500).json({message: 'Что-то пошло не так в блоке профиля студента ' + e.message});
+            res.status(500).json({message: 'Что-то пошло не так в блоке профиля ученика ' + e.message});
         }
     });
 

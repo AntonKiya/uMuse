@@ -1,5 +1,6 @@
 const pool = require("../pool");
 const {Router} = require('express');
+const {check, validationResult} = require('express-validator');
 const authMiddleware = require('../middleware/auth.middleware');
 const RoomChat = require('../models/RoomChat.model.js');
 
@@ -8,11 +9,26 @@ const router = Router();
 
 
 // /api/order-student/create
-router.post('/create', authMiddleware, async (req, res) => {
+router.post('/create',
+    [
+        check('ageFrom', 'некорректный возраст').isInt({min: 0}).notEmpty(),
+        check('ageTo', 'некорректный возраст').isInt({min: 1}).notEmpty(),
+    ],
+    authMiddleware, async (req, res) => {
     try{
 
         if (req.user.role !== 'student') {
             return res.status(403).json({message:'У вас нет прав доступа'});
+        }
+
+        const validationErrors = validationResult(req);
+
+        if (!validationErrors.isEmpty()) {
+
+            return res.status(400).json({
+                validationErrors: validationErrors.array(),
+                message: `Некорректные данные: ${validationErrors.array()[0].msg}`
+            });
         }
 
         const userId = req.user.userId;
@@ -71,7 +87,7 @@ router.get('/allOrdersS', authMiddleware, async (req, res) => {
             res.json(orders.rows);
 
     }catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке получения всех заявок студента ' + e});
+        res.status(500).json({message: 'Что-то пошло не так в блоке получения всех заявок ученика ' + e});
     }
 });
 
@@ -108,7 +124,7 @@ router.get('/oneOrderS/:idApp', authMiddleware, async (req, res) => {
 
 
     }catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке получения заявки студента ' + e});
+        res.status(500).json({message: 'Что-то пошло не так в блоке получения заявки ученика ' + e});
     }
 });
 
@@ -205,7 +221,7 @@ router.post('/oneResponse', authMiddleware, async (req, res) => {
         const {mentorId, orderId} = req.body;
 
         const data = await pool.query(
-            'SELECT "id_order", "id_mentor", "id_response", "emailMentor", "photoMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "invited", "interest", "id_response" ' +
+            'SELECT "id_order", "id_mentor", "id_response", "emailMentor", "photoMentor", "nameMentor", "direction", "experience", "city", "sex", "ageMentor", "educationMentor", "aboutMentor", "connectMentor", "invited", "interest", "id_response" ' +
             'FROM "mentor", "responses", "order", "direction", "experience", "city", "sex", "interestsMentor", "interest" ' +
             'WHERE "mentor".id_mentor = $1 ' +
             'AND "responses".mentor_id = $1 ' +
@@ -363,10 +379,6 @@ router.post('/deleteOrder', authMiddleware, async (req, res) => {
             'DELETE FROM "order" ' +
             'WHERE "order"."id_order" = $1 ' +
             'AND "order"."student_id" = $2;', [orderId, userId]);
-
-        await pool.query(
-        'DELETE FROM "likedStudent" ' +
-        'WHERE "likedStudent"."order_id" = $1;', [orderId]);
 
         res.json({message: 'Заявка удалена'});
 

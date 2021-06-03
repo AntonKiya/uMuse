@@ -167,6 +167,8 @@ router.get('/oneOrderM/:idOrder', authMiddleware, async (req, res) => {
                 'AND "order".sex_id = "sex".id_sex ' +
                 'AND "order".type_id = "type".id_type;',[idOrder]);
 
+            order.invited = result.rows[0].invited;
+
             const liked = await pool.query(
                 'select "order_id" from "likedMentor" ' +
                 'where "likedMentor"."mentor_id" = $1 ' +
@@ -252,7 +254,7 @@ router.post('/orderOwner', authMiddleware, async (req, res) => {
             res.json(student);
 
     }catch (e){
-        res.status(500).json({message: 'Что-то пошло не так в блоке получения профиля студента' + e});
+        res.status(500).json({message: 'Что-то пошло не так в блоке получения профиля ученика' + e});
     }
 });
 
@@ -268,7 +270,7 @@ router.get('/responses', authMiddleware, async (req,res) => {
         const userId = req.user.userId;
 
         const responses = await pool.query(
-        'SELECT "id_response", "order_id", "student_id","mentor_id", "direction", "experience", "city", "sex", type, "price", "ageFrom", "ageTo", suggestions ' +
+        'SELECT "id_response", "order_id", "student_id","mentor_id", "direction", "experience", "city", "sex", type, "price", "ageFrom", "ageTo", "datetime", suggestions ' +
         'FROM responses, direction, "order", "experience", city, sex, type ' +
         'WHERE "mentor_id" = $1 ' +
         'AND "order".id_order = "responses".order_id ' +

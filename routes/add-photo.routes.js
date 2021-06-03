@@ -17,7 +17,7 @@ router.post('/photo', authMiddleware, uploader.single('image'), async (req, res)
         const userRole = req.user.role;
 
         if (!req.file){
-            return res.status(400).json({message: 'Неккоректное фото'});
+            return res.status(400).json({message: 'Некорректное фото'});
         }
 
         const filename = req.file.filename;
@@ -29,7 +29,7 @@ router.post('/photo', authMiddleware, uploader.single('image'), async (req, res)
         }
         else if (userRole === 'mentor') {
 
-            await pool.query('UPDATE "mentor" SET photoMentor = $1 WHERE id_mentor = $2;', [filename, userId]);
+            await pool.query('UPDATE "mentor" SET "photoMentor" = $1 WHERE id_mentor = $2;', [filename, userId]);
 
         }
 

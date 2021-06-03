@@ -4,7 +4,7 @@ const config = require('config')
 
 module.exports = (req, res, next) => {
 
-    if (req.messege === 'OPTIONS'){
+    if (req.message === 'OPTIONS'){
         return next();
     }
 
@@ -18,7 +18,6 @@ module.exports = (req, res, next) => {
 
         const decodedToken = jwt.verify(token, config.get('jwtSecret'));
 
-        // В объект реквеста кладём раскодированный токен.
         req.user = decodedToken;
 
         next();

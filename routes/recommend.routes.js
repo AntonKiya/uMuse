@@ -16,7 +16,8 @@ router.get('/mentors', authMiddleware, async (req, res) => {
 
         const userId = req.user.userId;
 
-        const data = await pool.query('SELECT "id_mentor", "interest", "photoMentor", "city", "connectMentor", "ageMentor", "aboutMentor", "experience", "educationMentor", direction FROM mentor, student ,city,"interestsMentor", experience, direction,"interestsStudent", "interest" ' +
+        const data = await pool.query(
+            'SELECT "id_mentor", "nameMentor", "interest", "photoMentor", "city", "connectMentor", "ageMentor", "aboutMentor", "experience", "educationMentor", direction FROM "mentor", "student" ,"city","interestsMentor", experience, direction,"interestsStudent", "interest" ' +
             'WHERE "interestsStudent"."interestStudent_id" = "interestsMentor"."interestMentor_id" ' +
             'AND "interestsMentor".mentor_id = mentor.id_mentor ' +
             'AND "city".id_city = mentor."cityMentor_id" ' +
@@ -33,7 +34,7 @@ router.get('/mentors', authMiddleware, async (req, res) => {
 
             const mentor = item;
 
-            const {id_mentor, interest, photoMentor, city, connectMentor, ageMentor, aboutMentor, experience, educationMentor, direction} = mentor;
+            const {id_mentor, nameMentor, interest, photoMentor, city, connectMentor, ageMentor, aboutMentor, experience, educationMentor, direction} = mentor;
 
             const result = await mentors.find( elem => elem.id_mentor === mentor.id_mentor );
 
@@ -44,7 +45,7 @@ router.get('/mentors', authMiddleware, async (req, res) => {
             else {
 
 
-                mentors.push({id_mentor, interest, photoMentor, city, connectMentor, ageMentor, aboutMentor, experience, educationMentor, direction, interests: [mentor.interest]});
+                mentors.push({id_mentor, nameMentor, interest, photoMentor, city, connectMentor, ageMentor, aboutMentor, experience, educationMentor, direction, interests: [mentor.interest]});
             }
         }
 

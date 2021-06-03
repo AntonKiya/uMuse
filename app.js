@@ -34,74 +34,107 @@ io.on('connection', (socket) => {
 
     socket.on('USER_JOIN', async (data) => {
 
+        const {userId, userRole, roomId} = data;
+
+        const users = await pool.query(
+            'select "mentor_id", student_id ' +
+            'from "responses", "order" ' +
+            'where "id_response" = $1 ' +
+            'and responses.order_id = "order".id_order;', [roomId]);
+
+        const studentId = users.rows[0].student_id;
+
+        const mentorId = users.rows[0].mentor_id;
+
+        if ( (userRole === 'student' && studentId === userId) || (userRole === 'mentor' && mentorId === userId) ) {
+
         socket.join(data.roomId);
 
         const room = await RoomChat.findOne({idResponse: data.roomId});
 
         io.in(data.roomId).emit('GET_MESSAGES', room.messages);
 
+        }
     });
 
     socket.on('NEW_MESSAGE', async (data) => {
 
         const {userId, userRole, roomId, message} = data;
 
-        await RoomChat.findOneAndUpdate({idResponse: roomId}, {$push: {messages: message }});
+        if (message.text) {
 
-        const room = await RoomChat.findOne({idResponse: roomId});
 
-        io.in(data.roomId).emit('SET_MESSAGES', room.messages[room.messages.length - 1]);
+            const users = await pool.query(
+                'select "mentor_id", student_id ' +
+                'from "responses", "order" ' +
+                'where "id_response" = $1 ' +
+                'and responses.order_id = "order".id_order;', [roomId]);
 
-        if (userRole === 'mentor') {
+            const studentId = users.rows[0].student_id;
 
-            const identical = await pool.query('select * from "noticeStudent" ' +
-                'where "noticeStudent"."student_id" = (select "student_id" from "order", "responses"\n' +
-                'where "responses"."id_response" = $1' +
-                'AND "order"."id_order" = "responses"."order_id") ' +
-                'and "noticeStudent"."data" = $2;', [roomId, roomId]);
+            const mentorId = users.rows[0].mentor_id;
 
-            if (identical.rowCount === 0 ){
+            if ((userRole === 'student' && studentId === userId) || (userRole === 'mentor' && mentorId === userId)) {
 
-                await pool.query(
-                    'INSERT INTO "noticeStudent" ("student_id", data, "noticeTypeStudent_id") ' +
-                    'VALUES ((SELECT "student_id" FROM "order", "responses" ' +
-                    'WHERE "responses"."id_response" = $1 ' +
-                    'AND "order"."id_order" = "responses"."order_id") , $1, (SELECT "id_noticeType" FROM "noticeType" WHERE "noticeType" = \'message\'));', [roomId]);
+                await RoomChat.findOneAndUpdate({idResponse: roomId}, {$push: {messages: message}});
 
-                const notices = await pool.query(
-                    'SELECT "id_noticeStudent", "student_id", "data", "noticeType" from "noticeStudent", "noticeType" ' +
-                    'WHERE "noticeStudent"."student_id" = (SELECT "student_id" FROM "order", "responses" ' +
-                    'WHERE "responses"."id_response" = $1 ' +
-                    'AND "order"."id_order" = "responses"."order_id") ' +
-                    'AND "noticeType"."id_noticeType" = "noticeStudent"."noticeTypeStudent_id";', [roomId]);
+                const room = await RoomChat.findOne({idResponse: roomId});
 
-                io.in(notices.rows[0].student_id).emit('SET_NOTICE', notices.rows);
+                io.in(data.roomId).emit('SET_MESSAGES', room.messages[room.messages.length - 1]);
+
+                if (userRole === 'mentor') {
+
+                    const identical = await pool.query('select * from "noticeStudent" ' +
+                        'where "noticeStudent"."student_id" = (select "student_id" from "order", "responses"\n' +
+                        'where "responses"."id_response" = $1' +
+                        'AND "order"."id_order" = "responses"."order_id") ' +
+                        'and "noticeStudent"."data" = $2;', [roomId, roomId]);
+
+                    if (identical.rowCount === 0) {
+
+                        await pool.query(
+                            'INSERT INTO "noticeStudent" ("student_id", data, "noticeTypeStudent_id") ' +
+                            'VALUES ((SELECT "student_id" FROM "order", "responses" ' +
+                            'WHERE "responses"."id_response" = $1 ' +
+                            'AND "order"."id_order" = "responses"."order_id") , $1, (SELECT "id_noticeType" FROM "noticeType" WHERE "noticeType" = \'message\'));', [roomId]);
+
+                        const notices = await pool.query(
+                            'SELECT "id_noticeStudent", "student_id", "data", "noticeType" from "noticeStudent", "noticeType" ' +
+                            'WHERE "noticeStudent"."student_id" = (SELECT "student_id" FROM "order", "responses" ' +
+                            'WHERE "responses"."id_response" = $1 ' +
+                            'AND "order"."id_order" = "responses"."order_id") ' +
+                            'AND "noticeType"."id_noticeType" = "noticeStudent"."noticeTypeStudent_id";', [roomId]);
+
+                        io.in(notices.rows[0].student_id).emit('SET_NOTICE', notices.rows);
+
+                    }
+
+                }
+
+                if (userRole === 'student') {
+
+                    const identical = await pool.query('select * from "noticeMentor" ' +
+                        'where "noticeMentor"."mentor_id" = (select "mentor_id" from "responses" where "id_response" = $1) ' +
+                        'and "noticeMentor"."data" = $2;', [roomId, roomId]);
+
+                    if (identical.rowCount === 0) {
+
+                        await pool.query(
+                            'INSERT INTO "noticeMentor" ("mentor_id", data, "noticeTypeMentor_id")\n' +
+                            'VALUES ((select "mentor_id" from "responses" where "responses"."id_response" = $1), $1, (SELECT "id_noticeType" FROM "noticeType" WHERE "noticeType" = \'message\'));', [roomId]);
+
+                        const notices = await pool.query(
+                            'SELECT "id_noticeMentor", "mentor_id", "data", "noticeType" from "noticeMentor", "noticeType" ' +
+                            'WHERE "noticeMentor"."mentor_id" = (select "mentor_id" from "responses" where "responses"."id_response" = $1) ' +
+                            'AND "noticeType"."id_noticeType" = "noticeMentor"."noticeTypeMentor_id";', [roomId]);
+
+                        io.in(notices.rows[0].mentor_id).emit('SET_NOTICE', notices.rows);
+
+                    }
+
+                }
 
             }
-
-        }
-
-        if (userRole === 'student') {
-
-            const identical = await pool.query('select * from "noticeMentor" ' +
-                'where "noticeMentor"."mentor_id" = (select "mentor_id" from "responses" where "id_response" = $1) ' +
-                'and "noticeMentor"."data" = $2;', [roomId, roomId]);
-
-            if (identical.rowCount === 0) {
-
-                await pool.query(
-                    'INSERT INTO "noticeMentor" ("mentor_id", data, "noticeTypeMentor_id")\n' +
-                    'VALUES ((select "mentor_id" from "responses" where "responses"."id_response" = $1), $1, (SELECT "id_noticeType" FROM "noticeType" WHERE "noticeType" = \'message\'));', [roomId]);
-
-                const notices = await pool.query(
-                    'SELECT "id_noticeMentor", "mentor_id", "data", "noticeType" from "noticeMentor", "noticeType" ' +
-                    'WHERE "noticeMentor"."mentor_id" = (select "mentor_id" from "responses" where "responses"."id_response" = $1) ' +
-                    'AND "noticeType"."id_noticeType" = "noticeMentor"."noticeTypeMentor_id";', [roomId]);
-
-                io.in(notices.rows[0].mentor_id).emit('SET_NOTICE', notices.rows);
-
-            }
-
         }
 
     });
@@ -117,7 +150,7 @@ io.on('connection', (socket) => {
             const notices = await pool.query(
                 'SELECT "id_noticeStudent", "data", "noticeType" from "noticeStudent", "noticeType" ' +
                 'WHERE "noticeStudent"."student_id" = $1 ' +
-                'AND "noticeType"."id_noticeType" = "noticeStudent"."noticeTypeStudent_id";', [userId]);
+                'AND "noticeType"."id_noticeType" = "noticeStudent"."noticeTypeStudent_id" ORDER BY "id_noticeStudent" DESC ;', [userId]);
 
             io.in(userId).emit('SET_NOTICE', notices.rows);
 
@@ -127,7 +160,7 @@ io.on('connection', (socket) => {
             const notices = await pool.query(
                 'SELECT "id_noticeMentor", "mentor_id", "data", "noticeType" from "noticeMentor", "noticeType" ' +
                 'WHERE "noticeMentor"."mentor_id" = $1 ' +
-                'AND "noticeType"."id_noticeType" = "noticeMentor"."noticeTypeMentor_id";', [userId]);
+                'AND "noticeType"."id_noticeType" = "noticeMentor"."noticeTypeMentor_id" ORDER BY "id_noticeMentor" DESC ;', [userId]);
 
             io.in(userId).emit('SET_NOTICE', notices.rows);
 
