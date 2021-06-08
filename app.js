@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('config');
 const mongoose = require('mongoose');
 const pool = require('./pool');
+const path = require('path');
 const cors = require('cors');
 const RoomChat = require('./models/RoomChat.model');
 
@@ -14,7 +15,7 @@ const io = require('socket.io')(server, {
     }
 });
 
-const PORT = config.get('port') || 5000;
+const PORT = config.get('port') || 80;
 
 app.use(express.json());
 app.use(cors());
@@ -29,6 +30,14 @@ app.use('/api/add', require('./routes/add-photo.routes'));
 app.use('/api/uninviting', require('./routes/uninviting.routes'));
 app.use('/api/liked', require('./routes/liked.routes'));
 app.use('/api/recovery', require('./routes/recovery-password.routes'));
+
+if(process.env.NODE_ENV === 'production') {
+    app.use('/', express.static(path.join(__dirname, 'client', 'build')));
+
+    app.get('*', ((req, res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+    }));
+}
 
 io.on('connection', (socket) => {
 

@@ -61,7 +61,7 @@ export const Main = () => {
                         <div key={item.id_mentor} className={styles.mentorItem}>
                             <div className={styles.infoContainer}>
                                 <div className={styles.photoContainer}>
-                                    <img className={styles.photo} src={`http://localhost:5000/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
+                                    <img className={styles.photo} src={`http://localhost:80/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
                                     <div className={styles.direction}>{item.direction}</div>
                                 </div>
                                 <div className={styles.basicInfoContainer}>

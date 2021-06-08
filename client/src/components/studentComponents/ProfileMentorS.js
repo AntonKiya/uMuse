@@ -90,7 +90,7 @@ export const ProfileMentorS = ({mentor}) => {
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div className={styles.photoInfo}>
                 {liked.liked && <img src={heartActive} onClick={() => deleted(mentor.id_mentor)} className={styles.editButton} /> || <img src={heartNotActive} onClick={() => insert(mentor.id_mentor)} className={styles.editButton} />}
-                <img className={styles.photo} src={`http://localhost:5000/api/user/getPhoto/${mentor.photoMentor}`} alt={'ava'}/><br/>
+                <img className={styles.photo} src={`http://localhost:80/api/user/getPhoto/${mentor.photoMentor}`} alt={'ava'}/><br/>
                 {
                     (mentor.invited === 'true'
                         ||
