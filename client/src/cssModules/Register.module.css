@@ -129,6 +129,15 @@
     font-family: Inter, serif;
 }
 
+.acceptLink {
+    color: #7037ff;
+}
+
+.acceptContainer {
+    font-family: Inter, serif;
+    font-size: 14px;
+}
+
 @media screen and (max-width: 768px){
     .RegContect {
         overflow-y: auto;
