@@ -1,4 +1,5 @@
 const {Router} = require('express');
+const path = require('path');
 const {check, validationResult} = require('express-validator')
 const pool = require('../pool');
 const authMiddleware = require('../middleware/auth.middleware')
@@ -85,7 +86,7 @@ router.get('/getPhoto/:photo', (req, res) => {
 
         const photo = req.params.photo;
 
-        res.sendFile(`/Users/macbookpro/programming/Web/uMuse/uploads/${photo}`);
+        res.sendFile(path.join(__dirname,`../uploads/${photo}`));
 
     }catch (e){
         res.status(500).json({message: 'Что-то пошло не так в блоке получения фото ' + e.message});
