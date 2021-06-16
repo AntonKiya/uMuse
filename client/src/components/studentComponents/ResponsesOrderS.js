@@ -103,7 +103,7 @@ export const ResponsesOrderS = ({responses, content}) => {
                                     </div>
                                     <div className={styles.infoContainer}>
                                         <div className={styles.photoContainer}>
-                                            <img className={styles.photo} src={`http://localhost:80/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
+                                            <img className={styles.photo} src={`/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
                                             <div className={styles.direction}>{item.direction}</div>
                                         </div>
                                         <div className={styles.basicInfoContainer}>

@@ -98,7 +98,7 @@ export const LikedStudent = () => {
                             {item.likedStudent && liked[index].likedStudent && <img className={styles.heart} src={heartActive} onClick={() => deleted({orderId: item.id_order, mentorId: item.id_mentor, index})} alt={'❤️'}/> || <img className={styles.heart} src={heartNotActive} onClick={() => insert({orderId: item.id_order, mentorId: item.id_mentor, index})} alt={'🤍'}/>}
                             <div className={styles.infoContainer}>
                                 <div className={styles.photoContainer}>
-                                    <img className={styles.photo} src={`http://localhost:80/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
+                                    <img className={styles.photo} src={`/api/user/getPhoto/${item.photoMentor}`} alt={'ava'}/>
                                     <div className={styles.direction}>{item.directionMentor}</div>
                                 </div>
                                 <div className={styles.basicInfoContainer}>
