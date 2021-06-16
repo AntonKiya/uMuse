@@ -25,7 +25,7 @@ export const ProfileStudentM = ({student}) => {
         <div className={styles.profileData}>
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div className={styles.photoInfo}>
-                <img className={styles.photo} src={`http://localhost:80/api/user/getPhoto/${student.photoStudent}`} alt={'ava'}/><br/>
+                <img className={styles.photo} src={`/api/user/getPhoto/${student.photoStudent}`} alt={'ava'}/><br/>
                 <div className={styles.buttonContainer}>
                     <NavLink to={`/chat/${student.id_response}`}><button className={styles.chatButton} >Написать</button></NavLink>
                 </div>
