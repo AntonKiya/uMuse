@@ -22,6 +22,7 @@ import {LikedStudent} from "./pages/studentPages/LikedStudent";
 import {LikedMentor} from "./pages/mentorPages/LikedMentor";
 import {RecoveryPassword} from "./components/generalComponents/RecoveryPassword";
 import {Lending} from "./pages/generalPages/Lending";
+import {PersData} from "./pages/generalPages/PersData";
 
 export const useRoutes = (isAuthenticated, role) => {
 
@@ -110,6 +111,9 @@ export const useRoutes = (isAuthenticated, role) => {
             </Route>
             <Route path={'/recoveryStudent'} exact>
                 <RecoveryPassword/>
+            </Route>
+            <Route path={'/persdata'} exact>
+                <PersData/>
             </Route>
             <Redirect to={'/'} />
         </Switch>

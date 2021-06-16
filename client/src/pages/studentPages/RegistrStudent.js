@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useHttp} from '../../hooks/http.hook';
 import styles from '../../cssModules/Register.module.css';
 import {Notification} from "../../components/generalComponents/Notification";
+import {NavLink} from "react-router-dom";
 
 
 export const RegistrStudent = ({activeRegStude, setActiveRegStude, activeRegStudeHandler, activeAuthHandler}) => {
@@ -20,6 +21,8 @@ export const RegistrStudent = ({activeRegStude, setActiveRegStude, activeRegStud
     const [clientError, setClientError] = useState(false);
 
     const [activeNotification, setActiveNotification] = useState(false);
+
+    const [accept, setAccept] = useState(true);
 
     const haveAccHandler = () => {
 
@@ -78,6 +81,12 @@ export const RegistrStudent = ({activeRegStude, setActiveRegStude, activeRegStud
             setFormRegStud({...formRegStud});
         }
     };
+
+    const acceptHandler = () => {
+
+        setAccept(!accept);
+    }
+
     useEffect(() => {
 
         if (error) {
@@ -246,7 +255,7 @@ export const RegistrStudent = ({activeRegStude, setActiveRegStude, activeRegStud
                 </div>
                 <div className={styles.actionContainer}>
                     <button onClick={registrHandler}
-                            disabled={loading}
+                            disabled={loading || !accept}
                             type="button"
                             className={styles.sendButton}
                     >
@@ -257,6 +266,7 @@ export const RegistrStudent = ({activeRegStude, setActiveRegStude, activeRegStud
                         Уже есть аккаунт ?
                     </p>
                 </div>
+                <p className={styles.acceptContainer}><input className={styles.accept} type="checkbox" checked={accept} onClick={acceptHandler}/> Согласие на обработку <NavLink className={styles.acceptLink}to={'/persdata'}>песрональных данных</NavLink></p>
             </div>
         </div>
     );

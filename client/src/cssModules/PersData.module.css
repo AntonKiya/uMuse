@@ -1,0 +1,13 @@
+.persdata {
+    max-width: 80vw;
+    margin: 0 auto;
+    font-family: Inter, serif;
+}
+.heading {
+    margin-top: 22px;
+    margin-bottom: 10px;
+    font-size: 19px;
+}
+.point {
+    margin-bottom: 12px;
+}

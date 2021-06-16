@@ -83,7 +83,7 @@ export const ProfileDataM = ({getProfileData, dataProfile}) => {
             <Notification active={activeNotification} clearError={clearError} setActive={setActiveNotification} error={error}/>
             <div className={styles.photoInfo}>
                 <Link to={'/editM'}><img className={styles.editButton} src={editButton} alt={'Редактировать'}/></Link>
-                <img className={styles.photo} src={`http://localhost:5000/api/user/getPhoto/${dataProfile.photoMentor}`} alt={'ava'}/><br/>
+                <img className={styles.photo} src={`http://localhost:80/api/user/getPhoto/${dataProfile.photoMentor}`} alt={'ava'}/><br/>
                 <label className={styles.btnLabel}>
                     Обновить
                     <input onChange={send} ref={fileInput} hidden={true} type="file"/>
